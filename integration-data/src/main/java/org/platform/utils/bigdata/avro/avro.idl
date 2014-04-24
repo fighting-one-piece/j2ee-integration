@@ -1,0 +1,21 @@
+protocol SimpleService {
+
+record Message {
+
+string topic;
+
+bytes content;
+
+long    createdTime;
+
+string id;
+
+string ipAddress;
+
+map<string> props;
+
+}
+
+int publish(string context,array<Message> messages);
+
+}

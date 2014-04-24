@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.1.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd" default-autowire="byName">
+	
+    <!-- 配置EHCACHE缓存管理器 -->
+	<bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" lazy-init="false">
+		<property name="configLocation">
+		    <value>classpath:ehcache/ehcache.xml</value>
+		</property>
+		<!-- 由于hibernate也使用了Ehcache, 保证双方都使用同一个缓存管理器 -->  
+        <property name="shared" value="true"/>  
+	</bean>
+ 
+	<!-- 配置一个简单的缓存工厂bean对象 -->
+	<bean id="simpleCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+	    <property name="cacheManager" ref="ehCacheManager" />
+	    <!-- 使用缓存 关联ehcache.xml中的缓存配置 -->
+	    <property name="cacheName" value="SimpleCache" />
+	</bean>
+	
+</beans>

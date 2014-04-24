@@ -1,0 +1,21 @@
+struct Message {
+
+1: string topic
+
+2: binary content
+
+3: i64    createdTime
+
+4: string id
+
+5: string ipAddress
+
+6: map<string,string> props
+
+}
+
+service SimpleService {
+
+i32 publish(1:string context,2:list<Message> messages);
+
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.1.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd" default-autowire="byName">
+	
+	<!-- 注解配置  <context:annotation-config />-->
+	<context:component-scan base-package="org.platform"/>
+	
+	<!-- 数据库加载文件配置 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc/jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${driverClassName}"></property> 
+		<property name="url" value="${url}"></property> 
+		<property name="username" value="${username}"></property> 
+		<property name="password" value="${password}"></property> 
+	</bean> 
+	
+	<!-- 事务配置 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />  
+	</bean>
+
+    <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="dataSource" ref="dataSource"/>  
+    	<property name="transactionManager" ref="transactionManager"/>
+    	<property name="startupDelay" value="30"/>  
+        <!-- spring 管理的service需要放到这里，才能够注入成功 -->    
+        <property name="schedulerContextAsMap">    
+            <map>    
+                <description>schedulerContextAsMap</description>    
+                <entry key="jobService" value-ref="jobService"/>  
+            </map>    
+        <!-- 通过applicationContextSchedulerContextKey属性配置spring上下文 -->    
+        </property>  
+        <property name="applicationContextSchedulerContextKey">    
+            <value>applicationContext</value>    
+        </property>   
+        <property name="triggers">              
+        	<list>                  
+        		<ref local="simpleCronTrigger"/>              
+        	</list>          
+        </property>      
+    </bean>         
+    
+    <bean id="simpleCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">          
+    	<property name="jobDetail" ref="simpleJobDetail"/>          
+    	<property name="cronExpression" value="0/10 * * * * ?"></property>      
+    </bean>        
+    
+    <bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">      
+        <property name="targetObject" ref="simpleJob" />                 
+        <property name="targetMethod" value="execute" />       
+    </bean>
+	  
+</beans>
