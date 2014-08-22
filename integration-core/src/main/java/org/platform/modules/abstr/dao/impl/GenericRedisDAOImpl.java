@@ -96,7 +96,7 @@ public class GenericRedisDAOImpl <Entity extends Serializable, PK extends Serial
 				if (connection.exists(key)) {
 					 String vaule = (String) redisTemplate.getValueSerializer().deserialize(
 							connection.get(key));
-					 JSONObject object = JSONUtils.parseJsonData(vaule);
+					 JSONObject object = JSONUtils.json2Object(vaule);
 					 object.toString();
 					 //json数据填入对象
 					 Entity entity = null;

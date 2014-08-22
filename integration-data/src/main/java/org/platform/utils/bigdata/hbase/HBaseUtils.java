@@ -17,6 +17,8 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.platform.utils.bigdata.AbstrUtils;
 
@@ -53,6 +55,52 @@ public class HBaseUtils extends AbstrUtils {
 		} catch (Exception e) {
 			logger.info(e.getMessage(), e);
 		} 
+	}
+	
+	/** 表注册Coprocessor*/
+	public static void addTableCoprocessor(String tableName, String coprocessorClassName) {
+		try {
+			admin.disableTable(tableName);
+			HTableDescriptor htd = admin.getTableDescriptor(Bytes.toBytes(tableName));
+			htd.addCoprocessor(coprocessorClassName);
+			admin.modifyTable(Bytes.toBytes(tableName), htd);
+			admin.enableTable(tableName);
+		} catch (IOException e) {
+			logger.info(e.getMessage(), e);
+		}
+	}
+	
+	/** 统计表行数*/
+	public static long rowCount(String tableName, String family) {
+		long rowCount = 0;
+//		AggregationClient ac = new AggregationClient(configuration);  
+//		Scan scan = new Scan();
+//		scan.addFamily(Bytes.toBytes(family));
+//		try {
+//			rowCount = ac.rowCount(Bytes.toBytes(tableName), new LongColumnInterpreter(), scan);
+//		} catch (Throwable e) {
+//			logger.info(e.getMessage(), e);
+//		}  
+		return rowCount;
+	}
+	
+	/** 统计表行数*/
+	@SuppressWarnings("resource")
+	public static long rowCount(String tableName) {
+		long rowCount = 0;
+		try {
+			HTable table = new HTable(configuration, tableName);
+			Scan scan = new Scan();
+//			scan.setFilter(new KeyOnlyFilter());
+			scan.setFilter(new FirstKeyOnlyFilter());
+			ResultScanner resultScanner = table.getScanner(scan);
+			for (Result result : resultScanner) {
+				rowCount += result.size();
+			}
+		} catch (IOException e) {
+			logger.info(e.getMessage(), e);
+		}
+		return rowCount;
 	}
 
 	/** 删除表*/
@@ -142,13 +190,53 @@ public class HBaseUtils extends AbstrUtils {
 		return null;
 	}
 	
+	/** 查找所有记录*/
+	@SuppressWarnings({"resource" })
+	public static ResultScanner getRecords(String tableName, Scan scan) {
+		try {
+			HTable table = new HTable(configuration, tableName);
+			return table.getScanner(scan);
+		} catch (IOException e) {
+			logger.info(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	/** 查找所有记录*/
+	public static ResultScanner getRecords(String tableName, byte[] startRow, byte[] stopRow) {
+		return getRecords(tableName, startRow, stopRow, null);
+	}
+	
+	/** 查找所有记录*/
+	@SuppressWarnings({"resource" })
+	public static ResultScanner getRecords(String tableName, byte[] startRow,
+			byte[] stopRow, Filter filter) {
+		try {
+			HTable table = new HTable(configuration, tableName);
+			Scan scan = new Scan();
+			if (null != startRow) {
+				scan.setStartRow(startRow);
+			}
+			if (null != stopRow) {
+				scan.setStopRow(stopRow);
+			}
+			if (null != filter) {
+				scan.setFilter(filter);
+			}
+			return table.getScanner(scan);
+		} catch (IOException e) {
+			logger.info(e.getMessage(), e);
+		}
+		return null;
+	}
+	
 	public static void printRecord(Result result) {
 		for (Cell cell : result.rawCells()) {
 			logger.info("cell row: " + new String(cell.getRowArray()));
-			logger.info("cell family: " + new String(cell.getFamilyArray()));
-			logger.info("cell qualifier: " + new String(cell.getQualifierArray()));
-			logger.info("cell value: " + new String(cell.getValueArray()));
-			logger.info("cell timestamp: " + cell.getTimestamp());
+//			logger.info("cell family: " + new String(cell.getFamilyArray()));
+//			logger.info("cell qualifier: " + new String(cell.getQualifierArray()));
+//			logger.info("cell value: " + new String(cell.getValueArray()));
+//			logger.info("cell timestamp: " + cell.getTimestamp());
 		}
 		/** 之前版本*/
 		/** 

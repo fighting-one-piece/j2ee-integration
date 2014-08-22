@@ -83,7 +83,7 @@ public class ComplexIndexManager extends AbstrIndexManager {
 			isMerge = true;
 			//新增临时内存索引
 			IndexController.getInstance().addIndex(IIndex.RAM_TEMP, new RAMIndex());
-			//合并内存索引到文件索引中，合并完成后提交文件索引，新�?��个内存索�?
+			//合并内存索引到文件索引中，合并完成后提交文件索引，新建一个内存索引
 			IndexController.getInstance().obtainIndexWriter(IIndex.RAM).commit();
 			IndexController.getInstance().obtainIndexWriter(IIndex.FILE).addIndexes(
 					IndexController.getInstance().obtainIndexWriter(IIndex.RAM).getDirectory());

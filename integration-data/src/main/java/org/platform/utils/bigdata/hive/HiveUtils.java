@@ -18,17 +18,15 @@ import org.platform.utils.common.properties.PropertiesUtils;
 
 public class HiveUtils extends AbstrUtils {
 	
-	private static Properties properties = null;
-	
 	private static TTransport transport = null;
 	
 	private static TProtocol protocol = null;
-	
+	//连接池
 	private static ConnectionPool connectionPool = null;
 	
 	static{
 		try{
-			properties = PropertiesUtils.obtainValues("jdbc/jdbc.properties");
+			Properties properties = PropertiesUtils.obtainValues("jdbc/jdbc.properties");
 			connectionPool = new ConnectionPool(properties.getProperty("hive.driverClassName"), 
 					properties.getProperty("hive.url"), "", "");
 			transport = new TSocket(properties.getProperty("hive.host.ip"),
@@ -40,6 +38,7 @@ public class HiveUtils extends AbstrUtils {
 		}
 	}
 	
+	//获取连接池的连接
 	public static synchronized Connection obtainConnection() {
 		Connection connection = null;
 		try {

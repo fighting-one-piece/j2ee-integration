@@ -45,7 +45,7 @@ public class CrawlDAOTest {
 		}
 		String json = results.get(0).getValue();
 		System.out.println(json);
-		CrawlJob job = (CrawlJob) JSONUtils.parseJsonData(json, CrawlJob.class);
+		CrawlJob job = (CrawlJob) JSONUtils.json2Object(json, CrawlJob.class);
 		System.out.println(job.getCareer());
 	}
 	

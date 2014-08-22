@@ -456,6 +456,10 @@
 		<seleniumhq.version>2.37.1</seleniumhq.version>
 		<htmlunit.version>2.13</htmlunit.version>
 		<crawler4j.version>3.5</crawler4j.version>
+		
+		<spark.version>1.0.0</spark.version>
+		<spark.mllib.version>1.0.0</spark.mllib.version>
+		<spark.assembly.version>1.0.0</spark.assembly.version>
 
 		<maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
 		<maven.test.plugin.version>1.8.2</maven.test.plugin.version>
@@ -2193,6 +2197,49 @@
 				<groupId>edu.uci.ics</groupId>
 				<artifactId>crawler4j</artifactId>
 				<version>${crawler4j.version}</version>
+			</dependency>
+			
+			<!--SPARK依赖包 -->
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-core_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-mllib_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-bagel_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-repl_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-streaming_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-graphx_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-sql_2.10</artifactId>
+				<version>${spark.version}</version>
 			</dependency>
 
 		</dependencies>

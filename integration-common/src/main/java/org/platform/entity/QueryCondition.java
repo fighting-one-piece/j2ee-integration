@@ -119,6 +119,7 @@ public class QueryCondition implements Serializable {
 
 	public void setPagination(boolean isPagination) {
 		this.isPagination = isPagination;
+		mybatisCondition.put(IS_PAGINATION, isPagination);
 	}
 
 	public int getCurrentPageNum() {
@@ -138,6 +139,7 @@ public class QueryCondition implements Serializable {
 
 	public void setRowNumPerPage(int rowNumPerPage) {
 		this.rowNumPerPage = rowNumPerPage;
+		mybatisCondition.put(LIMIT, rowNumPerPage);
 	}
 
 	public Map<String, QueryItem> getHibernateCondition() {

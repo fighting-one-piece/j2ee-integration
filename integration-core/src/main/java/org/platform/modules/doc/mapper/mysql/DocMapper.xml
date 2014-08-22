@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mysql.org.platform.modules.doc.entity.Doc">
+
+	<resultMap type="Doc" id="docResultMap">
+		<id property="autoid" column="AUTOID" />
+		<result property="docno" column="DOCNO" />
+		<result property="title" column="TITLE" />
+		<result property="url" column="URL" />
+		<result property="source" column="SOURCE" />
+		<result property="ptime" column="PTIME" />
+		<result property="channel" column="CHANNEL" />
+		<result property="createtime" column="CREATETIME" />
+	</resultMap>
+
+	<sql id="_columns">
+		docno,title,url,source,ptime,channel,createtime
+	</sql>
+
+	<sql id="_where">
+		<where>
+    		1 = 1
+    		<if test="id != null">
+    			AND ID = #{id}
+    		</if>
+    		<if test="autoid != null">
+    			AND AUTOID = #{autoid}
+    		</if>
+    		<if test="title != null">
+    			AND TITLE = #{title}
+    		</if>
+    		<if test="url != null">
+    			AND URL = #{url}
+    		</if>
+    		<if test="channel != null">
+    			AND CHANNEL = #{channel}
+    		</if>
+    		<if test="orderProperty != null">
+	    		ORDER BY #{orderProperty}
+	    		<choose>
+	    			<when test="orderType == 2">
+	    				DESC
+	    			</when>
+	    			<otherwise>
+	    				ASC
+	    			</otherwise>
+	    		</choose>
+	    	</if>
+    	</where>
+	</sql>
+	
+	<insert id="insert" parameterType="Doc">
+		INSERT INTO T_PLAT_DOC(DOCNO, TITLE, URL, SOURCE, PTIME, CHANNEL, CREATETIME)
+		VALUES(
+		#{docno},
+		#{title},
+		#{url},
+		#{source},
+		#{ptime},
+		#{channel},
+		#{createtime}
+		)
+	</insert>
+	
+	<select id="readDataByPK" resultType="Doc" resultMap="docResultMap" parameterType="Long">  
+        <![CDATA[ 
+        	SELECT autoid,docno,title,url,source,ptime,channel,createtime FROM T_PLAT_DOC where id = #{id}
+        ]]> 
+	</select>
+
+	<select id="readDataListByCondition" resultType="Doc" resultMap="docResultMap">  
+        <![CDATA[
+        	SELECT autoid, 
+        ]]>
+        <include refid="_columns"/> 
+        <![CDATA[ 
+        	FROM T_PLAT_DOC
+        ]]>
+        <include refid="_where"/> 
+	</select>
+
+	<select id="readDataPaginationByCondition" resultType="Doc" resultMap="docResultMap">  
+       <![CDATA[
+        	SELECT autoid, 
+        ]]>
+        <include refid="_columns"/> 
+        <![CDATA[ 
+        	FROM T_PLAT_DOC
+        ]]>
+        <include refid="_where"/> 
+	</select>
+
+</mapper>

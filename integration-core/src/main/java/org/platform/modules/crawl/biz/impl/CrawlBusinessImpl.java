@@ -64,7 +64,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		List<CrawlDetailExt> crawlDetailExts = crawlDetailExtDAO.readDataListByCondition(condition);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();
 		for (CrawlDetailExt crawlDetailExt : crawlDetailExts) {
-			CrawlJob crawlJob = (CrawlJob) JSONUtils.parseJsonData(
+			CrawlJob crawlJob = (CrawlJob) JSONUtils.json2Object(
 					crawlDetailExt.getValue(), CrawlJob.class);
 			logger.debug(crawlJob);
 			resultList.add(crawlJob);
@@ -146,7 +146,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		QueryResult<CrawlDetailExt> qr = crawlDetailExtDAO.readDataPaginationByCondition(condition);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();
 		for (CrawlDetailExt crawlDetailExt : qr.getResultList()) {
-			resultList.add((CrawlJob) JSONUtils.parseJsonData(
+			resultList.add((CrawlJob) JSONUtils.json2Object(
 					crawlDetailExt.getValue(), CrawlJob.class));
 		}
 		QueryResult<CrawlJob> jobQR = new QueryResult<CrawlJob>();

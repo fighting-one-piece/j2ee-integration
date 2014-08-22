@@ -338,7 +338,7 @@
 	<!-- MyBatis 配置 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="${defaultDs}" />
-		<property name="typeAliasesPackage" value="org.platform.modules.auth.entity,org.platform.modules.index.entity" />
+		<property name="typeAliasesPackage" value="org.platform.modules.auth.entity,org.platform.modules.doc.entity" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
 		<property name="mapperLocations" value="classpath*:org/platform/modules/*/mapper/**/*.xml" />
 	</bean>
