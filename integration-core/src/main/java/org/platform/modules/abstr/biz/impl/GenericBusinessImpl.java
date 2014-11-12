@@ -18,7 +18,7 @@ import org.platform.utils.spring.SpringUtils;
 public abstract class GenericBusinessImpl<Entity extends Serializable, PK extends Serializable> implements IGenericBusiness<Entity, PK> {
 
 	/** 日志*/
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger LOG = Logger.getLogger(getClass());
 
 	protected Class<Entity> entityClass = null;
 	
@@ -42,7 +42,7 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 		StringBuilder beanName = new StringBuilder();
 		beanName.append(Character.toLowerCase(className.charAt(0)))
 	  		.append(className.substring(1)).append("DAO");
-		logger.debug("beanName: " + beanName.toString());
+		LOG.debug("beanName: " + beanName.toString());
 		Object daoInstance = SpringUtils.getBean(beanName.toString());
 		if (null == daoInstance) {
 			throw new BusinessException("数据访问对象获取失败");
@@ -51,19 +51,19 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 	}
 	
 	protected void preHandle(Object object) throws BusinessException {
-		
 	}
 	
 	protected void postHandle(Object object) throws BusinessException {
-		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void insert(Object object) throws BusinessException {
 		preHandle(object);
-		Entity entity = (Entity) object;
-		if (!entityClass.isAssignableFrom(object.getClass())) {
+		Entity entity = null;
+		if (entityClass.isAssignableFrom(object.getClass())) {
+			entity = (Entity) object;
+		} else {
 			entity = (Entity) obtainConverter().convertObject(object);
 		}
 		obtainDAOInstance().insert(entity);
@@ -74,8 +74,10 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 	@Override
 	public void update(Object object) throws BusinessException {
 		preHandle(object);
-		Entity entity = (Entity) object;
-		if (!entityClass.isAssignableFrom(object.getClass())) {
+		Entity entity = null;
+		if (entityClass.isAssignableFrom(object.getClass())) {
+			entity = (Entity) object;
+		} else {
 			entity = (Entity) obtainConverter().convertObject(object);
 		}
 		obtainDAOInstance().update(entity);

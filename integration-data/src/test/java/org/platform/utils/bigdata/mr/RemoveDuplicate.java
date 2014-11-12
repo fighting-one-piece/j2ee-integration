@@ -39,6 +39,7 @@ public class RemoveDuplicate {
 		
 		FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
 		FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+		
 		System.out.println(job.waitForCompletion(true) ? 0 : 1);
 	}
 }

@@ -55,9 +55,9 @@ public class CrawlController extends GenericController<CrawlDetail, Long> {
 
 	@RequestMapping(value = "/job/index", method = RequestMethod.GET)
 	public String index(int type) {
-		logger.debug("start to create index");
+		LOG.debug("start to create index");
 		crawlBusiness.insertIndex(type);
-		logger.debug("end to create index");
+		LOG.debug("end to create index");
 		return redirectToUrl("/crawl/job/search");
 	}
 	

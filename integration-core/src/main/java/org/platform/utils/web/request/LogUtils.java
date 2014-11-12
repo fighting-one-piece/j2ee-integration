@@ -2,12 +2,14 @@ package org.platform.utils.web.request;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import org.apache.shiro.SecurityUtils;
 import org.platform.utils.json.JSONUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
@@ -106,11 +108,13 @@ public class LogUtils {
         return "[" + msg.toString() + "]";
     }
 
-    protected static String getParams(HttpServletRequest request) {
+    @SuppressWarnings("unchecked")
+	protected static String getParams(HttpServletRequest request) {
         Map<String, String[]> params = request.getParameterMap();
         return JSONUtils.object2json(params);
     }
 
+	@SuppressWarnings("unchecked")
 	private static String getHeaders(HttpServletRequest request) {
         Map<String, List<String>> headers = Maps.newHashMap();
         Enumeration<String> namesEnumeration = request.getHeaderNames();

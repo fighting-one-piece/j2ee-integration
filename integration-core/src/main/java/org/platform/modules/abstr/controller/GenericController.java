@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class GenericController<Entity extends Serializable, PK extends Serializable> {
 
 	/** 日志*/
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger LOG = Logger.getLogger(getClass());
 
 	protected Class<Entity> entityClass = null;
 	

@@ -21,6 +21,7 @@
 	<context:property-placeholder location="classpath*:shiro/shiro.properties" ignore-unresolvable="true"/>
 	<context:property-placeholder location="classpath*:database/database.properties" ignore-unresolvable="true"/>
 	<context:property-placeholder location="classpath*:hibernate/hibernate.properties" ignore-unresolvable="true"/>
+	<context:property-placeholder location="classpath*:cassandra/cassandra.properties" ignore-unresolvable="true"/>
 	
 <!-- 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
 <!-- 		<property name="locations"> -->

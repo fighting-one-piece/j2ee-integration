@@ -33,7 +33,7 @@ import org.springframework.stereotype.Repository;
 public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Serializable> implements IGenericDAO<Entity, PK> {
 
 	/** 日志记录*/
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger LOG = Logger.getLogger(getClass());
 
 	@Resource(name="sessionFactory")
 	protected SessionFactory sessionFactory = null;

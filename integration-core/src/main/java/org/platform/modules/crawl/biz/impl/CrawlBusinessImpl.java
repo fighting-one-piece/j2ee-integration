@@ -66,7 +66,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		for (CrawlDetailExt crawlDetailExt : crawlDetailExts) {
 			CrawlJob crawlJob = (CrawlJob) JSONUtils.json2Object(
 					crawlDetailExt.getValue(), CrawlJob.class);
-			logger.debug(crawlJob);
+			LOG.debug(crawlJob);
 			resultList.add(crawlJob);
 		}
 		IIndexManager indexManager = type == IIndex.RAM ? new RAMIndexManager() : new FSIndexManager();

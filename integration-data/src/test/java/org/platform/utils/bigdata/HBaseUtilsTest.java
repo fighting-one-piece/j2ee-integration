@@ -3,9 +3,13 @@ package org.platform.utils.bigdata;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.junit.Test;
 import org.platform.utils.bigdata.hbase.HBaseUtils;
 
@@ -20,13 +24,13 @@ public class HBaseUtilsTest {
 			HBaseUtils.creatTable(tablename, familys);
 
 			// add record zkb
-			HBaseUtils.putRecord(tablename, "zkb", "grade", "", "5");
-			HBaseUtils.putRecord(tablename, "zkb", "course", "", "90");
-			HBaseUtils.putRecord(tablename, "zkb", "course", "math", "97");
-			HBaseUtils.putRecord(tablename, "zkb", "course", "art", "87");
+			HBaseUtils.insertRecord(tablename, "zkb", "grade", "", "5");
+			HBaseUtils.insertRecord(tablename, "zkb", "course", "", "90");
+			HBaseUtils.insertRecord(tablename, "zkb", "course", "math", "97");
+			HBaseUtils.insertRecord(tablename, "zkb", "course", "art", "87");
 			// add record baoniu
-			HBaseUtils.putRecord(tablename, "baoniu", "grade", "", "4");
-			HBaseUtils.putRecord(tablename, "baoniu", "course", "math", "89");
+			HBaseUtils.insertRecord(tablename, "baoniu", "grade", "", "4");
+			HBaseUtils.insertRecord(tablename, "baoniu", "course", "math", "89");
 
 			System.out.println("===========get one record========");
 			Result result = HBaseUtils.getRecord(tablename, "zkb");
@@ -55,40 +59,40 @@ public class HBaseUtilsTest {
 	
 	@Test
 	public void testInsert() {
-		HBaseUtils.putRecord("user", "0120140722a", "basic", "name", "user01");
-		HBaseUtils.putRecord("user", "0220140722b", "basic", "name", "user02");
-		HBaseUtils.putRecord("user", "0320140723c", "basic", "name", "user03");
-		HBaseUtils.putRecord("user", "0420140724d", "basic", "name", "user04");
-		HBaseUtils.putRecord("user", "0520140725e", "basic", "name", "user05");
-		HBaseUtils.putRecord("user", "0620140726f", "basic", "name", "user06");
-		HBaseUtils.putRecord("user", "0720140727g", "basic", "name", "user07");
-		HBaseUtils.putRecord("user", "0820140728h", "basic", "name", "user08");
-		HBaseUtils.putRecord("user", "0920140729i", "basic", "name", "user09");
-		HBaseUtils.putRecord("user", "1020140722j", "basic", "name", "user10");
-		HBaseUtils.putRecord("user", "1120140723k", "basic", "name", "user11");
-		HBaseUtils.putRecord("user", "1220140724l", "basic", "name", "user12");
-		HBaseUtils.putRecord("user", "1320140721m", "basic", "name", "user13");
-		HBaseUtils.putRecord("user", "1420140721n", "basic", "name", "user14");
-		HBaseUtils.putRecord("user", "1520140722o", "basic", "name", "user15");
-		HBaseUtils.putRecord("user", "1620140728p", "basic", "name", "user16");
-		HBaseUtils.putRecord("user", "1720140725q", "basic", "name", "user17");
-		HBaseUtils.putRecord("user", "0120140722a", "basic", "age", "17");
-		HBaseUtils.putRecord("user", "0220140722b", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "0320140723c", "basic", "age", "19");
-		HBaseUtils.putRecord("user", "0420140724d", "basic", "age", "17");
-		HBaseUtils.putRecord("user", "0520140725e", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "0620140726f", "basic", "age", "17");
-		HBaseUtils.putRecord("user", "0720140727g", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "0820140728h", "basic", "age", "19");
-		HBaseUtils.putRecord("user", "0920140729i", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1020140722j", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1120140723k", "basic", "age", "19");
-		HBaseUtils.putRecord("user", "1220140724l", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1320140721m", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1420140721n", "basic", "age", "17");
-		HBaseUtils.putRecord("user", "1520140722o", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1620140728p", "basic", "age", "18");
-		HBaseUtils.putRecord("user", "1720140725q", "basic", "age", "19");
+		HBaseUtils.insertRecord("user", "0120140722a", "basic", "name", "user01");
+		HBaseUtils.insertRecord("user", "0220140722b", "basic", "name", "user02");
+		HBaseUtils.insertRecord("user", "0320140723c", "basic", "name", "user03");
+		HBaseUtils.insertRecord("user", "0420140724d", "basic", "name", "user04");
+		HBaseUtils.insertRecord("user", "0520140725e", "basic", "name", "user05");
+		HBaseUtils.insertRecord("user", "0620140726f", "basic", "name", "user06");
+		HBaseUtils.insertRecord("user", "0720140727g", "basic", "name", "user07");
+		HBaseUtils.insertRecord("user", "0820140728h", "basic", "name", "user08");
+		HBaseUtils.insertRecord("user", "0920140729i", "basic", "name", "user09");
+		HBaseUtils.insertRecord("user", "1020140722j", "basic", "name", "user10");
+		HBaseUtils.insertRecord("user", "1120140723k", "basic", "name", "user11");
+		HBaseUtils.insertRecord("user", "1220140724l", "basic", "name", "user12");
+		HBaseUtils.insertRecord("user", "1320140721m", "basic", "name", "user13");
+		HBaseUtils.insertRecord("user", "1420140721n", "basic", "name", "user14");
+		HBaseUtils.insertRecord("user", "1520140722o", "basic", "name", "user15");
+		HBaseUtils.insertRecord("user", "1620140728p", "basic", "name", "user16");
+		HBaseUtils.insertRecord("user", "1720140725q", "basic", "name", "user17");
+		HBaseUtils.insertRecord("user", "0120140722a", "basic", "age", "17");
+		HBaseUtils.insertRecord("user", "0220140722b", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "0320140723c", "basic", "age", "19");
+		HBaseUtils.insertRecord("user", "0420140724d", "basic", "age", "17");
+		HBaseUtils.insertRecord("user", "0520140725e", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "0620140726f", "basic", "age", "17");
+		HBaseUtils.insertRecord("user", "0720140727g", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "0820140728h", "basic", "age", "19");
+		HBaseUtils.insertRecord("user", "0920140729i", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1020140722j", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1120140723k", "basic", "age", "19");
+		HBaseUtils.insertRecord("user", "1220140724l", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1320140721m", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1420140721n", "basic", "age", "17");
+		HBaseUtils.insertRecord("user", "1520140722o", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1620140728p", "basic", "age", "18");
+		HBaseUtils.insertRecord("user", "1720140725q", "basic", "age", "19");
 	}
 	
 	@Test
@@ -122,6 +126,36 @@ public class HBaseUtilsTest {
 	public void testGetWithFilter1() {
 		Scan scan = new Scan();
 		scan.setFilter(new FirstKeyOnlyFilter());
+		ResultScanner resultScanner = HBaseUtils.getRecords("user", scan);
+		HBaseUtils.printRecords(resultScanner);
+	}
+	
+	@Test
+	public void testGetWithFilter2() {
+		Scan scan = new Scan();
+		scan.setFilter(new RowFilter(CompareOp.EQUAL, new RegexStringComparator("")));
+		ResultScanner resultScanner = HBaseUtils.getRecords("user", scan);
+		HBaseUtils.printRecords(resultScanner);
+	}
+	
+	@Test
+	public void testGetWithFilter3() {
+		Scan scan = new Scan();
+		scan.setFilter(new RowFilter(CompareOp.EQUAL, 
+				new RegexStringComparator("\\w{2}2014072[45]+")));
+		ResultScanner resultScanner = HBaseUtils.getRecords("user", scan);
+		HBaseUtils.printRecords(resultScanner);
+	}
+	
+	@Test
+	public void testGetWithFilter4() {
+		Scan scan = new Scan();
+		FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		filterList.addFilter(new RowFilter(CompareOp.GREATER_OR_EQUAL, 
+				new RegexStringComparator("\\w{2}20140724\\w")));
+		filterList.addFilter(new RowFilter(CompareOp.LESS_OR_EQUAL, 
+				new RegexStringComparator("\\w{2}20140727\\w")));
+		scan.setFilter(filterList);
 		ResultScanner resultScanner = HBaseUtils.getRecords("user", scan);
 		HBaseUtils.printRecords(resultScanner);
 	}

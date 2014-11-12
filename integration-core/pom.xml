@@ -112,6 +112,19 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 		
+		<!-- CASSANDRA依赖包 -->
+		<dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-core</artifactId>
+			<version>${cassandra.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-dse</artifactId>
+			<version>${cassandra.version}</version>
+		</dependency>
+		
 		<!-- SPRING-DATA依赖包 -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -126,6 +139,25 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-cassandra</artifactId>
+			<exclusions>
+            	<exclusion>
+                	<groupId>com.google.collections</groupId>
+                	<artifactId>google-collections</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>com.datastax.cassandra</groupId>
+					<artifactId>cassandra-driver-core</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>com.datastax.cassandra</groupId>
+					<artifactId>cassandra-driver-dse</artifactId>
+            	</exclusion>
+       		</exclusions>
 		</dependency>
 
 		<!--QUARTZ依赖包 -->
@@ -243,43 +275,36 @@
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-bagel_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-repl_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-graphx_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
-			<version>${spark.version}</version>
 		</dependency>
 		
 	</dependencies>

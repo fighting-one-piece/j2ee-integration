@@ -3,7 +3,10 @@ package org.platform.utils.bigdata.hbase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -11,8 +14,10 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HConnection;
+import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -22,18 +27,21 @@ import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.platform.utils.bigdata.AbstrUtils;
 
-@SuppressWarnings("deprecation")
 public class HBaseUtils extends AbstrUtils {
 	
 	private static HBaseAdmin admin = null;
 	
-	private static HTablePool tablePool = null;
+//	private static HTablePool tablePool = null;
+	
+	private static HConnection connection = null;
 	
 	static {
 		try {
 			admin = new HBaseAdmin(configuration);
-			tablePool = new HTablePool(configuration, 10);
-			tablePool.close();
+			ExecutorService pools = Executors.newCachedThreadPool();
+			connection = HConnectionManager.createConnection(configuration, pools);
+//			tablePool = new HTablePool(configuration, 10);
+//			tablePool.close();
 		} catch (IOException e) {
 			logger.info(e.getMessage(), e);
 		}
@@ -73,6 +81,7 @@ public class HBaseUtils extends AbstrUtils {
 	/** 统计表行数*/
 	public static long rowCount(String tableName, String family) {
 		long rowCount = 0;
+//		0.95.0以后这种方法被替代，可以通过 table.coprocessorService 实现
 //		AggregationClient ac = new AggregationClient(configuration);  
 //		Scan scan = new Scan();
 //		scan.addFamily(Bytes.toBytes(family));
@@ -115,10 +124,10 @@ public class HBaseUtils extends AbstrUtils {
 	}
 
 	/** 插入一行记录*/
-	@SuppressWarnings("resource")
-	public static void putRecord(String tableName, String rowKey, String family, String qualifier, String value) {
+	public static void insertRecord(String tableName, String rowKey, String family, String qualifier, String value) {
 		try {
-			HTable table = new HTable(configuration, tableName);
+//			HTable table = new HTable(configuration, tableName);
+			HTableInterface table = connection.getTable(tableName);
 			Put put = new Put(Bytes.toBytes(rowKey));
 			put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
 			table.put(put);
@@ -129,10 +138,12 @@ public class HBaseUtils extends AbstrUtils {
 	}
 	
 	/** 批量插入记录*/
-	public static void putRecords(String tableName, List<Put> puts) {
-		HTable table = null;
+	public static void insertRecords(String tableName, List<Put> puts) {
+//		HTable table = null;
+		HTableInterface table = null;
 		try {
-			table = new HTable(configuration, tableName);
+//			table = new HTable(configuration, tableName);
+			table = connection.getTable(tableName);
 			table.put(puts);
 		} catch (IOException e) {
 			logger.info(e.getMessage(), e);
@@ -145,10 +156,10 @@ public class HBaseUtils extends AbstrUtils {
 	}
 	
 	/** 删除一行记录*/
-	@SuppressWarnings("resource")
 	public static void deleteRecord(String tableName, String... rowKeys) {
 		try {
-			HTable table = new HTable(configuration, tableName);
+//			HTable table = new HTable(configuration, tableName);
+			HTableInterface table = connection.getTable(tableName);
 			List<Delete> list = new ArrayList<Delete>();
 			Delete delete = null;
 			for (String rowKey : rowKeys) {
@@ -165,10 +176,10 @@ public class HBaseUtils extends AbstrUtils {
 	}
 
 	/** 查找一行记录*/
-	@SuppressWarnings({ "resource"})
 	public static Result getRecord(String tableName, String rowKey) {
 		try {
-			HTable table = new HTable(configuration, tableName);
+//			HTable table = new HTable(configuration, tableName);
+			HTableInterface table = connection.getTable(tableName);
 			Get get = new Get(rowKey.getBytes());
 			get.setMaxVersions();
 			return table.get(get);
@@ -179,22 +190,38 @@ public class HBaseUtils extends AbstrUtils {
 	}
 
 	/** 查找所有记录*/
-	@SuppressWarnings({"resource" })
 	public static ResultScanner getRecords(String tableName) {
-		try {
-			HTable table = new HTable(configuration, tableName);
-			return table.getScanner(new Scan());
-		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
-		}
-		return null;
+		return getRecords(tableName, null, null, null, null, null);
 	}
 	
 	/** 查找所有记录*/
-	@SuppressWarnings({"resource" })
-	public static ResultScanner getRecords(String tableName, Scan scan) {
+	public static ResultScanner getRecords(String tableName, String family) {
+		return getRecords(tableName, family, null, null, null, null);
+	}
+	
+	/** 查找所有记录*/
+	public static ResultScanner getRecords(String tableName, String family, String qualifier) {
+		return getRecords(tableName, family, qualifier, null, null, null);
+	}
+	
+	/** 查找所有记录*/
+	public static ResultScanner getRecords(String tableName, Filter filter) {
+		return getRecords(tableName, null, null, null, null, filter);
+	}
+	
+	/** 查找所有记录*/
+	public static ResultScanner getRecords(String tableName, String family, String qualifier, 
+			String startRow, String stopRow, Filter filter) {
 		try {
-			HTable table = new HTable(configuration, tableName);
+//			HTable table = new HTable(configuration, tableName);
+			HTableInterface table = connection.getTable(tableName);
+			Scan scan = new Scan();
+			if (!StringUtils.isBlank(family)) scan.addFamily(Bytes.toBytes(family));
+			if (!StringUtils.isBlank(family) && !StringUtils.isBlank(qualifier)) 
+				scan.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+			if (!StringUtils.isBlank(startRow)) scan.setStartRow(Bytes.toBytes(startRow));
+			if (!StringUtils.isBlank(stopRow)) scan.setStopRow(Bytes.toBytes(stopRow));
+			if (null != filter) scan.setFilter(filter);
 			return table.getScanner(scan);
 		} catch (IOException e) {
 			logger.info(e.getMessage(), e);
@@ -203,26 +230,10 @@ public class HBaseUtils extends AbstrUtils {
 	}
 	
 	/** 查找所有记录*/
-	public static ResultScanner getRecords(String tableName, byte[] startRow, byte[] stopRow) {
-		return getRecords(tableName, startRow, stopRow, null);
-	}
-	
-	/** 查找所有记录*/
-	@SuppressWarnings({"resource" })
-	public static ResultScanner getRecords(String tableName, byte[] startRow,
-			byte[] stopRow, Filter filter) {
+	public static ResultScanner getRecords(String tableName, Scan scan) {
 		try {
-			HTable table = new HTable(configuration, tableName);
-			Scan scan = new Scan();
-			if (null != startRow) {
-				scan.setStartRow(startRow);
-			}
-			if (null != stopRow) {
-				scan.setStopRow(stopRow);
-			}
-			if (null != filter) {
-				scan.setFilter(filter);
-			}
+//			HTable table = new HTable(configuration, tableName);
+			HTableInterface table = connection.getTable(tableName);
 			return table.getScanner(scan);
 		} catch (IOException e) {
 			logger.info(e.getMessage(), e);
@@ -233,10 +244,10 @@ public class HBaseUtils extends AbstrUtils {
 	public static void printRecord(Result result) {
 		for (Cell cell : result.rawCells()) {
 			logger.info("cell row: " + new String(cell.getRowArray()));
-//			logger.info("cell family: " + new String(cell.getFamilyArray()));
-//			logger.info("cell qualifier: " + new String(cell.getQualifierArray()));
-//			logger.info("cell value: " + new String(cell.getValueArray()));
-//			logger.info("cell timestamp: " + cell.getTimestamp());
+			logger.info("cell family: " + new String(cell.getFamilyArray()));
+			logger.info("cell qualifier: " + new String(cell.getQualifierArray()));
+			logger.info("cell value: " + new String(cell.getValueArray()));
+			logger.info("cell timestamp: " + cell.getTimestamp());
 		}
 		/** 之前版本*/
 		/** 
