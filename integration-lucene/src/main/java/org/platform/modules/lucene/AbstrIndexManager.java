@@ -43,7 +43,7 @@ import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
 import org.apache.lucene.search.vectorhighlight.SimpleFragListBuilder;
 import org.apache.lucene.store.Directory;
 import org.platform.entity.PKEntity;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.utils.reflect.ReflectUtils;
 
@@ -122,19 +122,19 @@ public abstract class AbstrIndexManager implements IIndexManager {
 	}
 	
 	@Override
-	public QueryResult<?> readByCondition(QueryCondition condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(QueryCondition.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(QueryCondition.LUCENE_QUERY);
+	public QueryResult<?> readByCondition(Query condition) {
+		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
 		if (null == query) query = obtainQuery(clazz, keyword);
-		Analyzer analyzer = (Analyzer) condition.obtainConditionValue(QueryCondition.LUCENE_ANALYZER);
-		Filter filter = (Filter) condition.obtainConditionValue(QueryCondition.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(QueryCondition.LUCENE_SORT);
-		String[] highLighterFields = (String[]) condition.obtainConditionValue(QueryCondition.LUCENE_HIGHLIGHTER_FIELDS);
+		Analyzer analyzer = (Analyzer) condition.obtainConditionValue(Query.LUCENE_ANALYZER);
+		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
+		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
+		String[] highLighterFields = (String[]) condition.obtainConditionValue(Query.LUCENE_HIGHLIGHTER_FIELDS);
 		int currentPageNum = condition.getCurrentPageNum();
 		int rowNumPerPage = condition.getRowNumPerPage();
 		if (rowNumPerPage == 0) {
-			Integer temp = (Integer) condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE);
+			Integer temp = (Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE);
 			rowNumPerPage = null == temp ? Integer.MAX_VALUE : temp;
 		}
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;

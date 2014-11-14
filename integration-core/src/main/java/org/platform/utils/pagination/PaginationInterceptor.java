@@ -24,7 +24,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.Configuration;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.utils.reflect.ReflectUtils;
 
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }) })
@@ -58,12 +58,12 @@ public class PaginationInterceptor implements Interceptor {
             //拦截到的prepare方法参数是一个Connection对象
             Connection connection = (Connection) invocation.getArgs()[0];
             setTotalRowNum(condition, mappedStatement, connection);
-	    	boolean isPagination = (Boolean) condition.get(QueryCondition.IS_PAGINATION);
+	    	boolean isPagination = (Boolean) condition.get(Query.IS_PAGINATION);
 	    	if (!isPagination) {
 	    		return invocation.proceed();
 	    	}
-	    	int offset = (Integer) condition.get(QueryCondition.OFFSET);
-	    	int limit = (Integer) condition.get(QueryCondition.LIMIT);
+	    	int offset = (Integer) condition.get(Query.OFFSET);
+	    	int limit = (Integer) condition.get(Query.LIMIT);
 	    	logger.debug("offset：　" + offset + "limit: " + limit);
             //获取MyBatis配置信息
             Configuration configuration = (Configuration) ReflectUtils.obtainValueByFieldName(delegate, "configuration");
@@ -135,7 +135,7 @@ public class PaginationInterceptor implements Interceptor {
            rs = pstmt.executeQuery();
            if (rs.next()) {
               int totalRecord = rs.getInt(1);
-              condition.put(QueryCondition.TOTAL_ROW_NUM, totalRecord);
+              condition.put(Query.TOTAL_ROW_NUM, totalRecord);
            }
        } catch (SQLException e) {
            e.printStackTrace();

@@ -13,7 +13,7 @@ import org.platform.utils.exception.DataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 
 @Repository("genericMongoDAO")
@@ -60,20 +60,19 @@ public class GenericMongoDAOImpl <Entity extends Serializable, PK extends Serial
 	}
 
 	@Override
-	public Entity readDataByCondition(QueryCondition condition)
-			throws DataAccessException {
+	public Entity readDataByCondition(Query query) throws DataAccessException {
 		return null;
 	}
 	
 	@Override
-	public List<Entity> readDataListByCondition(QueryCondition condition)
+	public List<Entity> readDataListByCondition(Query query)
 			throws DataAccessException {
 		List<Entity> resultList = mongoTemplate.findAll(entityClass);
 		return null == resultList ? new ArrayList<Entity>() : resultList;
 	}
 
 	@Override
-	public QueryResult<Entity> readDataPaginationByCondition(QueryCondition condition)
+	public QueryResult<Entity> readDataPaginationByCondition(Query query)
 			throws DataAccessException {
 		List<Entity> resultList = mongoTemplate.findAll(entityClass);
 		return new QueryResult<>(resultList.size(), resultList);

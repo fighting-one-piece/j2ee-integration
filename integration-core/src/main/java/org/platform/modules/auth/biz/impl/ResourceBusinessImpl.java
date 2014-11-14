@@ -3,7 +3,7 @@ package org.platform.modules.auth.biz.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryItem;
 import org.platform.modules.abstr.biz.converter.IConverter;
 import org.platform.modules.abstr.biz.impl.GenericBusinessImpl;
@@ -58,7 +58,7 @@ public class ResourceBusinessImpl extends GenericBusinessImpl<Resource, Long> im
         }
         //如果有子节点,最后拼一个*
         boolean hasChildren = false;
-        QueryCondition condition = new QueryCondition();
+        Query condition = new Query();
         condition.addHibernateCondition("id", Resource.ROOT, QueryItem.MATCH_NE);
         List<Resource> allResources = resourceDAO.readDataListByCondition(condition);
         for(Resource r : allResources) {
@@ -75,7 +75,7 @@ public class ResourceBusinessImpl extends GenericBusinessImpl<Resource, Long> im
 	
 	@Override
 	public List<Resource> readResourceTree(Integer type) throws BusinessException {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("type", type);
 		condition.addHibernateCondition("availan", Boolean.TRUE);
 		condition.addHibernateCondition("parent.id", Resource.ROOT);
@@ -87,7 +87,7 @@ public class ResourceBusinessImpl extends GenericBusinessImpl<Resource, Long> im
 	}
 	
 	private void iterateHandle(Resource resource) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("type", Resource.TYPE_MENU);
 		condition.addHibernateCondition("parent.id", resource.getId());
 		List<Resource> subResources = resourceDAO.readDataListByCondition(condition);

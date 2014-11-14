@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSONObject;
 
 import org.platform.entity.PKEntity;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.dao.IGenericDAO;
 import org.platform.utils.exception.DataAccessException;
@@ -113,19 +113,19 @@ public class GenericRedisDAOImpl <Entity extends Serializable, PK extends Serial
 	}
 
 	@Override
-	public Entity readDataByCondition(QueryCondition condition)
+	public Entity readDataByCondition(Query query)
 			throws DataAccessException {
 		return null;
 	}
 
 	@Override
-	public List<Entity> readDataListByCondition(QueryCondition condition)
+	public List<Entity> readDataListByCondition(Query query)
 			throws DataAccessException {
 		return null;
 	}
 	
 	@Override
-	public QueryResult<Entity> readDataPaginationByCondition(QueryCondition condition)
+	public QueryResult<Entity> readDataPaginationByCondition(Query query)
 			throws DataAccessException {
 		return null;
 	}

@@ -3,7 +3,7 @@ package org.platform.modules.auth.biz.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryItem;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.impl.GenericBusinessImpl;
@@ -36,7 +36,7 @@ public class UserOnlineBusinessImpl extends GenericBusinessImpl<UserOnline, Stri
 	
 	@Override
 	public QueryResult<UserOnline> findExpiredUserOnlineList(Date expiredDate) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("", expiredDate, QueryItem.MATCH_LE);
 		return null;
 	}

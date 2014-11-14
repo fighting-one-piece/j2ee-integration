@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.doc.entity.Doc;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class DocDAOTest {
 	
 	@Test
 	public void testMyBatisReadDataListByCondition() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addCondition("id", 10101L);
 		List<Doc> docs = docMyBatisDAO.readDataListByCondition(condition);
 		for (Doc doc : docs) {
@@ -57,10 +57,10 @@ public class DocDAOTest {
 	
 	@Test
 	public void testMyBatisReadDataPaginationByCondition() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.setPagination(true);
-		condition.addMybatisCondition(QueryCondition.OFFSET, 0);
-		condition.addMybatisCondition(QueryCondition.LIMIT, 50);
+		condition.addMybatisCondition(Query.OFFSET, 0);
+		condition.addMybatisCondition(Query.LIMIT, 50);
 		QueryResult<Doc> qr = docMyBatisDAO.readDataPaginationByCondition(condition);
 		for (Doc doc : qr.getResultList()) {
 			logger.debug("mybatis doc title: " + doc.getTitle());

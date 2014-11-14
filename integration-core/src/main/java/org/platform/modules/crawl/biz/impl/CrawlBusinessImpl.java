@@ -9,7 +9,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.WildcardQuery;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryItem;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.impl.GenericBusinessImpl;
@@ -48,7 +48,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	protected void preHandle(Object object) throws BusinessException {
 		CrawlDetail crawlDetail = (CrawlDetail) object;
 		if (null == crawlDetail.getId()) {
-			QueryCondition condition = new QueryCondition();
+			Query condition = new Query();
 			condition.addHibernateCondition("url", crawlDetail.getUrl());
 			condition.addHibernateCondition("status", crawlDetail.getStatus());
 			CrawlDetail dbCrawlDetail = crawlDetailDAO.readDataByCondition(condition);
@@ -60,7 +60,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	
 	@Override
 	public void insertIndex(int type) throws BusinessException {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		List<CrawlDetailExt> crawlDetailExts = crawlDetailExtDAO.readDataListByCondition(condition);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();
 		for (CrawlDetailExt crawlDetailExt : crawlDetailExts) {
@@ -83,7 +83,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	
 	@Override
 	public CrawlDetail readDataByUrlAndStatus(String url, Integer status) throws BusinessException {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("url", url);
 		condition.addHibernateCondition("status", status);
 		List<CrawlDetail> crawlDetails = crawlDetailDAO.readDataListByCondition(condition);
@@ -95,7 +95,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	
 	@Override
 	public List<CrawlDetail> readUnCrawlDataList() throws BusinessException {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		List<QueryItem> qis = new ArrayList<QueryItem>();
 		qis.add(new QueryItem("status", CrawlDetailStatus.UNCRAWL.getValue()));
 		qis.add(new QueryItem("status", CrawlDetailStatus.FAILURE.getValue()));
@@ -105,11 +105,11 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<CrawlJob> readIndex(QueryCondition condition) throws BusinessException {
-		condition.addCondition(QueryCondition.CURRENT_PAGE_NUM, condition.getCurrentPageNum());
-		condition.addCondition(QueryCondition.ROW_NUM_PER_PAGE, condition.getRowNumPerPage());
-		condition.addCondition(QueryCondition.LUCENE_CLASS, CrawlJob.class);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
+	public QueryResult<CrawlJob> readIndex(Query condition) throws BusinessException {
+		condition.addCondition(Query.CURRENT_PAGE_NUM, condition.getCurrentPageNum());
+		condition.addCondition(Query.ROW_NUM_PER_PAGE, condition.getRowNumPerPage());
+		condition.addCondition(Query.LUCENE_CLASS, CrawlJob.class);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
 		BooleanQuery booleanQuery = new BooleanQuery();
 		booleanQuery.add(new WildcardQuery(new Term("career", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("company", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
@@ -117,12 +117,12 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		booleanQuery.add(new WildcardQuery(new Term("updateTime", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("require", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("summary", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
-		condition.addCondition(QueryCondition.LUCENE_QUERY, booleanQuery);
+		condition.addCondition(Query.LUCENE_QUERY, booleanQuery);
 //		condition.addCondition(QueryCondition.LUCENE_QUERY, 
 //				new WildcardQuery(new Term("career", "*" + keyword + "*")));
-		condition.addCondition(QueryCondition.LUCENE_HIGHLIGHTER_FIELDS, 
+		condition.addCondition(Query.LUCENE_HIGHLIGHTER_FIELDS, 
 				new String[]{"career", "company", "require", "summary"});
-		condition.addCondition(QueryCondition.LUCENE_ANALYZER, IndexController.getInstance()
+		condition.addCondition(Query.LUCENE_ANALYZER, IndexController.getInstance()
 				.obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
 //		String[] fields = {"career", "company", "location", "updateTime", "require", "summary"};
 //		BooleanClause.Occur[] flags = {
@@ -135,13 +135,13 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 //		} catch (ParseException e) {
 //			logger.debug(e.getMessage(), e);
 //		}
-		int index = (int) condition.obtainConditionValue(QueryCondition.LUCENE_INDEX);
+		int index = (int) condition.obtainConditionValue(Query.LUCENE_INDEX);
 		IIndexManager indexManager = index == IIndex.RAM ? new RAMIndexManager() : new FSIndexManager();
 		return (QueryResult<CrawlJob>) indexManager.readByCondition(condition);
 	}
 	
 	@Override
-	public QueryResult<CrawlJob> readJobPaginationByCondition(QueryCondition condition)
+	public QueryResult<CrawlJob> readJobPaginationByCondition(Query condition)
 			throws BusinessException {
 		QueryResult<CrawlDetailExt> qr = crawlDetailExtDAO.readDataPaginationByCondition(condition);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();

@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.auth.dao.IUserDAO;
 import org.platform.modules.auth.dao.impl.hibernate.UserDAOImpl;
@@ -124,7 +124,7 @@ public class UserDAOTest {
 	
 	@Test
 	public void testMyBatisReadDataListByCondition() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<User> qr = userMyBatisDAO.readDataPaginationByCondition(condition);
 		for (User user : qr.getResultList()) {
 			logger.debug("mybatis user name: " + user.getName());
@@ -133,7 +133,7 @@ public class UserDAOTest {
 	
 	@Test
 	public void testHibernateReadDataListByCondition() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<User> qr = userHibernateDAO.readDataPaginationByCondition(condition);
 		for (User user : qr.getResultList()) {
 			logger.debug("hibernate user id: " + user.getId() + " name: " + user.getName());
@@ -143,7 +143,7 @@ public class UserDAOTest {
 	@Test
 	public void testSpringUtils() {
 		IUserDAO userDAO = SpringUtils.getBean(UserDAOImpl.class);
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<User> qr = userDAO.readDataPaginationByCondition(condition);
 		for (User user : qr.getResultList()) {
 			logger.debug("hibernate user name: " + user.getName());

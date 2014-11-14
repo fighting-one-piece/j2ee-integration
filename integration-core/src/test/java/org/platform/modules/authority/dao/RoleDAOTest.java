@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.auth.dao.IRoleDAO;
 import org.platform.modules.auth.entity.Role;
@@ -51,7 +51,7 @@ public class RoleDAOTest {
 	
 	@Test
 	public void testReadRoles() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<Role> qr = roleDAO.readDataPaginationByCondition(condition);
 		for (Role role : qr.getResultList()) {
 			logger.debug("role name: " + role.getName() + " code: " + role.getIdentity());

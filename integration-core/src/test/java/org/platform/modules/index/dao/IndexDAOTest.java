@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.doc.dao.IIndexDAO;
 import org.platform.modules.doc.entity.Index;
@@ -46,7 +46,7 @@ public class IndexDAOTest {
 	
 	@Test
 	public void testHibernateReadDataListByCondition() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<Index> qr = indexHibernateDAO.readDataPaginationByCondition(condition);
 		for (Index index : qr.getResultList()) {
 			logger.debug("hibernate index pk: " + index.getPK() + " title: " + index.getTitle());

@@ -2,7 +2,7 @@ package org.platform.modules.lucene;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 
 /** 索引管理接口*/
@@ -48,6 +48,6 @@ public interface IIndexManager {
 	 * @param condition 条件
 	 * @return
 	 */
-	public QueryResult<?> readByCondition(QueryCondition condition);
+	public QueryResult<?> readByCondition(Query condition);
 	
 }

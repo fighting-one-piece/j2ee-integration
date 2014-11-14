@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.auth.biz.IUserBusiness;
 import org.platform.modules.auth.dto.UserDTO;
@@ -57,7 +57,7 @@ public class UserBusinessTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadDataList() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		QueryResult<User> qr = (QueryResult<User>) userBusiness.readDataListByCondition(condition, false);
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getName() + ":" + u.getId() + ":" + u.getExpireTime());

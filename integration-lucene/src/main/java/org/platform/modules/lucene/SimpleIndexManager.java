@@ -14,7 +14,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 
 /** 基于内存、文件混合索引简单的操作*/
@@ -88,19 +88,19 @@ public class SimpleIndexManager extends AbstrIndexManager {
 	}
 	
 	@Override
-	public QueryResult<?> readByCondition(QueryCondition condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(QueryCondition.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(QueryCondition.LUCENE_QUERY);
+	public QueryResult<?> readByCondition(Query condition) {
+		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
 		if (null == query) query = obtainQuery(clazz, keyword);
-		Analyzer analyzer = (Analyzer) condition.obtainConditionValue(QueryCondition.LUCENE_ANALYZER);
-		Filter filter = (Filter) condition.obtainConditionValue(QueryCondition.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(QueryCondition.LUCENE_SORT);
-		String[] highLighterFields = (String[]) condition.obtainConditionValue(QueryCondition.LUCENE_HIGHLIGHTER_FIELDS);
-		int currentPageNum = null != condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Analyzer analyzer = (Analyzer) condition.obtainConditionValue(Query.LUCENE_ANALYZER);
+		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
+		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
+		String[] highLighterFields = (String[]) condition.obtainConditionValue(Query.LUCENE_HIGHLIGHTER_FIELDS);
+		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
+				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
+				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		//查询步骤1、从内存索引中查询结果 2、从文件索引中查询结果

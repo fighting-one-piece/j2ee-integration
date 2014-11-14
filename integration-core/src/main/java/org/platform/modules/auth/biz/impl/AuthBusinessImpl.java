@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.permission.WildcardPermission;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryItem;
 import org.platform.modules.auth.biz.IAuthBusiness;
 import org.platform.modules.auth.biz.IGroupBusiness;
@@ -98,7 +98,7 @@ public class AuthBusinessImpl implements IAuthBusiness {
 			Long userId) throws BusinessException {
 		Set<String> userPermissions = readPermissionsByUserId(userId);
 		
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("type", type);
 		condition.addHibernateCondition("availan", Boolean.TRUE);
 		List<Resource> allResources = (List<Resource>) 
@@ -123,7 +123,7 @@ public class AuthBusinessImpl implements IAuthBusiness {
 			roleIds[i] = roles.get(i).getId();
 		}
 		
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("type", type);
 		condition.addHibernateCondition("availan", Boolean.TRUE);
 		condition.addHibernateCondition("parent.id", Resource.ROOT);
@@ -181,7 +181,7 @@ public class AuthBusinessImpl implements IAuthBusiness {
 	
 	@SuppressWarnings("unchecked")
 	private boolean hasPermission(Resource resource, Long[] roleIds) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("principalType", Permission.PRINCIPAL_TYPE_ROLE);
 		condition.addHibernateCondition("principalId", roleIds, QueryItem.MATCH_IN);
 		condition.addHibernateCondition("resourceId", resource.getId());
@@ -213,7 +213,7 @@ public class AuthBusinessImpl implements IAuthBusiness {
 	
 	@SuppressWarnings("unchecked")
 	private void iterateHandle(Resource resource, Long[] roleIds) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("type", Resource.TYPE_MENU);
 		condition.addHibernateCondition("parent.id", resource.getId());
 		List<Resource> subResources = (List<Resource>) 

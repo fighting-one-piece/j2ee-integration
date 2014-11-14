@@ -3,7 +3,7 @@ package org.platform.modules.auth.controller;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.abstr.controller.GenericController;
 import org.platform.modules.auth.biz.IUserBusiness;
@@ -36,7 +36,7 @@ public class UserController extends GenericController<User, Long> {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login(@Valid User user, BindingResult result, Model model) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addCondition("name", user.getName());
 		condition.addCondition("password", user.getPassword());
 		User u = (User) userBusiness.readDataByCondition(condition, false);

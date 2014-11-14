@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.modules.crawl.entity.CrawlDetailExt;
 import org.platform.modules.crawl.entity.CrawlJob;
 import org.platform.utils.json.JSONUtils;
@@ -38,7 +38,7 @@ public class CrawlDAOTest {
 	
 	@Test
 	public void testReadDataList() {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		List<CrawlDetailExt> results = crawlDetailExtDAO.readDataListByCondition(condition);
 		for (CrawlDetailExt result : results) {
 			System.out.println(result.getKey());

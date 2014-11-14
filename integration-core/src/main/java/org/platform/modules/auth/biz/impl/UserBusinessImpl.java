@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.converter.IConverter;
 import org.platform.modules.abstr.biz.impl.GenericBusinessImpl;
 import org.platform.modules.abstr.dao.IGenericDAO;
@@ -41,7 +41,7 @@ public class UserBusinessImpl extends GenericBusinessImpl<User, Long> implements
 	public User readDataByName(String name) throws BusinessException {
 		User user = userMap.get(name);
 		if (null == user) {
-			QueryCondition condition = new QueryCondition();
+			Query condition = new Query();
 			condition.addHibernateCondition("name", name);
 			user = userHibernateDAO.readDataByCondition(condition);
 			userMap.put(name, user);

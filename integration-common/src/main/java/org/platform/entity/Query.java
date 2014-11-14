@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** 查询条件*/
-public class QueryCondition implements Serializable {
+public class Query implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -59,7 +59,7 @@ public class QueryCondition implements Serializable {
 	/** 查询条件Map*/
 	private Map<String, Object> mybatisCondition = new HashMap<String, Object>();
 	
-	public QueryCondition() {
+	public Query() {
 		mybatisCondition.put(IS_PAGINATION, isPagination);
 		mybatisCondition.put(OFFSET, 0);
 		mybatisCondition.put(LIMIT, rowNumPerPage);

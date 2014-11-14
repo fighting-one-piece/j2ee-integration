@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import org.apache.ibatis.session.Configuration;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.dao.IGenericDAO;
 import org.platform.utils.exception.DataAccessException;
@@ -87,14 +87,15 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Entity readDataByCondition(QueryCondition condition) {
-		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(SQLID_READ_DATA_BY_CONDITION), condition);
+	public Entity readDataByCondition(Query query) {
+		Map<String, Object> map = query.getMybatisCondition();
+		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(SQLID_READ_DATA_BY_CONDITION), map);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Entity> readDataListByCondition(QueryCondition condition) throws DataAccessException {
-		Map<String, Object> map = condition.getMybatisCondition();
+	public List<Entity> readDataListByCondition(Query query) throws DataAccessException {
+		Map<String, Object> map = query.getMybatisCondition();
 		List<Entity> resultList = (List<Entity>) sqlSessionTemplate.selectList(
 				obtainSQLID(SQLID_READ_DATA_LIST_BY_CONDITION), map);
 		return null == resultList ? new ArrayList<Entity>() : resultList;
@@ -102,12 +103,12 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<Entity> readDataPaginationByCondition(QueryCondition condition)
+	public QueryResult<Entity> readDataPaginationByCondition(Query query)
 			throws DataAccessException {
-		Map<String, Object> map = condition.getMybatisCondition();
+		Map<String, Object> map = query.getMybatisCondition();
 		List<Entity> resultList = (List<Entity>) sqlSessionTemplate.selectList(
 				obtainSQLID(SQLID_READ_DATA_PAGINATION_BY_CONDITION), map);
-		int totalRowNum = (Integer) map.get(QueryCondition.TOTAL_ROW_NUM);
+		int totalRowNum = (Integer) map.get(Query.TOTAL_ROW_NUM);
 		return new QueryResult<Entity>(totalRowNum, resultList);
 	}
 

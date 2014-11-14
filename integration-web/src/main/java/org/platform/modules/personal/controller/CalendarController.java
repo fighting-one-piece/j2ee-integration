@@ -12,7 +12,7 @@ import net.sf.ehcache.config.Searchable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.abstr.controller.GenericController;
 import org.platform.modules.auth.entity.User;
@@ -58,7 +58,7 @@ public class CalendarController extends GenericController<Calendar, Long> {
 	@RequestMapping("/load")
     @ResponseBody
     public Collection<Map> ajaxLoad(Searchable searchable, @CurrentUser User loginUser) {
-        QueryCondition condition = new QueryCondition();
+        Query condition = new Query();
         condition.addHibernateCondition("userId", loginUser.getId());
         List<Calendar> calendarList = (List<Calendar>) 
         		calendarBusiness.readDataListByCondition(condition, false);

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.converter.IConverter;
 import org.platform.modules.abstr.biz.impl.GenericBusinessImpl;
 import org.platform.modules.abstr.dao.IGenericDAO;
@@ -34,7 +34,7 @@ public class PermissionBusinessImpl extends GenericBusinessImpl<Permission, Long
 	@Override
 	public List<Permission> readPermissionsByPrincipalTypeAndPrincipalId(
 			Integer principalType, Long principalId) throws BusinessException {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		condition.addHibernateCondition("principalType", principalType);
 		condition.addHibernateCondition("principalId", principalId);
 		return permissionHibernateDAO.readDataListByCondition(condition);

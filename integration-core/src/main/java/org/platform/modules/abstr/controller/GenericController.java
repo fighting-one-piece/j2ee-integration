@@ -9,7 +9,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -129,9 +129,9 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 		return redirectToUrl(defaultViewPrefix());
 	}
 	
+	@ResponseBody
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/{id}/json", method = RequestMethod.GET)
-	@ResponseBody
 	public Entity readDataByPKWithJson(@PathVariable PK id) {
 		return (Entity) obtainBusinessInstance().readDataByPK(id, false);
 	}
@@ -139,12 +139,12 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public String readDataListWithPagination(Integer currentPageNum, Integer rowNumPerPage, Model model) {
-		QueryCondition condition = new QueryCondition();
-		if (null != currentPageNum) condition.setCurrentPageNum(currentPageNum);
-		condition.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
-		condition.setPagination(true);
+		Query query = new Query();
+		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
+		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
+		query.setPagination(true);
 		QueryResult<Entity> qr = (QueryResult<Entity>) 
-				obtainBusinessInstance().readDataPaginationByCondition(condition, false);
+				obtainBusinessInstance().readDataPaginationByCondition(query, false);
 		model.addAttribute("currentPageNum", currentPageNum);
 		model.addAttribute("rowNumPerPage", rowNumPerPage);
 		model.addAttribute("totalRowNum", qr.getTotalRowNum());
@@ -152,16 +152,16 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 		return defaultViewPrefix() + "/list";
 	}
 	
+	@ResponseBody
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/json", method = RequestMethod.GET)
-	@ResponseBody
 	public List<Entity> readDataListWithPaginationAndJson(Integer currentPageNum, Integer rowNumPerPage) {
-		QueryCondition condition = new QueryCondition();
-		if (null != currentPageNum) condition.setCurrentPageNum(currentPageNum);
-		condition.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
-		condition.setPagination(true);
+		Query query = new Query();
+		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
+		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
+		query.setPagination(true);
 		QueryResult<Entity> qr = (QueryResult<Entity>) 
-				obtainBusinessInstance().readDataListByCondition(condition, false);
+				obtainBusinessInstance().readDataListByCondition(query, false);
 		return qr.getResultList();
 	}
 	

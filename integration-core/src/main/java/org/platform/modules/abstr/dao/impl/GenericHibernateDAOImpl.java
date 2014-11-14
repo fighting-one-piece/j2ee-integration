@@ -22,7 +22,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.CriteriaImpl;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryItem;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.dao.IGenericDAO;
@@ -83,29 +83,29 @@ public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Ser
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Entity readDataByCondition(QueryCondition condition) throws DataAccessException {
+	public Entity readDataByCondition(Query query) throws DataAccessException {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(entityClass);
-		addRestrictions(criteria, condition);
+		addRestrictions(criteria, query);
 		return (Entity) criteria.uniqueResult();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Entity> readDataListByCondition(QueryCondition condition) throws DataAccessException {
+	public List<Entity> readDataListByCondition(Query query) throws DataAccessException {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(entityClass);
-		addRestrictions(criteria, condition);
+		addRestrictions(criteria, query);
 		List<Entity> resultList = criteria.list();
 		return null == resultList ? new ArrayList<Entity>() : resultList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<Entity> readDataPaginationByCondition(QueryCondition condition) throws DataAccessException {
+	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(entityClass);
-		addRestrictions(criteria, condition);
+		addRestrictions(criteria, query);
 		CriteriaImpl impl = (CriteriaImpl) criteria;
         //先把Projection和OrderBy条件取出来,清空两者来执行Count操作
         Projection projection = impl.getProjection();
@@ -115,9 +115,9 @@ public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Ser
         if (projection == null) {
             criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
         }
-		int firstRowNum = (condition.getCurrentPageNum() - 1) * condition.getRowNumPerPage();
+		int firstRowNum = (query.getCurrentPageNum() - 1) * query.getRowNumPerPage();
 		List<Entity> resultList = criteria.setFirstResult(firstRowNum)
-				.setMaxResults(condition.getRowNumPerPage()).list();
+				.setMaxResults(query.getRowNumPerPage()).list();
 		return new QueryResult<Entity>(totalRowNum, resultList);
 	}
 
@@ -137,19 +137,19 @@ public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Ser
 	 *<p>创建时间：2012-11-24 上午12:16:14</p>
 	 *<p>    作者: wl </p>
 	 */
-	private void addRestrictions(Criteria criteria, QueryCondition condition) {
-		if (condition.getHibernateCondition().size() == 0) {
+	private void addRestrictions(Criteria criteria, Query query) {
+		if (query.getHibernateCondition().size() == 0) {
 			return;
 		}
-		Map<String, QueryItem> conditionMap = condition.getHibernateCondition();
+		Map<String, QueryItem> conditionMap = query.getHibernateCondition();
 		for (Map.Entry<String, QueryItem> entry : conditionMap.entrySet()) {
 			criteria.add(addRestriction(entry.getValue()));
 		}
-		if (condition.getOrderCondition() != null) {
-			if (condition.getOrderType() == QueryCondition.ORDER_ASC) {
-				criteria.addOrder(Order.asc(condition.getOrderCondition()));
+		if (query.getOrderCondition() != null) {
+			if (query.getOrderType() == Query.ORDER_ASC) {
+				criteria.addOrder(Order.asc(query.getOrderCondition()));
 			} else {
-				criteria.addOrder(Order.desc(condition.getOrderCondition()));
+				criteria.addOrder(Order.desc(query.getOrderCondition()));
 			}
 		}
 	}

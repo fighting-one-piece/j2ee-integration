@@ -45,7 +45,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.platform.entity.PKEntity;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.utils.resource.ResourceUtils;
 
@@ -164,19 +164,19 @@ public class LuceneHandler {
 		}
 	}
 	
-	public QueryResult<?> readDataByCondition(QueryCondition condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(QueryCondition.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(QueryCondition.LUCENE_QUERY);
+	public QueryResult<?> readDataByCondition(Query condition) {
+		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
 		if (null == query) {
 			query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(QueryCondition.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(QueryCondition.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
+		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
+		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
+				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
+				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		int directory = DIRECTORY_RAM;
@@ -213,19 +213,19 @@ public class LuceneHandler {
 		return new QueryResult<>(topN, objectList);
 	}
 	
-	public QueryResult<?> readRAMDataByCondition(QueryCondition condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(QueryCondition.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(QueryCondition.LUCENE_QUERY);
+	public QueryResult<?> readRAMDataByCondition(Query condition) {
+		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
 		if (null == query) {
 			query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(QueryCondition.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(QueryCondition.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
+		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
+		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
+				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
+				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		IndexSearcher indexSearcher = obtainIndexSearcher(DIRECTORY_RAM);
@@ -255,19 +255,19 @@ public class LuceneHandler {
 		return new QueryResult<>(topN, objectList);
 	}
 	
-	public QueryResult<?> readFSDataByCondition(QueryCondition condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(QueryCondition.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(QueryCondition.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(QueryCondition.LUCENE_QUERY);
+	public QueryResult<?> readFSDataByCondition(Query condition) {
+		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
+		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
 		if (null == query) {
 			query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(QueryCondition.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(QueryCondition.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
+		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
+		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
+				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
+				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		IndexSearcher indexSearcher = obtainIndexSearcher(DIRECTORY_FS);

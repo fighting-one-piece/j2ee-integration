@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.abstr.biz.converter.IConverter;
@@ -102,9 +102,9 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 	}
 
 	@Override
-	public Object readDataByCondition(QueryCondition queryCondition, boolean isConvert)
+	public Object readDataByCondition(Query query, boolean isConvert)
 			throws BusinessException {
-		Object object = obtainDAOInstance().readDataByCondition(queryCondition);
+		Object object = obtainDAOInstance().readDataByCondition(query);
 		if (null == object) {
 			throw new BusinessException("获取的对象不存在");
 		}
@@ -115,9 +115,9 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 	}
 	
 	@Override
-	public List<?> readDataListByCondition(QueryCondition condition, boolean isConvert)
+	public List<?> readDataListByCondition(Query query, boolean isConvert)
 			throws BusinessException {
-		List<?> queryResult = obtainDAOInstance().readDataListByCondition(condition);
+		List<?> queryResult = obtainDAOInstance().readDataListByCondition(query);
 		if (isConvert) {
 			List<Object> resultList = new ArrayList<Object>();
 			for (Object object : queryResult) {
@@ -130,9 +130,9 @@ public abstract class GenericBusinessImpl<Entity extends Serializable, PK extend
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public QueryResult<?> readDataPaginationByCondition(QueryCondition condition, boolean isConvert)
+	public QueryResult<?> readDataPaginationByCondition(Query query, boolean isConvert)
 			throws BusinessException {
-		QueryResult<?> queryResult = obtainDAOInstance().readDataPaginationByCondition(condition);
+		QueryResult<?> queryResult = obtainDAOInstance().readDataPaginationByCondition(query);
 		if (isConvert) {
 			List<Object> resultList = new ArrayList<Object>();
 			for (Object object : queryResult.getResultList()) {

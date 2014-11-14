@@ -2,7 +2,7 @@ package org.platform.modules.crawl.biz;
 
 import java.util.List;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.crawl.entity.CrawlDetail;
@@ -19,9 +19,9 @@ public interface ICrawlBusiness extends IGenericBusiness<CrawlDetail, Long> {
 	
 	public List<CrawlDetail> readUnCrawlDataList() throws BusinessException;
 	
-	public QueryResult<CrawlJob> readIndex(QueryCondition condition) throws BusinessException;
+	public QueryResult<CrawlJob> readIndex(Query condition) throws BusinessException;
 	
-	public QueryResult<CrawlJob> readJobPaginationByCondition(QueryCondition condition) throws BusinessException;
+	public QueryResult<CrawlJob> readJobPaginationByCondition(Query condition) throws BusinessException;
 
 }
 

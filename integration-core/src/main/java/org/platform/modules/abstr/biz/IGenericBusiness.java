@@ -3,7 +3,7 @@ package org.platform.modules.abstr.biz;
 import java.io.Serializable;
 import java.util.List;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.utils.exception.BusinessException;
 
@@ -72,7 +72,7 @@ public interface IGenericBusiness<Entity extends Serializable, PK extends Serial
 	  *<p>包名类名：org.platform.modules.abstr.biz.IGenericBusiness</p>
 	  *<p>方法名：readDataByCondition</p>
 	  *<p>描述：读取对象</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@param isConvert 是否转换实体
 	  *<p>参数：@return 对象
 	  *<p>参数：@throws BusinessException 异常</p>
@@ -81,14 +81,14 @@ public interface IGenericBusiness<Entity extends Serializable, PK extends Serial
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public Object readDataByCondition(QueryCondition condition, boolean isConvert) throws BusinessException;
+	public Object readDataByCondition(Query query, boolean isConvert) throws BusinessException;
 
 	/**
 	 *
 	  *<p>包名类名：org.platform.modules.abstr.biz.IGenericBusiness</p>
 	  *<p>方法名：readDataListByCondition</p>
 	  *<p>描述：读取对象列表</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@param isConvert 是否转换实体
 	  *<p>参数：@return 对象列表
 	  *<p>参数：@throws BusinessException 异常</p>
@@ -97,14 +97,14 @@ public interface IGenericBusiness<Entity extends Serializable, PK extends Serial
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public List<?> readDataListByCondition(QueryCondition condition, boolean isConvert) throws BusinessException;
+	public List<?> readDataListByCondition(Query query, boolean isConvert) throws BusinessException;
 	
 	/**
 	 *
 	  *<p>包名类名：org.platform.modules.abstr.biz.IGenericBusiness</p>
 	  *<p>方法名：readDataPaginationByCondition</p>
 	  *<p>描述：读取对象分页列表</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@param isConvert 是否转换实体
 	  *<p>参数：@return 对象列表
 	  *<p>参数：@throws BusinessException 异常</p>
@@ -113,5 +113,6 @@ public interface IGenericBusiness<Entity extends Serializable, PK extends Serial
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public QueryResult<?> readDataPaginationByCondition(QueryCondition condition, boolean isConvert) throws BusinessException;
+	public QueryResult<?> readDataPaginationByCondition(Query query, boolean isConvert) throws BusinessException;
+
 }

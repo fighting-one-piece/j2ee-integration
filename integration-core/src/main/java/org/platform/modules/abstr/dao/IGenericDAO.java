@@ -3,7 +3,7 @@ package org.platform.modules.abstr.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.utils.exception.DataAccessException;
 
@@ -85,7 +85,7 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
 	  *<p>方法名：readDataByCondition</p>
 	  *<p>描述：读取实体对象</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@return 实体
 	  *<p>参数：@throws DataAccessException 异常</p>
 	  *<p>返回类型：Entity</p>
@@ -93,14 +93,14 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public Entity readDataByCondition(QueryCondition condition) throws DataAccessException;
+	public Entity readDataByCondition(Query query) throws DataAccessException;
 	
 	/**
 	 *
 	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
 	  *<p>方法名：readDataListByCondition</p>
 	  *<p>描述：读取实体对象列表</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@return 实体
 	  *<p>参数：@throws DataAccessException 异常</p>
 	  *<p>返回类型：QueryResult<Entity></p>
@@ -108,14 +108,14 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public List<Entity> readDataListByCondition(QueryCondition condition) throws DataAccessException;
+	public List<Entity> readDataListByCondition(Query query) throws DataAccessException;
 
 	/**
 	 *
 	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
 	  *<p>方法名：readDataPaginationByCondition</p>
 	  *<p>描述：读取实体对象分页列表</p>
-	  *<p>参数：@param condition 条件
+	  *<p>参数：@param query 条件
 	  *<p>参数：@return 实体
 	  *<p>参数：@throws DataAccessException 异常</p>
 	  *<p>返回类型：QueryResult<Entity></p>
@@ -123,7 +123,7 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	  *<p>作者: wulin </p>
 	 *
 	 */
-	public QueryResult<Entity> readDataPaginationByCondition(QueryCondition condition) throws DataAccessException;
+	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException;
 
 	/**
 	 *

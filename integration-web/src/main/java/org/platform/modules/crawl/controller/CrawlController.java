@@ -2,7 +2,7 @@ package org.platform.modules.crawl.controller;
 
 import javax.annotation.Resource;
 
-import org.platform.entity.QueryCondition;
+import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.abstr.controller.GenericController;
@@ -68,7 +68,7 @@ public class CrawlController extends GenericController<CrawlDetail, Long> {
 
 	@RequestMapping(value = "/job/search", method = RequestMethod.POST)
 	public String search(Integer currentPageNum, Integer rowNumPerPage, String keyword, Integer index, Model model) {
-		QueryCondition condition = new QueryCondition();
+		Query condition = new Query();
 		currentPageNum = null == currentPageNum ? 1 : currentPageNum;
 		rowNumPerPage = null == rowNumPerPage ? 10 : rowNumPerPage;
 		condition.setCurrentPageNum(currentPageNum);
@@ -76,11 +76,11 @@ public class CrawlController extends GenericController<CrawlDetail, Long> {
 		condition.setPagination(true);
 		keyword = null == keyword ? "" : keyword;
 		index = null == index ? IIndex.RAM : index;
-		condition.addCondition(QueryCondition.LUCENE_KEYWORD, keyword);
-		condition.addCondition(QueryCondition.LUCENE_INDEX, index);
+		condition.addCondition(Query.LUCENE_KEYWORD, keyword);
+		condition.addCondition(Query.LUCENE_INDEX, index);
 		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(condition);
 		if (qr.getTotalRowNum() == 0) {
-			condition = new QueryCondition();
+			condition = new Query();
 			condition.setCurrentPageNum(currentPageNum);
 			condition.setRowNumPerPage(rowNumPerPage);
 			condition.setPagination(true);
