@@ -16,6 +16,7 @@ import org.platform.modules.crawl.entity.CrawlDetailExt;
 import org.platform.modules.crawl.entity.CrawlDetailStatus;
 import org.platform.modules.crawl.entity.CrawlJob;
 import org.platform.modules.lucene.IIndex;
+import org.platform.modules.lucene.entity.QueryCondition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -81,10 +82,10 @@ public class CrawlBusinessTest {
 	
 	@Test
 	public void testReadIndex() {
-		Query condition = new Query();
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("career", "高级*")));
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("career", "高级*")));
 //		condition.addCondition(QueryCondition.LUCENE_QUERY, new WildcardQuery(new Term("summary", "职位标签*")));
-		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(condition);
+		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(conditions);
 		for (CrawlJob job : qr.getResultList()) {
 			System.out.println(job.getCareer() + "---" + job.getCompany());
 		}
@@ -92,10 +93,10 @@ public class CrawlBusinessTest {
 	
 	@Test
 	public void testReadIndex1() {
-		Query condition = new Query();
-		condition.addCondition(Query.LUCENE_KEYWORD, "职位描述");
-		condition.addCondition(Query.LUCENE_INDEX, IIndex.FILE);
-		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(condition);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.KEYWORD, "职位描述");
+		conditions.addCondition(QueryCondition.INDEX, IIndex.FILE);
+		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(conditions);
 		System.out.println("result number: " + qr.getTotalRowNum());
 		for (CrawlJob job : qr.getResultList()) {
 			System.out.println(job.getSummary());

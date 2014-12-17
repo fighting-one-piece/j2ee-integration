@@ -26,24 +26,6 @@ public class Query implements Serializable {
 	/** 限制数量*/
 	public static final String LIMIT = "limit";
 	
-	/** Lucene 索引类型*/
-	public static final String LUCENE_INDEX = "lucene_index";
-	/** Lucene 对象类*/
-	public static final String LUCENE_CLASS = "lucene_class";
-	/** Lucene 关键词*/
-	public static final String LUCENE_KEYWORD = "lucene_keyword";
-	/** Lucene 分词器*/
-	public static final String LUCENE_ANALYZER = "lucene_analyzer";
-	/** Lucene Query*/
-	public static final String LUCENE_QUERY = "lucene_query";
-	/** Lucene Filter*/
-	public static final String LUCENE_FILTER = "lucene_filter";
-	/** Lucene Sort*/
-	public static final String LUCENE_SORT = "lucene_sort";
-	/** Lucene HighLighter Fields*/
-	public static final String LUCENE_HIGHLIGHTER_FIELDS = "lucene_highlighter_fields";
-	
-	
 	/** 是否分页*/
 	private boolean isPagination = false;
 	/** 当前页数*/

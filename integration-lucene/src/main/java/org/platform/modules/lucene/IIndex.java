@@ -13,6 +13,8 @@ public interface IIndex {
 	/** 分词器类型*/
 	/** 标准分词器*/
 	public static final String ANALYZER_STANDARD = "standard";
+	/** MMSEG4J 分词器*/
+	public static final String ANALYZER_MMSEG4J = "mmseg4j";
 	/** MMSEG4J 简单分词器*/
 	public static final String ANALYZER_MMSEG4J_SIMPLE = "mmseg4j_simple";
 	/** MMSEG4J 复杂分词器*/

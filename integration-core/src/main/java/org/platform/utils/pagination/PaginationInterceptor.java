@@ -41,7 +41,7 @@ public class PaginationInterceptor implements Interceptor {
 	    //我们在PageInterceptor类上已经用@Signature标记了该Interceptor只拦截StatementHandler接口的prepare方法，又因为Mybatis只有在建立RoutingStatementHandler的时候
 	    //是通过Interceptor的plugin方法进行包裹的，所以我们这里拦截到的目标对象肯定是RoutingStatementHandler对象
 		RoutingStatementHandler handler = (RoutingStatementHandler) invocation.getTarget();
-        StatementHandler delegate = (StatementHandler) ReflectUtils.obtainValueByFieldName(handler, "delegate");
+        StatementHandler delegate = (StatementHandler) ReflectUtils.getValueByFieldName(handler, "delegate");
 	    BoundSql boundSql = delegate.getBoundSql();
 	    //获取当前要执行的Sql语句，也就是我们直接在Mapper映射语句中写的Sql语句
         String sql = boundSql.getSql();
@@ -54,7 +54,7 @@ public class PaginationInterceptor implements Interceptor {
 	    logger.debug("parameterObject: " + parameterObject);
 	    if (parameterObject instanceof Map) {
 	    	Map<String, Object> condition = (Map<String, Object>) parameterObject;
-	    	MappedStatement mappedStatement = (MappedStatement)ReflectUtils.obtainValueByFieldName(delegate, "mappedStatement");
+	    	MappedStatement mappedStatement = (MappedStatement)ReflectUtils.getValueByFieldName(delegate, "mappedStatement");
             //拦截到的prepare方法参数是一个Connection对象
             Connection connection = (Connection) invocation.getArgs()[0];
             setTotalRowNum(condition, mappedStatement, connection);
@@ -66,7 +66,7 @@ public class PaginationInterceptor implements Interceptor {
 	    	int limit = (Integer) condition.get(Query.LIMIT);
 	    	logger.debug("offset：　" + offset + "limit: " + limit);
             //获取MyBatis配置信息
-            Configuration configuration = (Configuration) ReflectUtils.obtainValueByFieldName(delegate, "configuration");
+            Configuration configuration = (Configuration) ReflectUtils.getValueByFieldName(delegate, "configuration");
             String dialectValue = configuration.getVariables().getProperty("dialect");
             if (null == dialectValue) {
             	throw new RuntimeException("the value of the dialect is not find");

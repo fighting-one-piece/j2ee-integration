@@ -33,7 +33,7 @@ public class RAMIndex implements IIndex {
 						IndexWriter.unlock(directory);
 					}
 					IndexWriterConfig indexWriterConfig = new IndexWriterConfig(VERSION, 
-							IndexController.getInstance().obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
+							IndexUtils.obtainDefaultAnalyzer());
 					indexWriter = new IndexWriter(directory, indexWriterConfig);
 				}
 			}

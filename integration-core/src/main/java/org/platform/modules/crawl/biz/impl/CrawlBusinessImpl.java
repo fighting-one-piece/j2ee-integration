@@ -21,11 +21,12 @@ import org.platform.modules.crawl.entity.CrawlDetail;
 import org.platform.modules.crawl.entity.CrawlDetailExt;
 import org.platform.modules.crawl.entity.CrawlDetailStatus;
 import org.platform.modules.crawl.entity.CrawlJob;
-import org.platform.modules.lucene.FSIndexManager;
 import org.platform.modules.lucene.IIndex;
-import org.platform.modules.lucene.IIndexManager;
-import org.platform.modules.lucene.IndexController;
-import org.platform.modules.lucene.RAMIndexManager;
+import org.platform.modules.lucene.IndexUtils;
+import org.platform.modules.lucene.biz.IIndexBusiness;
+import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
+import org.platform.modules.lucene.biz.impl.RAMIndexBusinessImpl;
+import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.exception.BusinessException;
 import org.platform.utils.json.JSONUtils;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 			LOG.debug(crawlJob);
 			resultList.add(crawlJob);
 		}
-		IIndexManager indexManager = type == IIndex.RAM ? new RAMIndexManager() : new FSIndexManager();
+		IIndexBusiness indexManager = type == IIndex.RAM ? new RAMIndexBusinessImpl() : new FSIndexBusinessImpl();
 		indexManager.insert(resultList.toArray(new Object[0]));
 		indexManager.commit();
 	}
@@ -105,11 +106,9 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<CrawlJob> readIndex(Query condition) throws BusinessException {
-		condition.addCondition(Query.CURRENT_PAGE_NUM, condition.getCurrentPageNum());
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, condition.getRowNumPerPage());
-		condition.addCondition(Query.LUCENE_CLASS, CrawlJob.class);
-		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
+	public QueryResult<CrawlJob> readIndex(QueryCondition conditions) throws BusinessException {
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, CrawlJob.class);
+		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
 		BooleanQuery booleanQuery = new BooleanQuery();
 		booleanQuery.add(new WildcardQuery(new Term("career", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("company", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
@@ -117,12 +116,12 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		booleanQuery.add(new WildcardQuery(new Term("updateTime", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("require", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
 		booleanQuery.add(new WildcardQuery(new Term("summary", "*"+ keyword +"*")), BooleanClause.Occur.SHOULD);
-		condition.addCondition(Query.LUCENE_QUERY, booleanQuery);
+		conditions.addCondition(QueryCondition.QUERY, booleanQuery);
 //		condition.addCondition(QueryCondition.LUCENE_QUERY, 
 //				new WildcardQuery(new Term("career", "*" + keyword + "*")));
-		condition.addCondition(Query.LUCENE_HIGHLIGHTER_FIELDS, 
+		conditions.addCondition(QueryCondition.HIGHLIGHTER_FIELDS, 
 				new String[]{"career", "company", "require", "summary"});
-		condition.addCondition(Query.LUCENE_ANALYZER, IndexController.getInstance()
+		conditions.addCondition(QueryCondition.ANALYZER, IndexUtils.getInstance()
 				.obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
 //		String[] fields = {"career", "company", "location", "updateTime", "require", "summary"};
 //		BooleanClause.Occur[] flags = {
@@ -135,15 +134,15 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 //		} catch (ParseException e) {
 //			logger.debug(e.getMessage(), e);
 //		}
-		int index = (int) condition.obtainConditionValue(Query.LUCENE_INDEX);
-		IIndexManager indexManager = index == IIndex.RAM ? new RAMIndexManager() : new FSIndexManager();
-		return (QueryResult<CrawlJob>) indexManager.readByCondition(condition);
+		int index = (int) conditions.getConditionValue(QueryCondition.INDEX);
+		IIndexBusiness indexManager = index == IIndex.RAM ? new RAMIndexBusinessImpl() : new FSIndexBusinessImpl();
+		return (QueryResult<CrawlJob>) indexManager.readDataListByCondition(conditions);
 	}
 	
 	@Override
-	public QueryResult<CrawlJob> readJobPaginationByCondition(Query condition)
+	public QueryResult<CrawlJob> readJobPaginationByCondition(Query query)
 			throws BusinessException {
-		QueryResult<CrawlDetailExt> qr = crawlDetailExtDAO.readDataPaginationByCondition(condition);
+		QueryResult<CrawlDetailExt> qr = crawlDetailExtDAO.readDataPaginationByCondition(query);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();
 		for (CrawlDetailExt crawlDetailExt : qr.getResultList()) {
 			resultList.add((CrawlJob) JSONUtils.json2Object(

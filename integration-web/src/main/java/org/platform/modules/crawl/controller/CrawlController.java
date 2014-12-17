@@ -11,6 +11,7 @@ import org.platform.modules.crawl.entity.CrawlDetail;
 import org.platform.modules.crawl.entity.CrawlJob;
 import org.platform.modules.crawl.service.ICrawlService;
 import org.platform.modules.lucene.IIndex;
+import org.platform.modules.lucene.entity.QueryCondition;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,23 +69,22 @@ public class CrawlController extends GenericController<CrawlDetail, Long> {
 
 	@RequestMapping(value = "/job/search", method = RequestMethod.POST)
 	public String search(Integer currentPageNum, Integer rowNumPerPage, String keyword, Integer index, Model model) {
-		Query condition = new Query();
+		QueryCondition conditions = new QueryCondition();
 		currentPageNum = null == currentPageNum ? 1 : currentPageNum;
 		rowNumPerPage = null == rowNumPerPage ? 10 : rowNumPerPage;
-		condition.setCurrentPageNum(currentPageNum);
-		condition.setRowNumPerPage(rowNumPerPage);
-		condition.setPagination(true);
+		conditions.setCurrentPageNum(currentPageNum);
+		conditions.setRowNumPerPage(rowNumPerPage);
 		keyword = null == keyword ? "" : keyword;
 		index = null == index ? IIndex.RAM : index;
-		condition.addCondition(Query.LUCENE_KEYWORD, keyword);
-		condition.addCondition(Query.LUCENE_INDEX, index);
-		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(condition);
+		conditions.addCondition(QueryCondition.KEYWORD, keyword);
+		conditions.addCondition(QueryCondition.INDEX, index);
+		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(conditions);
 		if (qr.getTotalRowNum() == 0) {
-			condition = new Query();
-			condition.setCurrentPageNum(currentPageNum);
-			condition.setRowNumPerPage(rowNumPerPage);
-			condition.setPagination(true);
-			qr = (QueryResult<CrawlJob>) crawlBusiness.readJobPaginationByCondition(condition);
+			Query query = new Query();
+			query.setCurrentPageNum(currentPageNum);
+			query.setRowNumPerPage(rowNumPerPage);
+			query.setPagination(true);
+			qr = (QueryResult<CrawlJob>) crawlBusiness.readJobPaginationByCondition(query);
 		}
 		model.addAttribute("index", index);
 		model.addAttribute("keyword", keyword);

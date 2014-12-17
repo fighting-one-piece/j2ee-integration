@@ -45,15 +45,14 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.platform.entity.PKEntity;
-import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
+import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.resource.ResourceUtils;
-
 
 /** Lucene处理类  **/
 public class LuceneHandler {
 	
-	public static Logger logger = Logger.getLogger(LuceneHandler.class);
+	public static Logger LOG = Logger.getLogger(LuceneHandler.class);
 	/** Lucene版本*/
 	public static final Version LUCENE_VERSION = Version.LUCENE_45;
 	
@@ -93,7 +92,7 @@ public class LuceneHandler {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return indexSearcher;
 	}
@@ -104,7 +103,7 @@ public class LuceneHandler {
 			fsIndexWriter.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 
@@ -113,7 +112,7 @@ public class LuceneHandler {
 			ramIndexWriter.addDocument(object2Document(object));
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -125,7 +124,7 @@ public class LuceneHandler {
 			commitIndex(DIRECTORY_RAM);
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -134,7 +133,7 @@ public class LuceneHandler {
 			ramIndexWriter.updateDocument(term, object2Document(object));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 
@@ -143,7 +142,7 @@ public class LuceneHandler {
 			ramIndexWriter.deleteDocuments(term);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 
@@ -151,7 +150,7 @@ public class LuceneHandler {
 		try {
 			ramIndexWriter.deleteAll();
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -160,137 +159,137 @@ public class LuceneHandler {
 			fsIndexWriter.addIndexes(directories);
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
-	public QueryResult<?> readDataByCondition(Query condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
-		if (null == query) {
-			query = obtainQuery(clazz, keyword);
+	public QueryResult<?> readDataByCondition(QueryCondition query) {
+		Class<?> clazz = (Class<?>) query.getConditionValue(QueryCondition.ENTITY_CLASS);
+		String keyword = (String) query.getConditionValue(QueryCondition.KEYWORD);
+		Query lucene_query = (Query) query.getConditionValue(QueryCondition.QUERY);
+		if (null == lucene_query) {
+			lucene_query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) query.getConditionValue(QueryCondition.FILTER);
+		Sort sort = (Sort) query.getConditionValue(QueryCondition.SORT);
+		int currentPageNum = null != query.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
+				(Integer) query.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != query.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
+				(Integer) query.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		int directory = DIRECTORY_RAM;
 		IndexSearcher indexSearcher = obtainIndexSearcher(directory);
 		try {
-			TopDocs topDocs = readData(indexSearcher, query, filter, topN, sort);
+			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
 			if (null == topDocs || topDocs.totalHits == 0 ) {           
 				releaseIndexSearcher(indexSearcher, directory);
 				directory = DIRECTORY_FS;
 				indexSearcher = obtainIndexSearcher(directory);
-				topDocs = readData(indexSearcher, query, filter, topN, sort);
+				topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
 			}
 			topN = null == topDocs ? 0 : topDocs.totalHits;
 			if (currentPageNum > 1) {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
+				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
 						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
 				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 					Document document = indexSearcher.doc(scoreDoc.doc);
-					logger.debug("document: " + document);
+					LOG.debug("document: " + document);
 					objectList.add(document2Object(document, clazz));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		} finally {
 			releaseIndexSearcher(indexSearcher, directory);
 		}
 		return new QueryResult<>(topN, objectList);
 	}
 	
-	public QueryResult<?> readRAMDataByCondition(Query condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
-		if (null == query) {
-			query = obtainQuery(clazz, keyword);
+	public QueryResult<?> readRAMDataByCondition(QueryCondition conditions) {
+		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
+		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
+		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
+		if (null == lucene_query) {
+			lucene_query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
+		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
+		int currentPageNum = null != conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
+				(Integer) conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
+				(Integer) conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		IndexSearcher indexSearcher = obtainIndexSearcher(DIRECTORY_RAM);
 		try {
-			TopDocs topDocs = readData(indexSearcher, query, filter, topN, sort);
+			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
 			topN = null == topDocs ? 0 :topDocs.totalHits;
 			if (currentPageNum > 1) {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
+				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
 						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
 				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 					Document document = indexSearcher.doc(scoreDoc.doc);
-					logger.debug("document: " + document);
+					LOG.debug("document: " + document);
 					objectList.add(document2Object(document, clazz));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		} finally {
 			releaseIndexSearcher(indexSearcher, DIRECTORY_RAM);
 		}
 		return new QueryResult<>(topN, objectList);
 	}
 	
-	public QueryResult<?> readFSDataByCondition(Query condition) {
-		Class<?> clazz = (Class<?>) condition.obtainConditionValue(Query.LUCENE_CLASS);
-		String keyword = (String) condition.obtainConditionValue(Query.LUCENE_KEYWORD);
-		Query query = (Query) condition.obtainConditionValue(Query.LUCENE_QUERY);
-		if (null == query) {
-			query = obtainQuery(clazz, keyword);
+	public QueryResult<?> readFSDataByCondition(QueryCondition conditions) {
+		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
+		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
+		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
+		if (null == lucene_query) {
+			lucene_query = obtainQuery(clazz, keyword);
 		}
-		Filter filter = (Filter) condition.obtainConditionValue(Query.LUCENE_FILTER);
-		Sort sort = (Sort) condition.obtainConditionValue(Query.LUCENE_SORT);
-		int currentPageNum = null != condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) ?
-				(Integer) condition.obtainConditionValue(Query.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) ?
-				(Integer) condition.obtainConditionValue(Query.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
+		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
+		int currentPageNum = null != conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
+				(Integer) conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
+		int rowNumPerPage = null != conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
+				(Integer) conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		IndexSearcher indexSearcher = obtainIndexSearcher(DIRECTORY_FS);
 		try {
-			TopDocs topDocs = readData(indexSearcher, query, filter, topN, sort);
+			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
 			topN = null == topDocs ? 0 : topDocs.totalHits;
 			if (currentPageNum > 1) {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
+				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
 						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
 				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 					Document document = indexSearcher.doc(scoreDoc.doc);
-					logger.debug("document: " + document);
+					LOG.debug("document: " + document);
 					objectList.add(document2Object(document, clazz));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		} finally {
 			releaseIndexSearcher(indexSearcher, DIRECTORY_FS);
 		}
@@ -320,7 +319,7 @@ public class LuceneHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -333,7 +332,7 @@ public class LuceneHandler {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 
@@ -364,7 +363,7 @@ public class LuceneHandler {
 				} 
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
-				logger.debug(e.getMessage(), e);
+				LOG.debug(e.getMessage(), e);
 			}
 		}
 		return document;
@@ -398,7 +397,7 @@ public class LuceneHandler {
 			}
 		} catch (IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return object;
 	}
@@ -445,7 +444,7 @@ public class LuceneHandler {
 			ramControlledRealTimeReopenThread.start();
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -459,7 +458,7 @@ public class LuceneHandler {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -480,7 +479,7 @@ public class LuceneHandler {
 			query = queryParser.parse(keyword);
 		} catch (ParseException e) {
 			e.printStackTrace();
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return query;
 	}

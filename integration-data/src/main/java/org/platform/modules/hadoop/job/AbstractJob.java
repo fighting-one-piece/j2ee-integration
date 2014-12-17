@@ -17,7 +17,7 @@ import org.platform.modules.hadoop.job.strategy.DefaultStrategy;
 import org.platform.modules.hadoop.job.strategy.JobStrategy;
 import org.platform.modules.hadoop.job.strategy.StrategyFactory;
 import org.platform.utils.date.DateUtils;
-import org.platform.utils.date.SimpleDateFormatEnum;
+import org.platform.utils.date.DateFormat;
 
 @RunFrequency
 public abstract class AbstractJob extends Configured implements Tool {
@@ -196,9 +196,9 @@ public abstract class AbstractJob extends Configured implements Tool {
 
 	public void printTimeStamp(long begin, long end) {
 		LOG.info(new StringBuilder().append("Started at: ")
-				.append(DateUtils.getTime(begin,SimpleDateFormatEnum.timeFormat.get()))
+				.append(DateUtils.getTime(begin,DateFormat.timeFormat.get()))
 				.append("\tFinished at: ")
-				.append(DateUtils.getTime(end,SimpleDateFormatEnum.timeFormat.get()))
+				.append(DateUtils.getTime(end,DateFormat.timeFormat.get()))
 				.append("\tFinished in: ").append((end - begin) / 1000L)
 				.append("sec").toString());
 	}

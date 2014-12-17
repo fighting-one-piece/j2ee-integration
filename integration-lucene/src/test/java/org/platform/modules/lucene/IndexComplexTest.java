@@ -25,30 +25,28 @@ import org.apache.lucene.search.SortField.Type;
 import org.apache.lucene.search.WildcardQuery;
 import org.junit.Before;
 import org.junit.Test;
-import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.entity.User;
-import org.platform.modules.lucene.ComplexIndexManager;
-import org.platform.modules.lucene.FSIndexManager;
-import org.platform.modules.lucene.IIndex;
-import org.platform.modules.lucene.IIndexManager;
-import org.platform.modules.lucene.IndexController;
-import org.platform.modules.lucene.RAMIndexManager;
+import org.platform.modules.lucene.biz.IIndexBusiness;
+import org.platform.modules.lucene.biz.impl.ComplexIndexBusinessImpl;
+import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
+import org.platform.modules.lucene.biz.impl.RAMIndexBusinessImpl;
+import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.random.RandomUtils;
 
 public class IndexComplexTest {
 	
-	private IIndexManager fsIndexManager = null;
+	private IIndexBusiness fsIndexManager = null;
 	
-	private IIndexManager ramIndexManager = null;
+	private IIndexBusiness ramIndexManager = null;
 	
-	private IIndexManager complexIndexManager = null;
+	private IIndexBusiness complexIndexManager = null;
 	
 	@Before
 	public void before() {
-		fsIndexManager = new FSIndexManager();
-		ramIndexManager = new RAMIndexManager();
-		complexIndexManager = new ComplexIndexManager();
+		fsIndexManager = new FSIndexBusinessImpl();
+		ramIndexManager = new RAMIndexBusinessImpl();
+		complexIndexManager = new ComplexIndexBusinessImpl();
 	}
 
 	public void insertFSIndex(String keyword) {
@@ -112,15 +110,15 @@ public class IndexComplexTest {
 	
 	@SuppressWarnings("unchecked")
 	public void readFSByCondition(String keyword) {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addCondition(Query.LUCENE_SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
 		System.out.println("fs query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
@@ -129,15 +127,15 @@ public class IndexComplexTest {
 	
 	@SuppressWarnings("unchecked")
 	public void readRAMByCondition(String keyword) {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addHibernateCondition(Query.LUCENE_SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
 		System.out.println("ram query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
@@ -146,17 +144,17 @@ public class IndexComplexTest {
 	
 	@SuppressWarnings("unchecked")
 	public void readCommonByCondition(String keyword) {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		//condition.addCondition(QueryCondition.LUCENE_ANALYZER, IndexController.getInstance().obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addCondition(Query.LUCENE_SORT, sort);
-		condition.addCondition(Query.LUCENE_HIGHLIGHTER_FIELDS, new String[]{"id", "name"});
-		QueryResult<User> qr = (QueryResult<User>) complexIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		conditions.addCondition(QueryCondition.HIGHLIGHTER_FIELDS, new String[]{"id", "name"});
+		QueryResult<User> qr = (QueryResult<User>) complexIndexManager.readDataListByCondition(conditions);
 		System.out.println("common query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
@@ -182,7 +180,7 @@ public class IndexComplexTest {
 	@Test
 	public void testIndexAnalyzer() {
 		String word = "鎴戞槸涓崕浜烘皯鍏卞拰鍥藉叕姘?鎴戝嚭鐢熷湪鍥涘窛,鎴戝湪鏂扮枂闀垮ぇ";
-		Analyzer analyzer = IndexController.getInstance().obtainAnalyzer(
+		Analyzer analyzer = IndexUtils.obtainAnalyzer(
 				IIndex.ANALYZER_MMSEG4J_MAXWORD);
 		try {
 			TokenStream tokenStream = analyzer.tokenStream("field", new StringReader(word));

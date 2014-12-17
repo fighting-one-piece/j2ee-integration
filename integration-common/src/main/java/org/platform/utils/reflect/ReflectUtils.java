@@ -2,17 +2,25 @@ package org.platform.utils.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.platform.utils.date.DateFormat;
 
 public class ReflectUtils {
 	
-	private static Logger logger = Logger.getLogger(ReflectUtils.class);
+	private static Logger LOG = Logger.getLogger(ReflectUtils.class);
 
 	@SuppressWarnings("unchecked")
-	public static <T> Class<T> obtainParameterizedType(Class<?> clazz, int index) {
+	public static <T> Class<T> getParameterizedType(Class<?> clazz, int index) {
         Type parameterizedType = clazz.getGenericSuperclass();
         if (!(parameterizedType instanceof ParameterizedType)) {
             parameterizedType = clazz.getSuperclass().getGenericSuperclass();
@@ -27,19 +35,39 @@ public class ReflectUtils {
         return (Class<T>) actualTypeArguments[0];
     }
 	
-	public static Field obtainFieldByFieldName(Object object, String fieldName) {
+	public static Field[] getFields(Object object) {
+		List<Field> fields = new ArrayList<Field>();
+		for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
+        	for (Field field : superClass.getDeclaredFields()) {
+        		fields.add(field);
+        	}
+        }
+		return fields.toArray(new Field[0]);
+	}
+	
+	public static Field[] getFields(Class<?> clazz) {
+		List<Field> fields = new ArrayList<Field>();
+		for (Class<?> superClass = clazz; superClass != Object.class; superClass = superClass.getSuperclass()) {
+        	for (Field field : superClass.getDeclaredFields()) {
+        		fields.add(field);
+        	}
+        }
+		return fields.toArray(new Field[0]);
+	}
+	
+	public static Field getFieldByFieldName(Object object, String fieldName) {
         for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
         	for (Field field : superClass.getDeclaredFields()) {
-    			if (fieldName.equals(field.getName())) {
-						return field;
+    			if (fieldName.equalsIgnoreCase(field.getName())) {
+					return field;
     			}
     		}
         }
         return null;
     }
 
-    public static Object obtainValueByFieldName(Object object, String fieldName) {
-        Field field = obtainFieldByFieldName(object, fieldName);
+    public static Object getValueByFieldName(Object object, String fieldName) {
+        Field field = getFieldByFieldName(object, fieldName);
         Object value = null;
         try {
 		    if(null != field){
@@ -52,15 +80,16 @@ public class ReflectUtils {
 		        }
 		    }
         } catch (Exception e) {
-        	logger.info(e.getMessage(), e);
+        	LOG.info(e.getMessage(), e);
         }
         return value;
     }
 
     public static void setValueByFieldName(Object object, String fieldName, Object value) {
-    	Field field = obtainFieldByFieldName(object, fieldName);
-    	if (null == field) return;
+    	Field field = getFieldByFieldName(object, fieldName);
+    	if (null == field || Modifier.isStatic(field.getModifiers())) return;
     	try {
+    		value = convertValueByFileType(field.getType(), value);
 	        if (field.isAccessible()) {
 	            field.set(object, value);
 	        } else {
@@ -69,19 +98,45 @@ public class ReflectUtils {
 	            field.setAccessible(false);
 	        }
     	} catch (Exception e) {
-        	logger.info(e.getMessage(), e);
+        	LOG.info(e.getMessage(), e);
         }
+    }
+    
+    public static Object convertValueByFileType(Class<?> type, Object value) {
+    	Object finalValue = value;
+    	if (String.class.isAssignableFrom(type)) {
+    		finalValue = String.valueOf(value);
+		} else if (Boolean.class.isAssignableFrom(type)) {
+    		finalValue = Boolean.parseBoolean(String.valueOf(value));
+		} else if (Integer.class.isAssignableFrom(type)) {
+    		finalValue = Integer.parseInt(String.valueOf(value));
+		} else if (Long.class.isAssignableFrom(type)) {
+			finalValue = Long.parseLong(String.valueOf(value));
+		} else if (Float.class.isAssignableFrom(type)) {
+			finalValue = Float.parseFloat(String.valueOf(value));
+		} else if (Double.class.isAssignableFrom(type)) {
+			finalValue = Double.parseDouble(String.valueOf(value));
+		} else if (Date.class.isAssignableFrom(type)) {
+			try {
+				finalValue = DateFormat.timeFormat.get().parse(String.valueOf(value));
+			} catch (ParseException e) {
+				LOG.error(e.getMessage(), e);
+			}
+		} 
+    	return finalValue;
     }
     
     public static boolean isExistField(Object object, String fieldName) {
     	try {
-			for (Field field : object.getClass().getFields()) {
-				if (fieldName.equals(field.getName())) {
-					return true;
-				}
-			}
+    		for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
+            	for (Field field : superClass.getDeclaredFields()) {
+        			if (fieldName.equals(field.getName())) {
+    					return true;
+        			}
+        		}
+            }
 		} catch (Exception e) {
-        	logger.info(e.getMessage(), e);
+        	LOG.info(e.getMessage(), e);
         }
     	return false;
     }
@@ -94,8 +149,104 @@ public class ReflectUtils {
 				}
 			}
 		} catch (Exception e) {
-        	logger.info(e.getMessage(), e);
+        	LOG.info(e.getMessage(), e);
         }
     	return false;
+    }
+    
+    public static Object getValueByMethodName(Object object, String methodName) {
+    	return getValueByMethodName(object, null, methodName);
+	}
+    
+    public static Object getValueByMethodName(Object object, String methodName, Class<?>... parameterTypes) {
+		return getValueByMethodName(object, null, methodName, parameterTypes);
+	}
+    
+    public static Object getValueByMethodName(Object object, Object values[], String methodName, Class<?>... parameterTypes) {
+		if (!isExistMethod(object, methodName)) return null;
+		try {
+			return object.getClass().getMethod(methodName, parameterTypes).invoke(object, values);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} 
+		return null;
+	}
+    
+    public static Map<String, Object> convertObjectToObjectMap(Object object) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Field[] fields = getFields(object);
+		try {
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) continue;
+				String name = field.getName();
+				field.setAccessible(true);
+				Object value = field.get(object);
+				field.setAccessible(false);
+				if (null == value) continue;
+				map.put(name, value);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} 
+		return map;
+	}
+    
+    public static void convertObjectMapToObject(Map<String, Object> map, Object object) {
+    	Field[] fields = getFields(object);
+		try {
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) continue;
+				String name = field.getName();
+				Object value = map.get(name);
+				if (null == value) continue;
+				field.setAccessible(true);
+				field.set(object, value);
+				field.setAccessible(false);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} 
+    }
+    
+    public static Map<String, String> convertObjectToStringMap(Object object) {
+		Map<String, String> map = new HashMap<String, String>();
+		Field[] fields = getFields(object);
+		try {
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) continue;
+				String name = field.getName();
+				field.setAccessible(true);
+				Object value = field.get(object);
+				field.setAccessible(false);
+				if (null == value) continue;
+				String finalValue = String.valueOf(value);
+				Class<?> type = field.getType();
+				if (Date.class.isAssignableFrom(type)) {
+					finalValue = DateFormat.timeFormat.get().format(value);
+				} 
+				map.put(name, finalValue);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} 
+		return map;
+	}
+    
+    public static void convertStringMapToObject(Map<String, String> map, Object object) {
+    	Field[] fields = getFields(object);
+		try {
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) continue;
+				String name = field.getName();
+				String valueString = map.get(name);
+				if (null == valueString) continue;
+				Object value = convertValueByFileType(field.getType(), valueString);
+				field.setAccessible(true);
+				field.set(object, value);
+				field.setAccessible(false);
+			}
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		} 
     }
 }

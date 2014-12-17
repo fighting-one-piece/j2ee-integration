@@ -13,30 +13,30 @@ import org.apache.lucene.search.SortField.Type;
 import org.apache.lucene.search.WildcardQuery;
 import org.junit.Before;
 import org.junit.Test;
-import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.entity.User;
-import org.platform.modules.lucene.FSIndexManager;
-import org.platform.modules.lucene.IIndexManager;
-import org.platform.modules.lucene.RAMIndexManager;
-import org.platform.modules.lucene.SimpleIndexManager;
+import org.platform.modules.lucene.biz.IIndexBusiness;
+import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
+import org.platform.modules.lucene.biz.impl.RAMIndexBusinessImpl;
+import org.platform.modules.lucene.biz.impl.SimpleIndexBusinessImpl;
+import org.platform.modules.lucene.entity.QueryCondition;
 
 public class IndexSimpleTest {
 	
-	private IIndexManager fsIndexManager = null;
+	private IIndexBusiness fsIndexManager = null;
 	
-	private IIndexManager ramIndexManager = null;
+	private IIndexBusiness ramIndexManager = null;
 	
-	private IIndexManager commonIndexManager = null;
+	private IIndexBusiness commonIndexManager = null;
 	
 	private String keyword = "two";
 	
 	@Before
 	public void before() {
-		fsIndexManager = new FSIndexManager();
-		ramIndexManager = new RAMIndexManager();
+		fsIndexManager = new FSIndexBusinessImpl();
+		ramIndexManager = new RAMIndexBusinessImpl();
 		//fsIndexManager = new FSIndexManager(true);
-		commonIndexManager = new SimpleIndexManager();
+		commonIndexManager = new SimpleIndexBusinessImpl();
 	}
 
 	@Test
@@ -105,15 +105,15 @@ public class IndexSimpleTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadFSByCondition() {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addCondition(Query.LUCENE_SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
 		System.out.println("fs query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
@@ -123,15 +123,15 @@ public class IndexSimpleTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadRAMByCondition() {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addHibernateCondition(Query.LUCENE_SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
 		System.out.println("ram query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
@@ -141,15 +141,15 @@ public class IndexSimpleTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadCommonByCondition(String keyword) {
-		Query condition = new Query();
-		condition.addCondition(Query.CURRENT_PAGE_NUM, 0);
-		condition.addCondition(Query.ROW_NUM_PER_PAGE, 10);
-		condition.addCondition(Query.LUCENE_CLASS, User.class);
+		QueryCondition conditions = new QueryCondition();
+		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
 		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		condition.addCondition(Query.LUCENE_QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
 		Sort sort = new Sort(new SortField("name", Type.STRING));
-		condition.addCondition(Query.LUCENE_SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) commonIndexManager.readByCondition(condition);
+		conditions.addCondition(QueryCondition.SORT, sort);
+		QueryResult<User> qr = (QueryResult<User>) commonIndexManager.readDataListByCondition(conditions);
 		System.out.println("common query total row number: " + qr.getTotalRowNum());
 		for (User u : qr.getResultList()) {
 			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
