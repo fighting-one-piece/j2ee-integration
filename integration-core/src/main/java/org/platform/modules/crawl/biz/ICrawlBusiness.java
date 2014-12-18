@@ -7,7 +7,6 @@ import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
 import org.platform.modules.crawl.entity.CrawlDetail;
 import org.platform.modules.crawl.entity.CrawlJob;
-import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.exception.BusinessException;
 
 public interface ICrawlBusiness extends IGenericBusiness<CrawlDetail, Long> {
@@ -20,7 +19,8 @@ public interface ICrawlBusiness extends IGenericBusiness<CrawlDetail, Long> {
 	
 	public List<CrawlDetail> readUnCrawlDataList() throws BusinessException;
 	
-	public QueryResult<CrawlJob> readIndex(QueryCondition conditions) throws BusinessException;
+	public QueryResult<CrawlJob> readIndex(String keyword, Integer index, Integer currentPageNum,
+			Integer rowNumPerPage) throws BusinessException;
 	
 	public QueryResult<CrawlJob> readJobPaginationByCondition(Query query) throws BusinessException;
 

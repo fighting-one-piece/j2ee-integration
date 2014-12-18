@@ -7,19 +7,13 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.SortField.Type;
-import org.apache.lucene.search.WildcardQuery;
 import org.junit.Before;
 import org.junit.Test;
-import org.platform.entity.QueryResult;
 import org.platform.entity.User;
 import org.platform.modules.lucene.biz.IIndexBusiness;
 import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
 import org.platform.modules.lucene.biz.impl.RAMIndexBusinessImpl;
 import org.platform.modules.lucene.biz.impl.SimpleIndexBusinessImpl;
-import org.platform.modules.lucene.entity.QueryCondition;
 
 public class IndexSimpleTest {
 	
@@ -102,58 +96,55 @@ public class IndexSimpleTest {
 		System.out.println("delete index end");
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadFSByCondition() {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
-		System.out.println("fs query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
+//		System.out.println("fs query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadRAMByCondition() {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
-		System.out.println("ram query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
+//		System.out.println("ram query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testReadCommonByCondition(String keyword) {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) commonIndexManager.readDataListByCondition(conditions);
-		System.out.println("common query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		QueryResult<User> qr = (QueryResult<User>) commonIndexManager.readDataListByCondition(conditions);
+//		System.out.println("common query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
 	@Test

@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.WildcardQuery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,7 +81,7 @@ public class CrawlBusinessTest {
 	@Test
 	public void testReadIndex() {
 		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("career", "高级*")));
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("career", "高级*")));
 //		condition.addCondition(QueryCondition.LUCENE_QUERY, new WildcardQuery(new Term("summary", "职位标签*")));
 		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(conditions);
 		for (CrawlJob job : qr.getResultList()) {
@@ -94,8 +92,8 @@ public class CrawlBusinessTest {
 	@Test
 	public void testReadIndex1() {
 		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.KEYWORD, "职位描述");
-		conditions.addCondition(QueryCondition.INDEX, IIndex.FILE);
+//		conditions.addCondition(QueryCondition.KEYWORD, "职位描述");
+//		conditions.addCondition(QueryCondition.INDEX, IIndex.FILE);
 		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(conditions);
 		System.out.println("result number: " + qr.getTotalRowNum());
 		for (CrawlJob job : qr.getResultList()) {

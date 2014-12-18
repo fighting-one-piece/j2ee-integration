@@ -2,6 +2,7 @@ package org.platform.modules.crawl.entity;
 
 public class CrawlJob {
 
+	private String search = null;
 	/** 职位名称*/
 	private String career = null;
 	/** 公司名称*/
@@ -16,6 +17,14 @@ public class CrawlJob {
 	private String summary = null;
 	/** 链接地址*/
 	private String link = null;
+	
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
 
 	public String getCareer() {
 		return career;

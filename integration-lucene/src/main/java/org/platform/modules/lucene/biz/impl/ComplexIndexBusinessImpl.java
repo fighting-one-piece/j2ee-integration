@@ -107,19 +107,13 @@ public class ComplexIndexBusinessImpl extends AbstrIndexBusinessImpl {
 	}
 	
 	@Override
-	public QueryResult<?> readDataListByCondition(QueryCondition conditions) {
-		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
-		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
-		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
-		if (null == lucene_query) lucene_query = obtainQuery(clazz, keyword);
-		Analyzer analyzer = (Analyzer) conditions.getConditionValue(QueryCondition.ANALYZER);
-		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
-		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
-		String[] highLighterFields = (String[]) conditions.getConditionValue(QueryCondition.HIGHLIGHTER_FIELDS);
-		int currentPageNum = null != conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) ?
-				(Integer) conditions.getConditionValue(QueryCondition.CURRENT_PAGE_NUM) : 0;
-		int rowNumPerPage = null != conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) ?
-				(Integer) conditions.getConditionValue(QueryCondition.ROW_NUM_PER_PAGE) : Integer.MAX_VALUE;
+	public QueryResult<?> readDataListByCondition(QueryCondition condition) {
+		Query query = obtainQuery(condition);
+		Filter filter = condition.getFilter();
+		Sort sort = obtainSort(condition);
+		String[] highLighterFields = condition.getHighLighterFields();
+		int currentPageNum = condition.getCurrentPageNum();
+		int rowNumPerPage = condition.getRowNumPerPage(); 
 		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
 		List<Object> objectList = new ArrayList<>();
 		//查询步骤1、先从临时内存索引中查询结果  2、从内存索引中查询结果 3、从文件索引中查询结果
@@ -129,7 +123,7 @@ public class ComplexIndexBusinessImpl extends AbstrIndexBusinessImpl {
 		try {
 			indexSearcher = IndexUtils.obtainIndexSearcher(indexType);
 			if (null != indexSearcher) {
-				topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
+				topDocs = readDataList(indexSearcher, query, filter, topN, sort);
 				topN = (null == topDocs || topDocs.totalHits == 0) ? topN : topDocs.totalHits;
 			}
 			if (null == topDocs || topDocs.totalHits == 0) {
@@ -137,7 +131,7 @@ public class ComplexIndexBusinessImpl extends AbstrIndexBusinessImpl {
 				indexType = IIndex.RAM;
 				indexSearcher = IndexUtils.obtainIndexSearcher(indexType);
 				if (null != indexSearcher) {
-					topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
+					topDocs = readDataList(indexSearcher, query, filter, topN, sort);
 					topN = (null == topDocs || topDocs.totalHits == 0) ? topN : topDocs.totalHits;
 				}
 			}
@@ -146,7 +140,7 @@ public class ComplexIndexBusinessImpl extends AbstrIndexBusinessImpl {
 				indexType = IIndex.FILE;
 				indexSearcher = IndexUtils.obtainIndexSearcher(indexType);
 				if (null != indexSearcher) {
-					topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
+					topDocs = readDataList(indexSearcher, query, filter, topN, sort);
 					topN = null == topDocs ? 0 : topDocs.totalHits;
 				}
 			}
@@ -155,19 +149,17 @@ public class ComplexIndexBusinessImpl extends AbstrIndexBusinessImpl {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
+				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
 						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
 				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 					Document document = indexSearcher.doc(scoreDoc.doc);
 					LOG.debug("document: " + document);
-					Object object = document2Object(document, clazz);
-					if (null == analyzer) {
-						highLighterFast(indexSearcher, lucene_query, scoreDoc.doc, object, highLighterFields);
-					} else {
-						highLighter(analyzer, lucene_query, document, object, highLighterFields);
-					}
+					Object object = document2Object(document, condition.getEntityClass());
+					Analyzer analyzer = condition.getAnalyzer();
+					if (null == analyzer) analyzer = IndexUtils.obtainDefaultAnalyzer();
+					highLighter(analyzer, query, document, object, highLighterFields);
 					objectList.add(object);
 				}
 			}

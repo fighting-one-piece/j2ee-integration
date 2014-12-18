@@ -48,6 +48,6 @@ public interface IIndexBusiness {
 	 * @param condition 条件
 	 * @return
 	 */
-	public QueryResult<?> readDataListByCondition(QueryCondition conditions);
+	public QueryResult<?> readDataListByCondition(QueryCondition condition);
 	
 }

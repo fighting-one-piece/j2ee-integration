@@ -22,12 +22,17 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -49,6 +54,7 @@ import org.platform.modules.lucene.IndexUtils;
 import org.platform.modules.lucene.biz.IIndexBusiness;
 import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.reflect.ReflectUtils;
+import org.platform.utils.word.WordUtils;
 
 public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 
@@ -125,56 +131,96 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 	}
 	
 	@Override
-	public QueryResult<?> readDataListByCondition(QueryCondition conditions) {
-		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
-		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
-		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
-		if (null == lucene_query) lucene_query = obtainQuery(clazz, keyword);
-		Analyzer analyzer = (Analyzer) conditions.getConditionValue(QueryCondition.ANALYZER);
-		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
-		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
-		String[] highLighterFields = (String[]) conditions.getConditionValue(
-				QueryCondition.HIGHLIGHTER_FIELDS);
-		int currentPageNum = conditions.getCurrentPageNum();
-		int rowNumPerPage = conditions.getRowNumPerPage();
-		if (rowNumPerPage == 0) {
-			Integer temp = (Integer) conditions.getConditionValue(
-					QueryCondition.ROW_NUM_PER_PAGE);
-			rowNumPerPage = null == temp ? Integer.MAX_VALUE : temp;
-		}
-		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
-		List<Object> objectList = new ArrayList<>();
+	public QueryResult<?> readDataListByCondition(QueryCondition condition) {
+		Query query = obtainQuery(condition);
+		Filter filter = condition.getFilter();
+		Sort sort = obtainSort(condition);
+		String[] highLighterFields = condition.getHighLighterFields();
+		int currentPageNum = condition.getCurrentPageNum();
+		int rowNumPerPage = condition.getRowNumPerPage(); 
+		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? 
+				rowNumPerPage : currentPageNum * rowNumPerPage;
+		List<Object> objectList = new ArrayList<Object>();
 		IndexSearcher indexSearcher = obtainIndexSearcher();
 		try {
-			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
-			topN = null == topDocs ? 0 :topDocs.totalHits;
+			TopDocs topDocs = readDataList(indexSearcher, query, filter, topN, sort);
+			topN = null == topDocs ? 0 : topDocs.totalHits;
 			if (currentPageNum > 1) {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
+				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
 						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
+				Analyzer analyzer = condition.getAnalyzer();
+				if (null == analyzer) analyzer = IndexUtils.obtainDefaultAnalyzer();
 				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+					LOG.info(scoreDoc.doc + " score: " + scoreDoc.score);
 					Document document = indexSearcher.doc(scoreDoc.doc);
-					LOG.debug("document: " + document);
-					Object object = document2Object(document, clazz);
-					if (null == analyzer) {
-						highLighterFast(indexSearcher, lucene_query, scoreDoc.doc, object, highLighterFields);
-					} else {
-						highLighter(analyzer, lucene_query, document, object, highLighterFields);
-					}
+					Object object = document2Object(document, condition.getEntityClass());
+					highLighter(analyzer, query, document, object, highLighterFields);
 					objectList.add(object);
 				}
 			}
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		} finally {
 			releaseIndexSearcher(indexSearcher);
 		}
 		return new QueryResult<>(topN, objectList);
 	}
+	
+//	public QueryResult<?> readDataListByConditionV1(QueryCondition conditions) {
+//		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
+//		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
+//		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
+//		if (null == lucene_query) lucene_query = obtainQuery(clazz, keyword);
+//		Analyzer analyzer = (Analyzer) conditions.getConditionValue(QueryCondition.ANALYZER);
+//		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
+//		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
+//		String[] highLighterFields = (String[]) conditions.getConditionValue(
+//				QueryCondition.HIGHLIGHTER_FIELDS);
+//		int currentPageNum = conditions.getCurrentPageNum();
+//		int rowNumPerPage = conditions.getRowNumPerPage();
+//		if (rowNumPerPage == 0) {
+//			Integer temp = (Integer) conditions.getConditionValue(
+//					QueryCondition.ROW_NUM_PER_PAGE);
+//			rowNumPerPage = null == temp ? Integer.MAX_VALUE : temp;
+//		}
+//		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
+//		List<Object> objectList = new ArrayList<>();
+//		IndexSearcher indexSearcher = obtainIndexSearcher();
+//		try {
+//			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
+//			topN = null == topDocs ? 0 :topDocs.totalHits;
+//			if (currentPageNum > 1) {
+//				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
+//				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+//				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
+//				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
+//						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
+//			}
+//			if (null != topDocs && null != topDocs.scoreDocs) {
+//				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+//					Document document = indexSearcher.doc(scoreDoc.doc);
+//					LOG.debug("document: " + document);
+//					Object object = document2Object(document, clazz);
+//					if (null == analyzer) {
+//						highLighterFast(indexSearcher, lucene_query, scoreDoc.doc, object, highLighterFields);
+//					} else {
+//						highLighter(analyzer, lucene_query, document, object, highLighterFields);
+//					}
+//					objectList.add(object);
+//				}
+//			}
+//		} catch (Exception e) {
+//			LOG.debug(e.getMessage(), e);
+//		} finally {
+//			releaseIndexSearcher(indexSearcher);
+//		}
+//		return new QueryResult<>(topN, objectList);
+//	}
 	
 	protected Document object2Document(Object object) {
 		Document document = new Document();
@@ -244,6 +290,37 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		return object;
 	}
 	
+	protected Query obtainQuery(QueryCondition condition) {
+		String[] queryFields = condition.getQueryFields();
+		if (null == queryFields) {
+			Field[] fields = ReflectUtils.getFields(condition.getEntityClass());
+			queryFields = new String[fields.length];
+			for (int i = 0, length = fields.length; i < length; i++) {
+				Field field = fields[i];
+				field.setAccessible(true);
+				Class<?> type = field.getType();
+				if (Collection.class.isAssignableFrom(type)) continue;
+				queryFields[i] = field.getName();
+				field.setAccessible(false);
+			}
+		}
+		String queryTag = condition.getQueryTag();
+		if (null == queryTag) throw new RuntimeException("没有查询标识");
+		BooleanQuery orQuery = new BooleanQuery();
+		String[] words = WordUtils.splitBySeg(condition.getKeyword());
+		for (int i = 0, wLen = words.length; i < wLen; i++) {
+			for (int j = 0, fLen = queryFields.length; j < fLen; j++) {
+				String wildcardWord = "*" + words[i] + "*";
+				orQuery.add(new WildcardQuery(new Term(queryFields[j], wildcardWord)), 
+						BooleanClause.Occur.SHOULD);
+			}
+		}
+		BooleanQuery andQuery = new BooleanQuery();
+		andQuery.add(new TermQuery(new Term("search", queryTag)), BooleanClause.Occur.MUST);
+		andQuery.add(orQuery, BooleanClause.Occur.MUST);
+		return andQuery;
+	}
+	
 	protected Query obtainQuery(Class<?> clazz, String keyword) {
 		List<String> fields = new ArrayList<String>();
 		for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
@@ -266,13 +343,15 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		return query;
 	}
 	
-	protected Query obtainBooleanQuery(Class<?> clazz, String keyword) {
-		
-		
-		return null;
+	public Sort obtainSort(QueryCondition condition) {
+		if (null != condition.getSort()) return condition.getSort();
+		SortField[] sortFields = new SortField[]{new SortField(null, SortField.Type.SCORE, true),
+				new SortField("createTime", SortField.Type.LONG, true)};
+		return new Sort(sortFields);
 	}
 	
-	protected TopDocs readData(IndexSearcher indexSearcher, Query query, Filter filter, int topN, Sort sort) throws IOException {
+	protected TopDocs readDataList(IndexSearcher indexSearcher, Query query, 
+			Filter filter, int topN, Sort sort) throws IOException {
 		TopDocs topDocs = null;
 		if (null == filter && null == sort) {
 			topDocs = indexSearcher.search(query, topN);

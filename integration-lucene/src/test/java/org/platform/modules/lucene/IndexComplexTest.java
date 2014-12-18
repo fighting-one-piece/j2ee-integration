@@ -19,19 +19,13 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.SortField.Type;
-import org.apache.lucene.search.WildcardQuery;
 import org.junit.Before;
 import org.junit.Test;
-import org.platform.entity.QueryResult;
 import org.platform.entity.User;
 import org.platform.modules.lucene.biz.IIndexBusiness;
 import org.platform.modules.lucene.biz.impl.ComplexIndexBusinessImpl;
 import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
 import org.platform.modules.lucene.biz.impl.RAMIndexBusinessImpl;
-import org.platform.modules.lucene.entity.QueryCondition;
 import org.platform.utils.random.RandomUtils;
 
 public class IndexComplexTest {
@@ -71,6 +65,7 @@ public class IndexComplexTest {
 		fsIndexManager.insert(userList.toArray(new Object[0]));
 		fsIndexManager.commit();
 		System.out.println("insert fs index end");
+		ramIndexManager.insert(userList.toArray(new Object[0]));
 	}
 	
 	public void insertRAMIndex(String keyword) {
@@ -108,57 +103,54 @@ public class IndexComplexTest {
 		System.out.println("delete index end");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void readFSByCondition(String keyword) {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
-		System.out.println("fs query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		QueryResult<User> qr = (QueryResult<User>) fsIndexManager.readDataListByCondition(conditions);
+//		System.out.println("fs query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void readRAMByCondition(String keyword) {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
-		System.out.println("ram query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		QueryResult<User> qr = (QueryResult<User>) ramIndexManager.readDataListByCondition(conditions);
+//		System.out.println("ram query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void readCommonByCondition(String keyword) {
-		QueryCondition conditions = new QueryCondition();
-		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
-		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
-		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
-		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
-		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
-		//condition.addCondition(QueryCondition.LUCENE_ANALYZER, IndexController.getInstance().obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
-		Sort sort = new Sort(new SortField("name", Type.STRING));
-		conditions.addCondition(QueryCondition.SORT, sort);
-		conditions.addCondition(QueryCondition.HIGHLIGHTER_FIELDS, new String[]{"id", "name"});
-		QueryResult<User> qr = (QueryResult<User>) complexIndexManager.readDataListByCondition(conditions);
-		System.out.println("common query total row number: " + qr.getTotalRowNum());
-		for (User u : qr.getResultList()) {
-			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
-		}
+//		QueryCondition conditions = new QueryCondition();
+//		conditions.addCondition(QueryCondition.CURRENT_PAGE_NUM, 0);
+//		conditions.addCondition(QueryCondition.ROW_NUM_PER_PAGE, 10);
+//		conditions.addCondition(QueryCondition.ENTITY_CLASS, User.class);
+//		//condition.addCondition(QueryCondition.LUCENE_KEYWORD, "google");
+//		conditions.addCondition(QueryCondition.QUERY, new WildcardQuery(new Term("name", keyword + "*")));
+//		//condition.addCondition(QueryCondition.LUCENE_ANALYZER, IndexController.getInstance().obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD));
+//		Sort sort = new Sort(new SortField("name", Type.STRING));
+//		conditions.addCondition(QueryCondition.SORT, sort);
+//		conditions.addCondition(QueryCondition.HIGHLIGHTER_FIELDS, new String[]{"id", "name"});
+//		QueryResult<User> qr = (QueryResult<User>) complexIndexManager.readDataListByCondition(conditions);
+//		System.out.println("common query total row number: " + qr.getTotalRowNum());
+//		for (User u : qr.getResultList()) {
+//			System.out.println(u.getId() + ":" + u.getName() + ":" + u.getExpireTime());
+//		}
 	}
 	
 	@Test
@@ -236,7 +228,6 @@ public class IndexComplexTest {
 		System.out.println("finish");
 	}
 	
-	//3涓嚎绋嬪幓鍋氬垱寤虹储寮?11涓嚎绋嬪幓鍋氭煡璇㈢储寮?1涓嚎绋嬪幓鍋氭洿鏂?
 	@Test
 	public void testMultiThreadIndex() {
 		Queue<Future<?>> queue = new ArrayBlockingQueue<Future<?>>(15);
