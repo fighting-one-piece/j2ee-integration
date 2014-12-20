@@ -18,7 +18,7 @@ import org.apache.lucene.store.FSDirectory;
 /** 文件索引*/
 public class FSIndex implements IIndex {
 	
-	private Logger logger = Logger.getLogger(FSIndex.class);
+	private Logger LOG = Logger.getLogger(FSIndex.class);
 
 	private IndexWriter indexWriter = null;
 	
@@ -31,7 +31,6 @@ public class FSIndex implements IIndex {
 	private String indexPath = "D:\\develop\\java\\lucene\\indexes";
 	
 	public FSIndex() {
-		
 	}
 	
 	public FSIndex(String indexPath) {
@@ -39,6 +38,11 @@ public class FSIndex implements IIndex {
 	}
 	
 	public FSIndex(boolean isNearRealTime) {
+		this.isNearRealTime = isNearRealTime;
+	}
+	
+	public FSIndex(String indexPath, boolean isNearRealTime) {
+		this.indexPath = indexPath;
 		this.isNearRealTime = isNearRealTime;
 	}
 
@@ -59,7 +63,7 @@ public class FSIndex implements IIndex {
 				}
 			}
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return indexWriter;
 	}
@@ -85,7 +89,7 @@ public class FSIndex implements IIndex {
 			}
 			return referenceManager.acquire();
 		} catch (Exception e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -95,7 +99,7 @@ public class FSIndex implements IIndex {
 		try {
 			indexWriter.close();
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -104,7 +108,7 @@ public class FSIndex implements IIndex {
 		try {
 			referenceManager.release(indexSearcher);
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 

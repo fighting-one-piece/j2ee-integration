@@ -15,7 +15,7 @@ import org.apache.lucene.store.RAMDirectory;
 /** 内存索引*/
 public class RAMIndex implements IIndex {
 	
-	private Logger logger = Logger.getLogger(RAMIndex.class);
+	private Logger LOG = Logger.getLogger(RAMIndex.class);
 	
 	private IndexWriter indexWriter = null;
 	
@@ -38,7 +38,7 @@ public class RAMIndex implements IIndex {
 				}
 			}
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return indexWriter;
 	}
@@ -55,7 +55,7 @@ public class RAMIndex implements IIndex {
 			referenceManager = new SearcherManager(indexWriter, true, searcherFactory);
 			return referenceManager.acquire();
 		} catch (Exception e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -65,7 +65,7 @@ public class RAMIndex implements IIndex {
 		try {
 			indexWriter.close();
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class RAMIndex implements IIndex {
 		try {
 			referenceManager.release(indexSearcher);
 		} catch (IOException e) {
-			logger.debug(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 }
