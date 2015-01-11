@@ -29,7 +29,7 @@
 	</settings>
 	
 	<plugins>  
-    	<plugin interceptor="org.platform.utils.pagination.PaginationInterceptor"/>  
+    	<plugin interceptor="org.platform.modules.abstr.dao.mybatis.interceptor.PaginationInterceptor"/>  
 	</plugins> 
 	
 	<!-- 全局别名设置，在映射文件中只需写别名，而不必写出整个类路径  -->

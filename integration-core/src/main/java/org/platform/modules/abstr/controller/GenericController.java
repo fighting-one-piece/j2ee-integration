@@ -75,8 +75,7 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
     }
     
     /**
-     * 当前模块 视图的前缀
-     * 默认
+     * 当前模块 视图的前缀 默认
      * 1、获取当前类头上的@RequestMapping中的value作为前缀
      * 2、如果没有就使用当前模型小写的简单类名
      */
@@ -143,8 +142,8 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
 		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
 		query.setPagination(true);
-		QueryResult<Entity> qr = (QueryResult<Entity>) 
-				obtainBusinessInstance().readDataPaginationByCondition(query, false);
+		QueryResult<Entity> qr = (QueryResult<Entity>) obtainBusinessInstance()
+				.readDataPaginationByCondition(query, false);
 		model.addAttribute("currentPageNum", currentPageNum);
 		model.addAttribute("rowNumPerPage", rowNumPerPage);
 		model.addAttribute("totalRowNum", qr.getTotalRowNum());
@@ -160,8 +159,8 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
 		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
 		query.setPagination(true);
-		QueryResult<Entity> qr = (QueryResult<Entity>) 
-				obtainBusinessInstance().readDataListByCondition(query, false);
+		QueryResult<Entity> qr = (QueryResult<Entity>) obtainBusinessInstance()
+				.readDataListByCondition(query, false);
 		return qr.getResultList();
 	}
 	
