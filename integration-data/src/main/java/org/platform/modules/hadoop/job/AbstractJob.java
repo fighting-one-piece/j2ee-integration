@@ -196,9 +196,9 @@ public abstract class AbstractJob extends Configured implements Tool {
 
 	public void printTimeStamp(long begin, long end) {
 		LOG.info(new StringBuilder().append("Started at: ")
-				.append(DateUtils.getTime(begin,DateFormat.timeFormat.get()))
+				.append(DateUtils.getTime(begin,DateFormat.TIME.get()))
 				.append("\tFinished at: ")
-				.append(DateUtils.getTime(end,DateFormat.timeFormat.get()))
+				.append(DateUtils.getTime(end,DateFormat.TIME.get()))
 				.append("\tFinished in: ").append((end - begin) / 1000L)
 				.append("sec").toString());
 	}
