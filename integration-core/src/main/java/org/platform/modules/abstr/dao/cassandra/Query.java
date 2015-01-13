@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.platform.modules.abstr.dao.cassandra.thingdb.ThingUtils;
-
+import org.platform.modules.abstr.common.ThingUtils;
 
 /** 查询条件*/
 public class Query implements Serializable {

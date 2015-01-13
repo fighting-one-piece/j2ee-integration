@@ -118,7 +118,7 @@ public class ReflectUtils {
 			finalValue = Double.parseDouble(String.valueOf(value));
 		} else if (Date.class.isAssignableFrom(type)) {
 			try {
-				finalValue = DateFormat.timeFormat.get().parse(String.valueOf(value));
+				finalValue = DateFormat.TIME.get().parse(String.valueOf(value));
 			} catch (ParseException e) {
 				LOG.error(e.getMessage(), e);
 			}
@@ -222,7 +222,7 @@ public class ReflectUtils {
 				String finalValue = String.valueOf(value);
 				Class<?> type = field.getType();
 				if (Date.class.isAssignableFrom(type)) {
-					finalValue = DateFormat.timeFormat.get().format(value);
+					finalValue = DateFormat.TIME.get().format(value);
 				} 
 				map.put(name, finalValue);
 			}

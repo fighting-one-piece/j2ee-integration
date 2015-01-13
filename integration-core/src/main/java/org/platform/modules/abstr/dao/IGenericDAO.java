@@ -22,6 +22,20 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	 *
 	 */
 	public void insert(Entity entity) throws DataAccessException;
+	
+	/**
+	 *
+	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
+	  *<p>方法名：insert</p>
+	  *<p>描述：新增实体对象集合</p>
+	  *<p>参数：@param entities 实体集合
+	  *<p>参数：@throws DataAccessException 异常</p>
+	  *<p>返回类型：void</p>
+	  *<p>创建时间：2013-4-8 下午11:00:28</p>
+	  *<p>作者: wulin </p>
+	 *
+	 */
+	public void insert(List<Entity> entities) throws DataAccessException;
 
 	/**
 	 *
@@ -36,6 +50,20 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	 *
 	 */
 	public void update(Entity entity) throws DataAccessException;
+	
+	/**
+	 *
+	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
+	  *<p>方法名：update</p>
+	  *<p>描述：修改实体对象集合</p>
+	  *<p>参数：@param entities 实体集合
+	  *<p>参数：@throws DataAccessException 异常</p>
+	  *<p>返回类型：void</p>
+	  *<p>创建时间：2013-4-8 下午11:01:03</p>
+	  *<p>作者: wulin </p>
+	 *
+	 */
+	public void update(List<Entity> entities) throws DataAccessException;
 
 	/**
 	 *
@@ -124,6 +152,21 @@ public interface IGenericDAO<Entity extends Serializable, PK extends Serializabl
 	 *
 	 */
 	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException;
+	
+	/**
+	 *
+	  *<p>包名类名：org.platform.modules.abstr.dao.IGenericDAO</p>
+	  *<p>方法名：readCountByCondition</p>
+	  *<p>描述：读取实体行数</p>
+	  *<p>参数：@param query 条件
+	  *<p>参数：@return 行数
+	  *<p>参数：@throws DataAccessException 异常</p>
+	  *<p>返回类型：QueryResult<Entity></p>
+	  *<p>创建时间：2013-4-8 下午11:23:57</p>
+	  *<p>作者: wulin </p>
+	 *
+	 */
+	public Long readCountByCondition(Query query) throws DataAccessException;
 
 	/**
 	 *

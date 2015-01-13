@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.platform.modules.abstr.dao.cassandra.Query;
 import org.platform.modules.abstr.dao.cassandra.QueryResult;
-import org.platform.modules.abstr.dao.cassandra.thingdb.Thing;
-import org.platform.modules.abstr.dao.cassandra.thingdb.ThingData;
+import org.platform.modules.abstr.entity.Thing;
+import org.platform.modules.abstr.entity.ThingData;
 
 public interface IGenericCassandraDAO<Entity, ID> {
 

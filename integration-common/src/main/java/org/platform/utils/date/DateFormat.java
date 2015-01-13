@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum DateFormat {
-	timeFormat("yyyyMMdd HH:mm:ss"), 
-	dateFormat("yyyyMMdd"), 
-	monthFormat("yyyyMM");
+	
+	TIME("yyyyMMdd HH:mm:ss"), 
+	DATE("yyyyMMdd"), 
+	MONTH("yyyyMM");
 
 	private String formatStr;
 	private static Map<String, ThreadLocal<java.text.SimpleDateFormat>> sdfMap = new HashMap<String, ThreadLocal<java.text.SimpleDateFormat>>();

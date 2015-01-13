@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mysql.org.platform.modules.abstr.entity.ThingData">
+
+	<resultMap type="ThingData" id="thingDataResultMap">  
+        <id property="thingId" column="THING_ID"/>  
+        <result property="attribute" column="ATTRIBUTE"/>
+        <result property="value" column="VALUE"/>  
+        <result property="kind" column="KIND"/> 
+    </resultMap>
+    
+    <sql id="columnClause">THING_ID, ATTRIBUTE, VALUE, KIND</sql>
+    
+    <sql id="whereClause">
+    	<where>
+    		<if test="thingId != null">
+    			THING_ID = #{thingId}
+    		</if>
+    		<if test="attribute != null and attribute != ''">
+    			AND ATTRIBUTE = #{attribute}
+    		</if>
+    		<if test="value != null and value != ''">
+    			AND VALUE = #{value}
+    		</if>
+    		<if test="valueGT != null and valueGT != ''">
+    			AND VALUE &gt; #{valueGT}  + 0
+    		</if>
+    		<if test="valueGE != null and valueGE != ''">
+    			AND VALUE &gt;= #{valueGE}  + 0
+    		</if>
+    		<if test="valueLT != null and valueLT != ''">
+    			AND VALUE &lt; #{valueLT} + 0
+    		</if>
+    		<if test="valueLE != null and valueLE != ''">
+    			AND VALUE &lt;= #{valueLE} + 0
+    		</if>
+    		<if test="valueLike != null and valueLike != ''">
+    			AND VALUE like "%"#{valueLike}"%"
+    		</if>
+    		<if test="kind != null and kind != ''">
+    			AND KIND = #{kind}
+    		</if>
+    	</where>
+    </sql>
+    
+    <insert id="insert" parameterType="ThingData">
+    	INSERT INTO ${table} (THING_ID, ATTRIBUTE, VALUE, KIND) 
+        VALUES(#{thingId},#{attribute},#{value},#{kind})  
+    </insert>
+    
+    <update id="update" parameterType="ThingData">
+    	UPDATE ${table}
+    	<set>
+    		<if test="value != null and value != ''">
+    			VALUE = #{value},
+    		</if>
+    		<if test="kind != null and kind != ''">
+    			KIND = #{kind}
+    		</if>
+    	</set>
+    	WHERE THING_ID = #{thingId} AND ATTRIBUTE = #{attribute}
+    </update>
+    
+    <delete id="delete" parameterType="ThingData">
+    	DELETE FROM ${table} WHERE THING_ID = #{thingId}
+    </delete>
+    
+    <select id="readDataByCondition" parameterType="map" resultType="ThingData" resultMap="thingDataResultMap">  
+        SELECT 
+        <include refid="columnClause"/>
+        FROM ${table} 
+        <include refid="whereClause"/>
+    </select>
+    
+    <select id="readDataListByCondition" parameterType="map" resultType="ThingData" resultMap="thingDataResultMap">  
+        SELECT 
+        <include refid="columnClause"/>
+        FROM ${table} 
+        <include refid="whereClause"/>
+    </select>
+    
+    <select id="readDataPaginationByCondition" resultType="ThingData" resultMap="thingDataResultMap">  
+        <![CDATA[ 
+            SELECT * FROM ${table}
+        ]]>   
+    </select>
+    
+    <select id="readCountByCondition" resultType="java.lang.Long">  
+    	SELECT COUNT(1) FROM ${table} 
+        <include refid="whereClause"/>
+    </select>
+    
+</mapper>

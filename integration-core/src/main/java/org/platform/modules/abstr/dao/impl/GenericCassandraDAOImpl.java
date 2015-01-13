@@ -14,13 +14,13 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.platform.modules.abstr.common.ThingUtils;
 import org.platform.modules.abstr.dao.IGenericCassandraDAO;
 import org.platform.modules.abstr.dao.cassandra.CQLBuilder;
 import org.platform.modules.abstr.dao.cassandra.Query;
 import org.platform.modules.abstr.dao.cassandra.QueryResult;
-import org.platform.modules.abstr.dao.cassandra.thingdb.Thing;
-import org.platform.modules.abstr.dao.cassandra.thingdb.ThingData;
-import org.platform.modules.abstr.dao.cassandra.thingdb.ThingUtils;
+import org.platform.modules.abstr.entity.Thing;
+import org.platform.modules.abstr.entity.ThingData;
 import org.springframework.cassandra.core.QueryOptions;
 import org.springframework.cassandra.core.RetryPolicy;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -90,7 +90,7 @@ public class GenericCassandraDAOImpl<Entity, ID> implements IGenericCassandraDAO
 	public void insert(Thing thing) {
 		Insert insert = QueryBuilder.insertInto(thingTable());
 		insert.setConsistencyLevel(ConsistencyLevel.QUORUM);
-		Map<String, Object> map = ThingUtils.convertObjectToMap(thing, true);
+		Map<String, Object> map = ThingUtils.convertObjectToMap(thing);
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			insert.value(entry.getKey(), entry.getValue());
 		}
@@ -101,7 +101,7 @@ public class GenericCassandraDAOImpl<Entity, ID> implements IGenericCassandraDAO
 	public void insert(ThingData thingData) {
 		Insert insert = QueryBuilder.insertInto(dataTable());
 		insert.setConsistencyLevel(ConsistencyLevel.QUORUM);
-		Map<String, Object> map = ThingUtils.convertObjectToMap(thingData, true);
+		Map<String, Object> map = ThingUtils.convertObjectToMap(thingData);
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			insert.value(entry.getKey(), entry.getValue());
 		}
@@ -131,7 +131,7 @@ public class GenericCassandraDAOImpl<Entity, ID> implements IGenericCassandraDAO
 	public void update(Thing thing) {
 		Update update = QueryBuilder.update(thingTable());
 		update.setConsistencyLevel(ConsistencyLevel.QUORUM);
-		Map<String, Object> map = ThingUtils.convertObjectToMap(thing, true);
+		Map<String, Object> map = ThingUtils.convertObjectToMap(thing);
 		String id = (String) map.get("id");
 		map.remove("id");
 		Assignments assignments = update.with();
@@ -151,7 +151,7 @@ public class GenericCassandraDAOImpl<Entity, ID> implements IGenericCassandraDAO
 		assignments.and(QueryBuilder.set("kind", thingData.getKind()));
 		com.datastax.driver.core.querybuilder.Update.Where where = update.where();
 		where.and(QueryBuilder.eq("thing_id", thingData.getThingId()));
-		where.and(QueryBuilder.eq("key", thingData.getKey()));
+		where.and(QueryBuilder.eq("attribute", thingData.getAttribute()));
 		cassandraTemplate.execute(update);
 	}
 	

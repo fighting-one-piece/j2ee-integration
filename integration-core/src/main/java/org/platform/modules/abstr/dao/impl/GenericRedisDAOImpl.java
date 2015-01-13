@@ -52,12 +52,22 @@ public class GenericRedisDAOImpl <Entity extends Serializable, PK extends Serial
 			}
 		});
 	}
+	
+	@Override
+	public void insert(List<Entity> entities) throws DataAccessException {
+		
+	}
 
 	@Override
 	public void update(Entity entity) throws DataAccessException {
 		
 	}
 
+	@Override
+	public void update(List<Entity> entities) throws DataAccessException {
+		
+	}
+	
 	@Override
 	public void delete(final Entity entity) throws DataAccessException {
 		redisTemplate.execute(new RedisCallback<PK>() {
@@ -127,6 +137,11 @@ public class GenericRedisDAOImpl <Entity extends Serializable, PK extends Serial
 	@Override
 	public QueryResult<Entity> readDataPaginationByCondition(Query query)
 			throws DataAccessException {
+		return null;
+	}
+	
+	@Override
+	public Long readCountByCondition(Query query) throws DataAccessException {
 		return null;
 	}
 

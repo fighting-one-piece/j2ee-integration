@@ -1,6 +1,6 @@
 package org.platform.modules.personal.entity;
 
-import org.platform.modules.abstr.dao.cassandra.thingdb.Thing;
+import org.platform.modules.abstr.entity.Thing;
 
 public class Link extends Thing {
 

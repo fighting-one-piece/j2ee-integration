@@ -63,10 +63,20 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 	public void insert(Entity entity) {
 		sqlSessionTemplate.insert(obtainSQLID(SQLID_INSERT), entity);
 	}
+	
+	@Override
+	public void insert(List<Entity> entities) throws DataAccessException {
+		
+	}
 
 	@Override
 	public void update(Entity entity) {
 		sqlSessionTemplate.update(obtainSQLID(SQLID_UPDATE), entity);
+	}
+
+	@Override
+	public void update(List<Entity> entities) throws DataAccessException {
+		
 	}
 	
 	@Override
@@ -110,6 +120,11 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 				obtainSQLID(SQLID_READ_DATA_PAGINATION_BY_CONDITION), map);
 		int totalRowNum = (Integer) map.get(Query.TOTAL_ROW_NUM);
 		return new QueryResult<Entity>(totalRowNum, resultList);
+	}
+	
+	@Override
+	public Long readCountByCondition(Query query) throws DataAccessException {
+		return null;
 	}
 
 	@Override

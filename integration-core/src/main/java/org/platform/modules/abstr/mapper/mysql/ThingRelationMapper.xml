@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mysql.org.platform.modules.abstr.entity.ThingRelation">
+
+	<resultMap type="ThingRelation" id="thingRelationResultMap">  
+        <id property="id" column="ID"/>  
+        <result property="thing1Id" column="THING1_ID"/>
+        <result property="thing2Id" column="THING2_ID"/>  
+        <result property="kind" column="KIND"/> 
+        <result property="deleted" column="DELETED"/> 
+        <result property="spam" column="SPAM"/> 
+        <result property="createTime" column="CREATE_TIME"/> 
+        <result property="info" column="INFO"/> 
+    </resultMap>
+    
+    <sql id="columnClause">ID, THING1_ID, THING2_ID, KIND, DELETED, SPAM, CREATE_TIME, INFO</sql>
+    
+    <sql id="updateWhereClause">
+    	<where>
+    		<if test="id != null">
+    			ID = #{id}
+    		</if>
+    		<if test="thing1Id != null">
+    			AND THING1_ID = #{thing1Id}
+    		</if>
+    		<if test="thing2Id != null">
+    			AND THING2_ID = #{thing2Id}
+    		</if>
+    		<if test="kind != null and kind != ''">
+    			AND KIND = #{kind}
+    		</if>
+    	</where>
+    </sql>
+    
+    <sql id="whereClause">
+    	<where>
+    		<if test="id != null">
+    			ID = #{id}
+    		</if>
+    		<if test="thing1Id != null">
+    			AND THING1_ID = #{thing1Id}
+    		</if>
+    		<if test="thing2Id != null">
+    			AND THING2_ID = #{thing2Id}
+    		</if>
+    		<if test="kind != null and kind != ''">
+    			AND KIND = #{kind}
+    		</if>
+    		<if test="kindGT != null and kindGT != ''">
+    			AND KIND &gt; #{kindGT}
+    		</if>
+    		<if test="kindGE != null and kindGE != ''">
+    			AND KIND &gt;= #{kindGE}
+    		</if>
+    		<if test="kindLT != null and kindLT != ''">
+    			AND KIND &lt; #{kindLT}
+    		</if>
+    		<if test="kindLE != null and kindLE != ''">
+    			AND KIND &lt;= #{kindLE}
+    		</if>
+    		<if test="kindLike != null and kindLike != ''">
+    			AND KIND like "%"#{kindLike}"%"
+    		</if>
+    		<if test="deleted != null">
+    			AND DELETED = #{deleted}
+    		</if>
+    		<if test="spam != null">
+    			AND SPAM = #{spam}
+    		</if>
+    		<if test="createTime != null">
+    			AND CREATE_TIME = #{createTime}
+    		</if>
+    		<if test="createTimeGT != null">
+    			AND CREATE_TIME &gt; #{createTimeGT}
+    		</if>
+    		<if test="createTimeGE != null">
+    			AND CREATE_TIME &gt;= #{createTimeGE}
+    		</if>
+    		<if test="createTimeLT != null">
+    			AND CREATE_TIME &lt; #{createTimeLT}
+    		</if>
+    		<if test="createTimeLE != null">
+    			AND CREATE_TIME &lt;= #{createTimeLE}
+    		</if>
+    		<if test="info != null and info != ''">
+    			AND INFO = #{info}
+    		</if>
+    		<if test="infoLike != null and infoLike != ''">
+    			AND INFO like "%"#{infoLike}"%"
+    		</if>
+    	</where>
+    </sql>
+    
+    <sql id="orderClause">
+    	<if test="orderAttribute != null and orderAttribute != ''">
+    		ORDER BY ${orderAttribute}
+    		<if test="orderType != null and orderType != ''">
+    			${orderType}
+    		</if>
+    	</if>
+    </sql>
+    
+    <insert id="insert" keyProperty="id" parameterType="ThingRelation">
+    	INSERT INTO ${table} (THING1_ID, THING2_ID, KIND, DELETED, SPAM, CREATE_TIME, INFO) 
+        VALUES(#{thing1Id}, #{thing2Id}, #{kind}, #{deleted}, #{spam}, #{createTime}, #{info})  
+    </insert>
+    
+    <update id="update" parameterType="ThingRelation">
+    	UPDATE ${table}
+    	<set>
+    		<if test="kind != null and kind != ''">
+    			KIND = #{kind},
+    		</if>
+    		<if test="deleted != null">
+    			DELETED = #{deleted},
+    		</if>
+    		<if test="spam != null">
+    			SPAM = #{spam},
+    		</if>
+    		<if test="createTime != null">
+    			CREATE_TIME = #{createTime},
+    		</if>
+    		<if test="info != null and info != ''">
+    			INFO = #{info}
+    		</if>
+    	</set>
+    	<include refid="updateWhereClause"/>
+    </update>
+    
+    <update id="updateDeleted" parameterType="map">
+    	UPDATE ${table} SET DELETED = #{deleted} WHERE ID = #{id}
+    </update>
+    
+    <update id="updateSpam" parameterType="map">
+    	UPDATE ${table} SET SPAM = #{spam} WHERE ID = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="ThingRelation">
+    	DELETE FROM ${table} WHERE ID = #{id}
+    </delete>
+    
+    <select id="readDataByPK" parameterType="map" resultType="ThingRelation" resultMap="thingRelationResultMap">
+	    SELECT 
+	    <include refid="columnClause"/>
+	    FROM ${table} WHERE ID = #{id}
+    </select>
+    
+    <select id="readDataByCondition" parameterType="map" resultType="ThingRelation" resultMap="thingRelationResultMap">
+	    SELECT 
+	    <include refid="columnClause"/>
+	    FROM ${table} 
+	    <include refid="whereClause"/>
+    </select>
+    
+    <select id="readDataListByCondition" parameterType="map" resultType="ThingRelation" resultMap="thingRelationResultMap">  
+        SELECT 
+        <include refid="columnClause"/>
+        FROM ${table} 
+        <include refid="whereClause"/>
+        <include refid="orderClause"/>
+    </select>
+    
+    <select id="readDataPaginationByCondition" resultType="ThingRelation" resultMap="thingRelationResultMap">  
+        SELECT 
+        <include refid="columnClause"/>
+        FROM ${table} 
+        <include refid="whereClause"/>
+        <include refid="orderClause"/>   
+    </select>
+    
+    <select id="readCountByCondition" resultType="java.lang.Long">  
+    	SELECT COUNT(1) FROM ${table} 
+        <include refid="whereClause"/>
+    </select>
+    
+</mapper>

@@ -49,20 +49,20 @@ public class DateUtils {
 	}
 
 	public static String getToday() {
-		return DateFormat.dateFormat.get().format(new Date());
+		return DateFormat.DATE.get().format(new Date());
 	}
 
 	public static String getYesterday() {
 		java.util.Calendar calendar = GregorianCalendar.getInstance();
 		calendar.add(5, -1);
-		return DateFormat.dateFormat.get().format(calendar.getTime());
+		return DateFormat.DATE.get().format(calendar.getTime());
 	}
 
 	public static boolean runMonthlyJob(String date) {
 		java.util.Calendar today = java.util.Calendar.getInstance();
 		if ((null != date) && (!"".equals(date))) {
 			try {
-				today.setTime(DateFormat.dateFormat.get().parse(date));
+				today.setTime(DateFormat.DATE.get().parse(date));
 				today.add(5, 1);
 			} catch (ParseException e) {
 				return false;
@@ -76,7 +76,7 @@ public class DateUtils {
 		java.util.Calendar today = java.util.Calendar.getInstance();
 		if ((null != date) && (!"".equals(date))) {
 			try {
-				today.setTime(DateFormat.dateFormat.get().parse(date));
+				today.setTime(DateFormat.DATE.get().parse(date));
 				today.add(5, 1);
 			} catch (ParseException e) {
 				return false;
@@ -90,7 +90,7 @@ public class DateUtils {
 	public static List<String> getLatestDateList(String date, int n)
 			throws ParseException {
 		List<String> resultList = new ArrayList<String>();
-		Date toDate = DateFormat.dateFormat.get().parse(date);
+		Date toDate = DateFormat.DATE.get().parse(date);
 		java.util.Calendar toGc = GregorianCalendar.getInstance();
 		toGc.setTime(toDate);
 		java.util.Calendar gc = GregorianCalendar.getInstance();
@@ -102,33 +102,33 @@ public class DateUtils {
 				break;
 			gc.add(5, -1);
 			Date temp = gc.getTime();
-			resultList.add(DateFormat.dateFormat.get().format(temp));
+			resultList.add(DateFormat.DATE.get().format(temp));
 		}
 		return resultList;
 	}
 
 	public static String getTheDayBefore(String date, int n)
 			throws ParseException {
-		Date inDate = DateFormat.dateFormat.get().parse(date);
+		Date inDate = DateFormat.DATE.get().parse(date);
 		java.util.Calendar calendar = GregorianCalendar.getInstance();
 		calendar.setTime(inDate);
 		calendar.add(5, -n);
-		return DateFormat.dateFormat.get().format(calendar.getTime());
+		return DateFormat.DATE.get().format(calendar.getTime());
 	}
 
 	public static List<String> getDateList(String from, String to)
 			throws ParseException {
 		List<String> resultList = new ArrayList<String>();
 		System.out.println("from=" + from + "\nto=" + to);
-		Date fromDate = DateFormat.dateFormat.get().parse(from);
-		Date toDate = DateFormat.dateFormat.get().parse(to);
+		Date fromDate = DateFormat.DATE.get().parse(from);
+		Date toDate = DateFormat.DATE.get().parse(to);
 		java.util.Calendar gc = GregorianCalendar.getInstance();
 		gc.setTime(toDate);
 		java.util.Calendar fromGc = GregorianCalendar.getInstance();
 		fromGc.setTime(fromDate);
 		while ((gc.after(fromGc)) || (gc.equals(fromGc))) {
 			Date temp = gc.getTime();
-			resultList.add(DateFormat.dateFormat.get().format(temp));
+			resultList.add(DateFormat.DATE.get().format(temp));
 			gc.add(5, -1);
 		}
 		return resultList;
@@ -136,7 +136,7 @@ public class DateUtils {
 
 	public static List<String> getMonthDateList(String date)
 			throws ParseException {
-		Date dateTemp = DateFormat.dateFormat.get().parse(date);
+		Date dateTemp = DateFormat.DATE.get().parse(date);
 		java.util.Calendar from = GregorianCalendar.getInstance();
 		from.setTime(dateTemp);
 		from.set(5, 1);
@@ -147,16 +147,16 @@ public class DateUtils {
 		to.set(5, lastDay);
 
 		return getDateList(
-				DateFormat.dateFormat.get().format(from.getTime()),
-				DateFormat.dateFormat.get().format(to.getTime()));
+				DateFormat.DATE.get().format(from.getTime()),
+				DateFormat.DATE.get().format(to.getTime()));
 	}
 
 	public static List<String> getQuarterDateList(String date)
 			throws ParseException {
 		java.util.Calendar from = GregorianCalendar.getInstance();
-		from.setTime(DateFormat.dateFormat.get().parse(date));
+		from.setTime(DateFormat.DATE.get().parse(date));
 		java.util.Calendar to = GregorianCalendar.getInstance();
-		to.setTime(DateFormat.dateFormat.get().parse(date));
+		to.setTime(DateFormat.DATE.get().parse(date));
 
 		int month = from.get(2);
 		int quarter = month / 3;
@@ -168,12 +168,12 @@ public class DateUtils {
 		to.set(5, lastDay);
 
 		return getDateList(
-				DateFormat.dateFormat.get().format(from.getTime()),
-				DateFormat.dateFormat.get().format(to.getTime()));
+				DateFormat.DATE.get().format(from.getTime()),
+				DateFormat.DATE.get().format(to.getTime()));
 	}
 
 	public static long getMonthBeginTime(String date) throws ParseException {
-		Date dateTemp = DateFormat.dateFormat.get().parse(date);
+		Date dateTemp = DateFormat.DATE.get().parse(date);
 
 		java.util.Calendar c = GregorianCalendar.getInstance();
 		c.setTime(dateTemp);
@@ -187,7 +187,7 @@ public class DateUtils {
 	}
 
 	public static long getMonthEndTime(String date) throws ParseException {
-		Date dateTemp = DateFormat.dateFormat.get().parse(date);
+		Date dateTemp = DateFormat.DATE.get().parse(date);
 
 		java.util.Calendar c = GregorianCalendar.getInstance();
 		c.setTime(dateTemp);
@@ -203,7 +203,7 @@ public class DateUtils {
 
 	public static long getQuarterBeginTime(String date) throws ParseException {
 		java.util.Calendar c = GregorianCalendar.getInstance();
-		c.setTime(DateFormat.dateFormat.get().parse(date));
+		c.setTime(DateFormat.DATE.get().parse(date));
 
 		int month = c.get(2);
 		int quarter = month / 3;
@@ -220,7 +220,7 @@ public class DateUtils {
 
 	public static long getQuarterEndTime(String date) throws ParseException {
 		java.util.Calendar c = GregorianCalendar.getInstance();
-		c.setTime(DateFormat.dateFormat.get().parse(date));
+		c.setTime(DateFormat.DATE.get().parse(date));
 
 		int month = c.get(2);
 		int quarter = month / 3;
@@ -370,7 +370,7 @@ public class DateUtils {
 
 	public static long getDayStartTime(String date) {
 		try {
-			Date dateTemp = DateFormat.dateFormat.get().parse(date);
+			Date dateTemp = DateFormat.DATE.get().parse(date);
 
 			java.util.Calendar c = GregorianCalendar.getInstance();
 			c.setTime(dateTemp);
@@ -386,7 +386,7 @@ public class DateUtils {
 
 	public static long getDayEndTime(String date) {
 		try {
-			Date dateTemp = DateFormat.dateFormat.get().parse(date);
+			Date dateTemp = DateFormat.DATE.get().parse(date);
 
 			java.util.Calendar c = GregorianCalendar.getInstance();
 			c.setTime(dateTemp);

@@ -12,7 +12,6 @@ import org.platform.modules.abstr.dao.IGenericDAO;
 import org.platform.utils.exception.DataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
-
 import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 
@@ -38,12 +37,22 @@ public class GenericMongoDAOImpl <Entity extends Serializable, PK extends Serial
 	public void insert(Entity entity) throws DataAccessException {
 		mongoTemplate.insert(entity);
 	}
+	
+	@Override
+	public void insert(List<Entity> entities) throws DataAccessException {
+		
+	}
 
 	@Override
 	public void update(Entity entity) throws DataAccessException {
 		//mongoTemplate.upsert(query, update, entityClass);
 	}
 
+	@Override
+	public void update(List<Entity> entities) throws DataAccessException {
+		
+	}
+	
 	@Override
 	public void delete(Entity entity) throws DataAccessException {
 		
@@ -76,6 +85,11 @@ public class GenericMongoDAOImpl <Entity extends Serializable, PK extends Serial
 			throws DataAccessException {
 		List<Entity> resultList = mongoTemplate.findAll(entityClass);
 		return new QueryResult<>(resultList.size(), resultList);
+	}
+	
+	@Override
+	public Long readCountByCondition(Query query) throws DataAccessException {
+		return null;
 	}
 
 	@Override

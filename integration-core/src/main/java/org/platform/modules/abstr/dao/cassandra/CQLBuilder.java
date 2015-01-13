@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.platform.modules.abstr.dao.cassandra.thingdb.ThingUtils;
+import org.platform.modules.abstr.common.ThingUtils;
 
 public class CQLBuilder {
 	

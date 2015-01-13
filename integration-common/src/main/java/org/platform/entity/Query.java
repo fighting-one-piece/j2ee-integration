@@ -25,6 +25,15 @@ public class Query implements Serializable {
 	public static final String OFFSET = "offset";
 	/** 限制数量*/
 	public static final String LIMIT = "limit";
+	/** 表名*/
+	public static final String TABLE = "table";
+	/** Thing表名*/
+	public static final String T_TABLE = "thingTable";
+	/** Data表名*/
+	public static final String D_TABLE = "dataTable";
+	/** 关键词*/
+	public static final String[] KEYS = new String[]{IS_PAGINATION, OFFSET, LIMIT,
+		TABLE, CURRENT_PAGE_NUM, ROW_NUM_PER_PAGE, TOTAL_ROW_NUM};
 	
 	/** 是否分页*/
 	private boolean isPagination = false;
@@ -36,10 +45,14 @@ public class Query implements Serializable {
 	private String orderProperty = null;
 	/** 排序类型*/
 	private int orderType = ORDER_ASC;
-	/** 查询条件Map*/
+	/** Hibernate查询条件Map*/
 	private Map<String, QueryItem> hibernateCondition = new HashMap<String, QueryItem>();
-	/** 查询条件Map*/
+	/** MyBatis查询条件Map*/
 	private Map<String, Object> mybatisCondition = new HashMap<String, Object>();
+	/** 基本属性查询条件Map*/
+	private Map<String, Object> basicAttributes = new HashMap<String, Object>();
+	/** 数据属性查询条件Map*/
+	private Map<String, Object> dataAttributes = new HashMap<String, Object>();
 	
 	public Query() {
 		mybatisCondition.put(IS_PAGINATION, isPagination);
@@ -89,6 +102,10 @@ public class Query implements Serializable {
 	
 	public String getOrderCondition() {
 		return orderProperty;
+	}
+	
+	public String getDataOrderAttribute() {
+		return null;
 	}
 
 	public int getOrderType() {
@@ -145,5 +162,23 @@ public class Query implements Serializable {
 	public void setMybatisCondition(Map<String, Object> mybatisCondition) {
 		this.mybatisCondition = mybatisCondition;
 	}
+	
+	public Map<String, Object> getBasicAttributes() {
+		return basicAttributes;
+	}
+
+	public void setBasicAttributes(Map<String, Object> basicAttributes) {
+		this.basicAttributes = basicAttributes;
+	}
+
+	public Map<String, Object> getDataAttributes() {
+		return dataAttributes;
+	}
+
+	public void setDataAttributes(Map<String, Object> dataAttributes) {
+		this.dataAttributes = dataAttributes;
+	}
+	
+	
 
 }

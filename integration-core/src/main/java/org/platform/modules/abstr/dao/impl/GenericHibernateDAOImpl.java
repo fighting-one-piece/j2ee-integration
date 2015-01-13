@@ -54,11 +54,20 @@ public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Ser
 		Session session = sessionFactory.getCurrentSession();
 		session.save(entity);
 	}
+	
+	public void insert(java.util.List<Entity> entities) throws DataAccessException {
+		
+	};
 
 	@Override
 	public void update(Entity entity) throws DataAccessException {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(entity);
+	}
+	
+	@Override
+	public void update(List<Entity> entities) throws DataAccessException {
+		
 	}
 
 	@Override
@@ -119,6 +128,11 @@ public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Ser
 		List<Entity> resultList = criteria.setFirstResult(firstRowNum)
 				.setMaxResults(query.getRowNumPerPage()).list();
 		return new QueryResult<Entity>(totalRowNum, resultList);
+	}
+	
+	@Override
+	public Long readCountByCondition(Query query) throws DataAccessException {
+		return null;
 	}
 
 	@Override
