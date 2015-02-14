@@ -34,7 +34,7 @@ public class HiveUtils extends AbstrUtils {
 			protocol = new TBinaryProtocol(transport);
 			transport.open();
 		}catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class HiveUtils extends AbstrUtils {
 		try {
 			connection = connectionPool.getConnection();
 		} catch (SQLException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return connection;
 	}
@@ -66,7 +66,7 @@ public class HiveUtils extends AbstrUtils {
 			}
 			pstmt.executeQuery();
 		} catch (SQLException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		} finally {
 			release(conn, pstmt, null);
 		}
@@ -76,7 +76,7 @@ public class HiveUtils extends AbstrUtils {
 		try {
 			obtainHiveClient().execute(sql);
 		} catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		} 
 	}
 	
@@ -92,7 +92,7 @@ public class HiveUtils extends AbstrUtils {
 			if (null != st) st.close();
 			if (null != conn) conn.close();
 		}catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class HiveUtils extends AbstrUtils {
 		try{
 			if (null != conn) connectionPool.returnConnection(conn);
 		}catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 

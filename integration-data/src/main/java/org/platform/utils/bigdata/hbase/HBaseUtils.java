@@ -43,7 +43,7 @@ public class HBaseUtils extends AbstrUtils {
 //			tablePool = new HTablePool(configuration, 10);
 //			tablePool.close();
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 	
@@ -51,17 +51,17 @@ public class HBaseUtils extends AbstrUtils {
 	public static void creatTable(String tableName, String[] familys) {
 		try {
 			if (admin.tableExists(tableName)) {
-				logger.info("table "+ tableName + " already exists!");
+				LOG.info("table "+ tableName + " already exists!");
 			} else {
 				HTableDescriptor tableDesc = new HTableDescriptor(TableName.valueOf(tableName));
 				for (int i = 0; i < familys.length; i++) {
 					tableDesc.addFamily(new HColumnDescriptor(familys[i]));
 				}
 				admin.createTable(tableDesc);
-				logger.info("create table " + tableName + " success.");
+				LOG.info("create table " + tableName + " success.");
 			}
 		} catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		} 
 	}
 	
@@ -74,7 +74,7 @@ public class HBaseUtils extends AbstrUtils {
 			admin.modifyTable(Bytes.toBytes(tableName), htd);
 			admin.enableTable(tableName);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 	
@@ -107,7 +107,7 @@ public class HBaseUtils extends AbstrUtils {
 				rowCount += result.size();
 			}
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return rowCount;
 	}
@@ -117,9 +117,9 @@ public class HBaseUtils extends AbstrUtils {
 		try {
 			admin.disableTable(tableName);
 			admin.deleteTable(tableName);
-			logger.info("delete table " + tableName + " success.");
+			LOG.info("delete table " + tableName + " success.");
 		} catch (Exception e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		} 
 	}
 
@@ -131,9 +131,9 @@ public class HBaseUtils extends AbstrUtils {
 			Put put = new Put(Bytes.toBytes(rowKey));
 			put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
 			table.put(put);
-			logger.info("insert recored " + rowKey + " to table " + tableName + " success.");
+			LOG.info("insert recored " + rowKey + " to table " + tableName + " success.");
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 	
@@ -146,11 +146,11 @@ public class HBaseUtils extends AbstrUtils {
 			table = connection.getTable(tableName);
 			table.put(puts);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 			try {
 				table.flushCommits();
 			} catch (Exception e1) {
-				logger.info(e1.getMessage(), e1);
+				LOG.info(e1.getMessage(), e1);
 			}
 		}
 	}
@@ -169,9 +169,9 @@ public class HBaseUtils extends AbstrUtils {
 			if (list.size() > 0) {
 				table.delete(list);
 			}
-			logger.info("delete recoreds " + rowKeys + " success.");
+			LOG.info("delete recoreds " + rowKeys + " success.");
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 	}
 
@@ -184,7 +184,7 @@ public class HBaseUtils extends AbstrUtils {
 			get.setMaxVersions();
 			return table.get(get);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -224,7 +224,7 @@ public class HBaseUtils extends AbstrUtils {
 			if (null != filter) scan.setFilter(filter);
 			return table.getScanner(scan);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -236,18 +236,18 @@ public class HBaseUtils extends AbstrUtils {
 			HTableInterface table = connection.getTable(tableName);
 			return table.getScanner(scan);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return null;
 	}
 	
 	public static void printRecord(Result result) {
 		for (Cell cell : result.rawCells()) {
-			logger.info("cell row: " + new String(cell.getRowArray()));
-			logger.info("cell family: " + new String(cell.getFamilyArray()));
-			logger.info("cell qualifier: " + new String(cell.getQualifierArray()));
-			logger.info("cell value: " + new String(cell.getValueArray()));
-			logger.info("cell timestamp: " + cell.getTimestamp());
+			LOG.info("cell row: " + new String(cell.getRowArray()));
+			LOG.info("cell family: " + new String(cell.getFamilyArray()));
+			LOG.info("cell qualifier: " + new String(cell.getQualifierArray()));
+			LOG.info("cell value: " + new String(cell.getValueArray()));
+			LOG.info("cell timestamp: " + cell.getTimestamp());
 		}
 		/** 之前版本*/
 		/** 

@@ -1,11 +1,12 @@
 package org.platform.utils.bigdata;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstrUtils {
 	
-	protected static Logger logger = Logger.getLogger(AbstrUtils.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(AbstrUtils.class);
 	
 	protected static Configuration configuration = null;
 	

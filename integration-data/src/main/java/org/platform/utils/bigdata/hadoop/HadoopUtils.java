@@ -17,7 +17,7 @@ public class HadoopUtils extends AbstrUtils {
 		try {
 			fileSystem = FileSystem.get(URI.create(HDFS_DATA_WAREHOUSE), configuration);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return fileSystem;
 	}
@@ -27,7 +27,7 @@ public class HadoopUtils extends AbstrUtils {
 		try {
 			fileSystem = FileSystem.get(URI.create(hdfsPath), configuration);
 		} catch (IOException e) {
-			logger.info(e.getMessage(), e);
+			LOG.info(e.getMessage(), e);
 		}
 		return fileSystem;
 	}
