@@ -1,11 +1,15 @@
 package org.platform.utils.resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ResourceUtils {
 	
-	private ResourceUtils(){}
-
+	private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
+	
 	public static String getWebRootAbsolutePath() {
 		String classpath = ResourceUtils.class.getClassLoader().getResource("").getPath();
+		LOG.info("classpath: {}", classpath);
 		return classpath.indexOf("webapp") == -1 ? classpath :
 			classpath.substring(0, classpath.lastIndexOf("webapp") + 7);
 	}

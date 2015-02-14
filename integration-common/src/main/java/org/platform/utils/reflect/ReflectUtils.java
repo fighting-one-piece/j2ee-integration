@@ -12,12 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.platform.utils.date.DateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReflectUtils {
 	
-	private static Logger LOG = Logger.getLogger(ReflectUtils.class);
+	private static Logger LOG = LoggerFactory.getLogger(ReflectUtils.class);
 
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getParameterizedType(Class<?> clazz, int index) {
@@ -57,7 +58,9 @@ public class ReflectUtils {
 	
 	public static Field getFieldByFieldName(Object object, String fieldName) {
         for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
-        	for (Field field : superClass.getDeclaredFields()) {
+        	Field[] fields = superClass.getDeclaredFields();
+    		for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
     			if (fieldName.equalsIgnoreCase(field.getName())) {
 					return field;
     			}
@@ -129,7 +132,9 @@ public class ReflectUtils {
     public static boolean isExistField(Object object, String fieldName) {
     	try {
     		for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {
-            	for (Field field : superClass.getDeclaredFields()) {
+            	Field[] fields = superClass.getDeclaredFields();
+        		for (int i = 0, len = fields.length; i < len; i++) {
+    				Field field = fields[i];
         			if (fieldName.equals(field.getName())) {
     					return true;
         			}
@@ -176,7 +181,8 @@ public class ReflectUtils {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Field[] fields = getFields(object);
 		try {
-			for (Field field : fields) {
+			for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
 				if (Modifier.isStatic(field.getModifiers())) continue;
 				String name = field.getName();
 				field.setAccessible(true);
@@ -194,11 +200,12 @@ public class ReflectUtils {
     public static void convertObjectMapToObject(Map<String, Object> map, Object object) {
     	Field[] fields = getFields(object);
 		try {
-			for (Field field : fields) {
+			for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
 				if (Modifier.isStatic(field.getModifiers())) continue;
 				String name = field.getName();
 				Object value = map.get(name);
-				if (null == value) continue;
+				if (null == value || !field.getType().equals(value.getClass())) continue;
 				field.setAccessible(true);
 				field.set(object, value);
 				field.setAccessible(false);
@@ -212,7 +219,8 @@ public class ReflectUtils {
 		Map<String, String> map = new HashMap<String, String>();
 		Field[] fields = getFields(object);
 		try {
-			for (Field field : fields) {
+			for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
 				if (Modifier.isStatic(field.getModifiers())) continue;
 				String name = field.getName();
 				field.setAccessible(true);
@@ -235,7 +243,8 @@ public class ReflectUtils {
     public static void convertStringMapToObject(Map<String, String> map, Object object) {
     	Field[] fields = getFields(object);
 		try {
-			for (Field field : fields) {
+			for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
 				if (Modifier.isStatic(field.getModifiers())) continue;
 				String name = field.getName();
 				String valueString = map.get(name);
