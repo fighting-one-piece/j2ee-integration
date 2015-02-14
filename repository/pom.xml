@@ -14,6 +14,7 @@
 		<module>../integration-common</module>
 		<module>../integration-spring</module>
 		<module>../integration-lucene</module>
+		<module>../integration-scheduler</module>
 		<module>../integration-core</module>
 		<module>../integration-web</module>
 	</modules>
@@ -331,33 +332,34 @@
 		<mail.version>1.5.0-b01</mail.version>
 
 		<struts.version>2.3.1.2</struts.version>
-
-		<spring.tx.version>3.1.2.RELEASE</spring.tx.version>
-		<spring.web.version>3.1.2.RELEASE</spring.web.version>
-		<spring.aop.version>3.1.2.RELEASE</spring.aop.version>
+		
+		<!-- 3.1.2.RELEASE -->
+		<spring.tx.version>3.2.11.RELEASE</spring.tx.version>
+		<spring.web.version>3.2.11.RELEASE</spring.web.version>
+		<spring.aop.version>3.2.11.RELEASE</spring.aop.version>
 		<spring.orm.version>3.1.1.RELEASE</spring.orm.version>
 		<spring.oxm.version>3.1.1.RELEASE</spring.oxm.version>
-		<spring.jms.version>3.1.2.RELEASE</spring.jms.version>
-		<spring.core.version>3.1.2.RELEASE</spring.core.version>
-		<spring.test.version>3.1.2.RELEASE</spring.test.version>
-		<spring.jdbc.version>3.1.2.RELEASE</spring.jdbc.version>
+		<spring.jms.version>3.2.11.RELEASE</spring.jms.version>
+		<spring.core.version>3.2.11.RELEASE</spring.core.version>
+		<spring.test.version>3.2.11.RELEASE</spring.test.version>
+		<spring.jdbc.version>3.2.11.RELEASE</spring.jdbc.version>
 		<spring.flex.version>1.0.2.RELEASE</spring.flex.version>
-		<spring.beans.version>3.1.2.RELEASE</spring.beans.version>
-		<spring.webmvc.version>3.1.2.RELEASE</spring.webmvc.version>
-		<spring.context.version>3.1.2.RELEASE</spring.context.version>
+		<spring.beans.version>3.2.11.RELEASE</spring.beans.version>
+		<spring.webmvc.version>3.2.11.RELEASE</spring.webmvc.version>
+		<spring.context.version>3.2.11.RELEASE</spring.context.version>
 
 		<spring.data.jpa.version>1.4.1.RELEASE</spring.data.jpa.version>
 		<spring.data.redis.version>1.1.0.RELEASE</spring.data.redis.version>
 		<spring.data.mongodb.version>1.3.1.RELEASE</spring.data.mongodb.version>
 		<spring.data.hadoop.version>1.0.1.RELEASE-hadoop21</spring.data.hadoop.version>
 
-		<spring.security.core.version>3.1.2.RELEASE</spring.security.core.version>
-		<spring.security.config.version>3.1.2.RELEASE</spring.security.config.version>
-		<spring.security.web.version>3.1.2.RELEASE</spring.security.web.version>
-		<spring.security.acl.version>3.1.2.RELEASE</spring.security.acl.version>
-		<spring.security.taglibs.version>3.1.2.RELEASE</spring.security.taglibs.version>
-		<spring.security.openid.version>3.1.2.RELEASE</spring.security.openid.version>
-		<spring.security.ldap.version>3.1.2.RELEASE</spring.security.ldap.version>
+		<spring.security.core.version>3.2.11.RELEASE</spring.security.core.version>
+		<spring.security.config.version>3.2.11.RELEASE</spring.security.config.version>
+		<spring.security.web.version>3.2.11.RELEASE</spring.security.web.version>
+		<spring.security.acl.version>3.2.11.RELEASE</spring.security.acl.version>
+		<spring.security.taglibs.version>3.2.11.RELEASE</spring.security.taglibs.version>
+		<spring.security.openid.version>3.2.11.RELEASE</spring.security.openid.version>
+		<spring.security.ldap.version>3.2.11.RELEASE</spring.security.ldap.version>
 
 		<hibernate.core.version>4.1.7.Final</hibernate.core.version>
 		<hibernate.ehcache.version>4.1.7.Final</hibernate.ehcache.version>
@@ -369,11 +371,12 @@
 		<ibatis.core.version>3.0</ibatis.core.version>
 		<ibatis.sqlmap.version>3.0-beta-6</ibatis.sqlmap.version>
 
-		<!-- <mybatis.version>3.2.1</mybatis.version> -->
-		<mybatis.version>3.0.6</mybatis.version>
-		<mybatis.core.version>1.3.1</mybatis.core.version>
-		<mybatis.spring.version>1.0.1</mybatis.spring.version>
-		<!-- <mybatis.spring.version>1.2.0</mybatis.spring.version> -->
+		<mybatis.version>3.2.2</mybatis.version>
+		<mybatis.core.version>1.3.2</mybatis.core.version>
+		<mybatis.spring.version>1.1.1</mybatis.spring.version>
+<!-- 		<mybatis.version>3.0.6</mybatis.version> -->
+<!-- 		<mybatis.core.version>1.3.1</mybatis.core.version> -->
+<!-- 		<mybatis.spring.version>1.0.1</mybatis.spring.version> -->
 		
 		<cassandra.version>2.1.0</cassandra.version>
 
@@ -558,7 +561,7 @@
 				<version>${logback.version}</version>
 			</dependency>
 
-			<!-- SLF4J -->
+			<!-- Slf4j -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -571,7 +574,7 @@
 				<version>${slf4j.log4j.version}</version>
 			</dependency>
 
-			<!--DOM4J依赖包 -->
+			<!--Dom4j依赖包 -->
 			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
@@ -681,7 +684,7 @@
 				<version>${guava.version}</version>
 			</dependency>
 
-			<!--ACTIVEMQ依赖包 -->
+			<!--ActiveMQ依赖包 -->
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
 				<artifactId>activemq-core</artifactId>
@@ -694,7 +697,7 @@
 				<version>${activemq.pool.version}</version>
 			</dependency>
 
-			<!--ASPECTJ WEAVER依赖包 -->
+			<!--Aspectj Weaver依赖包 -->
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
@@ -728,7 +731,7 @@
 				<version>${c3p0.version}</version>
 			</dependency>
 
-			<!--EHCACHE依赖包 -->
+			<!--Ehcache依赖包 -->
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
@@ -767,14 +770,14 @@
 				<version>${castor.version}</version>
 			</dependency>
 
-			<!-- XERCES 依赖包 -->
+			<!-- XERCES依赖包 -->
 			<dependency>
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
 				<version>${xerces.version}</version>
 			</dependency>
 
-			<!-- XML-APIS 依赖 -->
+			<!-- XML-APIS依赖 -->
 			<dependency>
 				<groupId>xml-apis</groupId>
 				<artifactId>xml-apis</artifactId>
@@ -799,7 +802,7 @@
 				</exclusions>
 			</dependency>
 
-			<!-- JAVA MAIL依赖包 -->
+			<!-- Java Mail依赖包 -->
 			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
@@ -818,6 +821,12 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.context.version}</version>
 			</dependency>
+			
+			 <dependency>
+		        <groupId>org.springframework</groupId>
+		        <artifactId>spring-context-support</artifactId>
+		        <version>${spring.context.version}</version>
+		    </dependency>
 
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -885,7 +894,7 @@
 				<version>${spring.flex.version}</version>
 			</dependency>
 
-			<!-- SPRING-DATA依赖包 -->
+			<!-- Spring Data依赖包 -->
 			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-redis</artifactId>
@@ -942,7 +951,7 @@
 	       		</exclusions>
 			</dependency>
 
-			<!-- SPRING-SECURITY依赖包 -->
+			<!-- Spring Security依赖包 -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
@@ -1034,7 +1043,7 @@
 				</exclusions>
 			</dependency>
 
-			<!-- IBATIS依赖包 -->
+			<!-- Ibatis依赖包 -->
 			<dependency>
 				<groupId>org.apache.ibatis</groupId>
 				<artifactId>ibatis-core</artifactId>
@@ -1047,7 +1056,7 @@
 				<version>${ibatis.sqlmap.version}</version>
 			</dependency>
 
-			<!-- MYBATIS依赖包 -->
+			<!-- Mybatis依赖包 -->
 			<dependency>
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis</artifactId>
@@ -1066,7 +1075,7 @@
 				<version>${mybatis.spring.version}</version>
 			</dependency>
 			
-			<!-- CASSANDRA依赖包 -->
+			<!-- Cassandra依赖包 -->
 			<dependency>
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-driver-core</artifactId>
