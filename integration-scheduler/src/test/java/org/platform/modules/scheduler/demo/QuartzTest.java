@@ -1,23 +1,13 @@
 package org.platform.modules.scheduler.demo;
 
 import org.junit.Test;
-import org.platform.modules.scheduler.demo.CronTriggerTask;
-import org.platform.modules.scheduler.demo.ITask;
-import org.platform.modules.scheduler.demo.JobInfoTask;
-import org.platform.modules.scheduler.demo.SimpleTriggerTask;
-import org.platform.modules.scheduler.demo.TriggerInfoTask;
-import org.platform.modules.scheduler.spring.IJobBusiness;
-import org.platform.modules.scheduler.spring.MainContainer;
-import org.platform.modules.scheduler.spring.SimpleJobOne;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
+import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
-import org.quartz.TriggerBuilder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:spring/applicationContext-scheduler.xml"})
 public class QuartzTest {
 
 	@Test
@@ -51,23 +41,10 @@ public class QuartzTest {
 	
 	@Test
 	public void test5() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/applicationContext.xml");
-		MainContainer main = (MainContainer) context.getBean("mainContainer");
-		main.startup(60);
-	}
-	
-	@Test
-	public void test6() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/applicationContext.xml");
-		MainContainer main = (MainContainer) context.getBean("mainContainer");
-		main.startup(30);
-		IJobBusiness jobBusiness = (IJobBusiness) context.getBean("jobBusiness");
-		JobDetail jobDetail = JobBuilder.newJob(SimpleJobOne.class).withIdentity("job2", "jobGroupOne").build();
-		CronTrigger trigger = (CronTrigger) TriggerBuilder.newTrigger()
-				.withIdentity("trigger2", "triggerGroupOne")
-				.withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
-				.build();
-		jobBusiness.addScheduleJob(jobDetail, trigger);
-		main.startup(60);
+		try {
+			Thread.sleep(1000 * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

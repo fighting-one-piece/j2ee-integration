@@ -8,17 +8,16 @@
 						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd" default-autowire="byName">
 	
-	<!-- 注解配置  <context:annotation-config />-->
-	<context:component-scan base-package="org.platform"/>
+	<!-- 注解配置  -->
+	<context:component-scan base-package="org.platform">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>  
+	</context:component-scan>
 	
 	<!-- 数据库加载文件配置 -->
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:jdbc/jdbc.properties</value>
-			</list>
-		</property>
-	</bean>
+	<context:property-placeholder location="classpath:jdbc/jdbc.properties" ignore-unresolvable="true"/>
 	
 	<!-- 数据源配置 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -33,36 +32,48 @@
 		<property name="dataSource" ref="dataSource" />  
 	</bean>
 
+    <!--  
     <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-    	<property name="dataSource" ref="dataSource"/>  
+    -->
+    <bean id="schedulerFactory" class="org.platform.modules.scheduler.factory.SchedulerFactoryExtBean">
+    	<property name="autoStartup" value="false"/>  
+    	<property name="startupDelay" value="10"/>  
+		<property name="dataSource" ref="dataSource"/>  
     	<property name="transactionManager" ref="transactionManager"/>
-    	<property name="startupDelay" value="30"/>  
+    	<property name="configLocation" value="classpath:quartz/quartz.properties" />  
+        <!-- 通过applicationContextSchedulerContextKey属性配置spring上下文 -->    
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>    
         <!-- spring 管理的service需要放到这里，才能够注入成功 -->    
         <property name="schedulerContextAsMap">    
             <map>    
                 <description>schedulerContextAsMap</description>    
-                <entry key="jobService" value-ref="jobService"/>  
+                <entry key="schedulerBusiness" value-ref="schedulerBusiness"/>  
             </map>    
-        <!-- 通过applicationContextSchedulerContextKey属性配置spring上下文 -->    
         </property>  
-        <property name="applicationContextSchedulerContextKey">    
-            <value>applicationContext</value>    
-        </property>   
         <property name="triggers">              
         	<list>                  
-        		<ref local="simpleCronTrigger"/>              
+        		<ref bean="tempTaskCronTrigger" />
         	</list>          
         </property>      
     </bean>         
     
-    <bean id="simpleCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">          
-    	<property name="jobDetail" ref="simpleJobDetail"/>          
-    	<property name="cronExpression" value="0/10 * * * * ?"></property>      
+    <bean id="tempTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">          
+    	<property name="jobDetail" ref="tempTaskJobDetail"/>          
+    	<property name="cronExpression" value="0/15 * * * * ?"/>      
     </bean>        
     
-    <bean id="simpleJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">      
-        <property name="targetObject" ref="simpleJob" />                 
-        <property name="targetMethod" value="execute" />       
-    </bean>
+    <bean id="tempTaskJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">  
+		<property name="name" value="temp" />       
+		<property name="group" value="default" />       
+        <property name="jobClass" value="org.platform.modules.scheduler.task.TempTask" />  
+        <property name="durability" value="true" />     
+        <property name="requestsRecovery" value="true" />       
+        <property name="jobDataMap">
+        	<map>
+        		<entry key="timeout" value = "10" />
+        		<entry key="keyword" value = "hello" />
+        	</map>
+        </property>
+    </bean>  
 	  
 </beans>

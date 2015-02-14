@@ -25,7 +25,7 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!--QUARTZ依赖包 -->
+		<!--Quartz依赖包 -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
