@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-import org.apache.log4j.Logger;
 import org.platform.modules.abstr.common.ThingUtils;
 import org.platform.modules.abstr.dao.IGenericCassandraDAO;
 import org.platform.modules.abstr.dao.cassandra.CQLBuilder;
@@ -21,6 +18,8 @@ import org.platform.modules.abstr.dao.cassandra.Query;
 import org.platform.modules.abstr.dao.cassandra.QueryResult;
 import org.platform.modules.abstr.entity.Thing;
 import org.platform.modules.abstr.entity.ThingData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cassandra.core.QueryOptions;
 import org.springframework.cassandra.core.RetryPolicy;
 import org.springframework.data.cassandra.core.CassandraTemplate;
@@ -39,11 +38,11 @@ import com.datastax.driver.core.querybuilder.Update.Assignments;
 @Repository("genericCassandraDAO")
 public class GenericCassandraDAOImpl<Entity, ID> implements IGenericCassandraDAO<Entity, ID> {
 	
-	private static Logger LOG = Logger.getLogger(GenericCassandraDAOImpl.class);
+	private static Logger LOG = LoggerFactory.getLogger(GenericCassandraDAOImpl.class);
 	
 	private Class<Entity> entityClass = null;
 	
-	@Resource(name = "cassandraTemplate")
+//	@Resource(name = "cassandraTemplate")
 	private CassandraTemplate cassandraTemplate = null;
 	
 	@SuppressWarnings("unchecked")

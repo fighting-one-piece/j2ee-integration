@@ -16,7 +16,7 @@ public class DocBusinessImpl extends GenericBusinessImpl<Doc, Long> implements I
 	private IDocDAO docDAO = null;
 	
 	@Override
-	protected IGenericDAO<Doc, Long> obtainDAOInstance() {
+	public IGenericDAO<Doc, Long> obtainDAOInstance() {
 		return docDAO;
 	}
 }

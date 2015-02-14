@@ -9,17 +9,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.platform.modules.abstr.common.annotation.ThingDataTable;
 import org.platform.modules.abstr.common.annotation.ThingRelationTable;
-import org.platform.utils.spring.SpringUtils;
+import org.platform.utils.spring.SpringContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /** 数据库表生成器*/
 public class TableGen {
 	
-	private static Logger LOG = Logger.getLogger(TableGen.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TableGen.class);
 	
 	public static final String THING_PREFIX = "db_thing_";
 
@@ -34,7 +35,7 @@ public class TableGen {
 	private ComboPooledDataSource dataSource;
 	
 	public TableGen() {
-		this.dataSource = SpringUtils.getBean("dataSource");
+		this.dataSource = SpringContext.get("dataSource", ComboPooledDataSource.class);
 	}
 	
 	public void setDataSource(ComboPooledDataSource dataSource) {
@@ -94,49 +95,52 @@ public class TableGen {
 	
 	private String appendThingTable(String tableName) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" create table if not exists ").append(thingTable(tableName)).append(" (");
-		sb.append(" id bigint not null auto_increment,");
-		sb.append(" ups int,");
-		sb.append(" downs int,");
-		sb.append(" deleted boolean,");
-		sb.append(" spam boolean,");
-		sb.append(" creator_id bigint,");
-		sb.append(" create_time timestamp,");
-		sb.append(" primary key (id))");
+		sb.append(" CREATE TABLE IF NOT EXISTS ").append(thingTable(tableName)).append(" (");
+		sb.append(" ID BIGINT NOT NULL AUTO_INCREMENT,");
+		sb.append(" UPS INT,");
+		sb.append(" DOWNS INT,");
+		sb.append(" DELETED BOOLEAN,");
+		sb.append(" SPAM BOOLEAN,");
+		sb.append(" CREATOR_ID BIGINT,");
+		sb.append(" CREATE_TIME TIMESTAMP,");
+		sb.append(" PRIMARY KEY (ID))");
 		String createTableString = sb.toString();
-		LOG.info("create table: " + createTableString);
+		LOG.info("CREATE SENTENCE : " + createTableString);
 		return createTableString;
 	}
 	
 	private String appendDataTable(String tableName) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" create table if not exists ").append(dataTable(tableName)).append(" (");
-		sb.append(" thing_id bigint not null,");
-		sb.append(" attribute varchar(250) not null,");
-		sb.append(" value varchar(5000),");
-		sb.append(" kind varchar(50),");
-		sb.append(" primary key (thing_id, attribute))");
+		sb.append(" CREATE TABLE IF NOT EXISTS ").append(dataTable(tableName)).append(" (");
+		sb.append(" ID BIGINT NOT NULL AUTO_INCREMENT,");
+		sb.append(" THING_ID BIGINT NOT NULL,");
+		sb.append(" ATTRIBUTE VARCHAR(250) NOT NULL,");
+		sb.append(" VALUE VARCHAR(10000),");
+		sb.append(" KIND VARCHAR(50),");
+		sb.append(" PRIMARY KEY (ID),");
+		sb.append(" UNIQUE KEY ").append(uniqueName(tableName));
+		sb.append(" (THING_ID, ATTRIBUTE))");
 		String createTableString = sb.toString();
-		LOG.info("create table: " + createTableString);
+		LOG.info("CREATE SENTENCE : " + createTableString);
 		return createTableString;
 	}
 	
 	private String appendRelationTable(String tableName) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" create table if not exists ").append(relationTable(tableName)).append(" (");
-		sb.append(" id bigint not null auto_increment,");
-		sb.append(" thing1_id bigint not null,");
-		sb.append(" thing2_id bigint not null,");
-		sb.append(" kind varchar(200) not null,");
-		sb.append(" deleted boolean,");
-		sb.append(" spam boolean,");
-		sb.append(" create_time timestamp,");
-		sb.append(" info varchar(5000),");
-		sb.append(" primary key (id),");
-		sb.append(" unique key ").append(uniqueName(tableName));
-		sb.append(" (thing1_id, thing2_id, kind))");
+		sb.append(" CREATE TABLE IF NOT EXISTS ").append(relationTable(tableName)).append(" (");
+		sb.append(" ID BIGINT NOT NULL AUTO_INCREMENT,");
+		sb.append(" THING1_ID BIGINT NOT NULL,");
+		sb.append(" THING2_ID BIGINT NOT NULL,");
+		sb.append(" KIND VARCHAR(200) NOT NULL,");
+		sb.append(" DELETED BOOLEAN,");
+		sb.append(" SPAM BOOLEAN,");
+		sb.append(" CREATE_TIME TIMESTAMP,");
+		sb.append(" INFO VARCHAR(5000),");
+		sb.append(" PRIMARY KEY (ID),");
+		sb.append(" UNIQUE KEY ").append(uniqueName(tableName));
+		sb.append(" (THING1_ID, THING2_ID, KIND))");
 		String createTableString = sb.toString();
-		LOG.info("create table: " + createTableString);
+		LOG.info("CREATE SENTENCE : " + createTableString);
 		return createTableString;
 	}
 	
@@ -151,18 +155,18 @@ public class TableGen {
 		String indexName = indexName(tableName, name);
 		if (isExistIndex(table, indexName)) return null;
 		StringBuilder sb = new StringBuilder();
-		sb.append(" create index ").append(indexName);
-		sb.append(" on ").append(table);
+		sb.append(" CREATE INDEX ").append(indexName);
+		sb.append(" ON ").append(table);
 		sb.append(" ( ").append(on).append(" ) "); 
 		String createIndexString = sb.toString();
-		LOG.info("create index: " + createIndexString);
+		LOG.info("CREATE SENTENCE : " + createIndexString);
 		return createIndexString;
 	}
 	
 	private boolean isExistIndex(String table, String indexName) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" show index from ").append(table);
-		sql.append(" where key_name = '").append(indexName).append("'");
+		sql.append(" SHOW INDEX FROM ").append(table);
+		sql.append(" WHERE KEY_NAME = '").append(indexName).append("'");
 		Connection connection = null;
 		PreparedStatement pstat = null;
 		ResultSet resultSet = null;
@@ -234,6 +238,7 @@ public class TableGen {
 		paths.add("com/netease/talk/modules/inbox/entity");
 		paths.add("com/netease/talk/modules/channel/entity");
 		paths.add("com/netease/talk/modules/staticize/entity");
+		paths.add("com/netease/talk/modules/push/entity");
 		new TableGen().run(paths.toArray(new String[0]));
 		System.exit(0);
 	}

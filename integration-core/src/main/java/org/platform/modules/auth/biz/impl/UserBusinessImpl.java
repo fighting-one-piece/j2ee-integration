@@ -28,7 +28,7 @@ public class UserBusinessImpl extends GenericBusinessImpl<User, Long> implements
 	private IUserDAO userMyBatisDAO = null;
 	
 	@Override
-	protected IGenericDAO<User, Long> obtainDAOInstance() {
+	public IGenericDAO<User, Long> obtainDAOInstance() {
 		return userHibernateDAO;
 	}
 

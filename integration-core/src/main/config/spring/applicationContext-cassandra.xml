@@ -13,13 +13,15 @@
 		http://www.springframework.org/schema/data/cassandra http://www.springframework.org/schema/data/cassandra/spring-cassandra-1.0.xsd">
 
 	<!-- 读取项目配置信息 -->
+	
+	<!-- 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" p:location="classpath:cassandra.properties"/>
 	
 	<cassandra:cluster contact-points="${cassandra.contactpoints}" port="${cassandra.port}"></cassandra:cluster>
     
     <cassandra:session keyspace-name="${cassandra.keyspace}"></cassandra:session>
     
-<!--     <cassandra:repositories base-package="com.netease.talk.dao.cassandra.repo"></cassandra:repositories> -->
+	<cassandra:repositories base-package="com.netease.talk.dao.cassandra.repo"></cassandra:repositories>
  
     <cassandra:mapping entity-base-packages="org.platform.modules.*.entity"></cassandra:mapping>
     
@@ -27,5 +29,5 @@
     
     <cassandra:template id="cassandraTemplate"/>
     
-    
+     -->
 </beans>

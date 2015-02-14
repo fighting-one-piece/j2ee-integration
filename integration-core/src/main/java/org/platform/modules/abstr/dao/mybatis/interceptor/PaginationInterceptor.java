@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ibatis.executor.parameter.DefaultParameterHandler;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -22,17 +19,19 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.platform.entity.Query;
 import org.platform.modules.abstr.dao.mybatis.pagination.Dialect;
 import org.platform.modules.abstr.dao.mybatis.pagination.MySQL5Dialect;
-import org.platform.modules.abstr.dao.mybatis.pagination.OracleDialect;
 import org.platform.utils.reflect.ReflectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }) })
 public class PaginationInterceptor implements Interceptor {
 
-	private final static Log logger = LogFactory.getLog(PaginationInterceptor.class);
+	private final static Logger LOG = LoggerFactory.getLogger(PaginationInterceptor.class);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -53,20 +52,14 @@ public class PaginationInterceptor implements Interceptor {
 	    	return invocation.proceed();
 	    }
 	    Object parameterObject = boundSql.getParameterObject();
-	    logger.debug("parameterObject: " + parameterObject);
+	    LOG.debug("parameterObject: " + parameterObject);
 	    if (parameterObject instanceof Map) {
 	    	Map<String, Object> condition = (Map<String, Object>) parameterObject;
-	    	MappedStatement mappedStatement = (MappedStatement)ReflectUtils.getValueByFieldName(delegate, "mappedStatement");
-            //拦截到的prepare方法参数是一个Connection对象
-            Connection connection = (Connection) invocation.getArgs()[0];
-            setTotalRowNum(condition, mappedStatement, connection);
-	    	boolean isPagination = (Boolean) condition.get(Query.IS_PAGINATION);
-	    	if (!isPagination) {
-	    		return invocation.proceed();
-	    	}
-	    	int offset = (Integer) condition.get(Query.OFFSET);
-	    	int limit = (Integer) condition.get(Query.LIMIT);
-	    	logger.debug("offset：　" + offset + "limit: " + limit);
+	    	if (!condition.containsKey(Query.IS_PAGINATION)) return invocation.proceed();
+	    	Object pv = condition.get(Query.IS_PAGINATION);
+	    	if (null == pv) return invocation.proceed();
+	    	boolean isPagination = (Boolean) pv;
+	    	if (!isPagination) return invocation.proceed();
             //获取MyBatis配置信息
             Configuration configuration = (Configuration) ReflectUtils.getValueByFieldName(delegate, "configuration");
             String dialectValue = configuration.getVariables().getProperty("dialect");
@@ -74,25 +67,22 @@ public class PaginationInterceptor implements Interceptor {
             	throw new RuntimeException("the value of the dialect is not find");
             }
             Dialect.Type dialectType = Dialect.Type.valueOf(dialectValue.toUpperCase());;
-    		logger.debug("dialectType: " + dialectType);
-    		Dialect dialect = null;
-    		switch (dialectType) {
-    			case MYSQL:
-    				dialect = new MySQL5Dialect();
-    				break;
-    			case MSSQL:
-    				dialect = new MySQL5Dialect();
-    				break;
-    			case ORACLE:
-    				dialect = new OracleDialect();
-    				break;
-    			default:
-    				dialect = new MySQL5Dialect();
+    		LOG.debug("dialectType: " + dialectType);
+    		Dialect dialect = getDialect(dialectType);
+    		if (null == condition.get(Query.OFFSET) || null == condition.get(Query.LIMIT)) {
+    			throw new RuntimeException("offset or limit is not find");
     		}
+    		int offset = (Integer) condition.get(Query.OFFSET);
+	    	int limit = (Integer) condition.get(Query.LIMIT);
+	    	LOG.debug("offset：" + offset + " limit: " + limit);
             String pageSql = dialect.obtainPageSql(sql, offset, limit);
             //利用反射设置当前BoundSql对应的sql属性为我们建立好的分页Sql语句
             ReflectUtils.setValueByFieldName(boundSql, "sql", pageSql);
-            logger.debug("生成分页SQL : " + boundSql.getSql());
+            LOG.debug("生成分页SQL : " + boundSql.getSql());
+            MappedStatement mappedStatement = (MappedStatement)ReflectUtils.getValueByFieldName(delegate, "mappedStatement");
+            //拦截到的prepare方法参数是一个Connection对象
+            Connection connection = (Connection) invocation.getArgs()[0];
+            setTotalRowNum(condition, mappedStatement, connection);
 	    }
 		return invocation.proceed();
 	}
@@ -104,6 +94,27 @@ public class PaginationInterceptor implements Interceptor {
 
 	@Override
 	public void setProperties(Properties properties) {
+	}
+	
+	/**
+	 * 根据类型获取方言
+	 * @param dialectType
+	 * @return
+	 */
+	public Dialect getDialect(Dialect.Type dialectType) {
+		Dialect dialect = null;
+		switch (dialectType) {
+		case MYSQL:
+			dialect = new MySQL5Dialect();
+			break;
+		case MSSQL:
+			break;
+		case ORACLE:
+			break;
+		default:
+			dialect = new MySQL5Dialect();
+		}
+		return dialect;
 	}
 
 	/**

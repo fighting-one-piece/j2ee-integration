@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,13 +26,15 @@ import org.platform.entity.QueryItem;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.dao.IGenericDAO;
 import org.platform.utils.exception.DataAccessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository("genericHibernateDAO")
 public class GenericHibernateDAOImpl<Entity extends Serializable, PK extends Serializable> implements IGenericDAO<Entity, PK> {
 
 	/** 日志记录*/
-	protected Logger LOG = Logger.getLogger(getClass());
+	protected Logger LOG = LoggerFactory.getLogger(getClass());
 
 	@Resource(name="sessionFactory")
 	protected SessionFactory sessionFactory = null;

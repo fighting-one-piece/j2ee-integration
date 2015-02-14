@@ -23,15 +23,17 @@
 	<context:property-placeholder location="classpath*:hibernate/hibernate.properties" ignore-unresolvable="true"/>
 	<context:property-placeholder location="classpath*:cassandra/cassandra.properties" ignore-unresolvable="true"/>
 	
-<!-- 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
-<!-- 		<property name="locations"> -->
-<!-- 			<list> -->
-<!-- 				<value>classpath*:mail/mail.properties</value> -->
-<!-- 				<value>classpath*:database/database.properties</value> -->
-<!-- 				<value>classpath*:hibernate/hibernate.properties</value> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
-<!-- 	</bean> -->
+	<!-- 
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:mail/mail.properties</value>
+				<value>classpath*:database/database.properties</value>
+				<value>classpath*:hibernate/hibernate.properties</value>
+			</list>
+		</property>
+	</bean>
+	 -->
 	
 	<!-- 数据源配置 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -139,13 +141,9 @@
 				2: org.hibernate.context.internal.JTASessionContext- 当前session根据JTA来跟踪和界定。这和以前的仅支持JTA的方法是完全一样的。
 				3：org.hibernate.context.internal.ManagedSessionContext
 				使用spring时 默认是 ，用spring的事务管理 则用org.springframework.orm.hibernate4.SpringSessionContext
-		 	-->
-			<!--  
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
-			-->
-			<!--
 				<prop key="hibernate.proxool.pool_alias">myDataSource</prop>
 			    <prop key="hibernate.proxool.xml">proxool.xml</prop>
 			    org.hibernate.cache.EhCacheProvider
@@ -156,42 +154,50 @@
                 <prop key="hibernate.search.default.indexBase">H:\indexed</prop> 
                 hibernate 3.3以上
                 <property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory</property>
-                                   或 <property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</property>
+                                                或
+                <property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</property>
                 Hibernate 3.0-3.2
                 <property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</property>
-                                    或<property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</property>
+                                                或
+                <property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</property>
 			    -->
 		</property>
-<!--		<property name="configurationClass">-->
-<!--			<value>org.hibernate.cfg.AnnotationConfiguration</value>-->
-<!--		</property>-->
+		<!-- 
+		<property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration</value>
+		</property>
+		-->
 		<property name="packagesToScan">
 			<list>
 				<value>org.platform.entity</value>
 				<value>org.platform.modules.**.entity</value>
 			</list>
 		</property>
-<!--		<property name="mappingLocations">-->
-<!--			<list>-->
-<!--				<value>classpath:jbpm.execution.hbm.xml</value>-->
-<!--				<value>classpath:jbpm.history.hbm.xml</value>-->
-<!--				<value>classpath:jbpm.identity.hbm.xml</value>-->
-<!--				<value>classpath:jbpm.repository.hbm.xml</value>-->
-<!--				<value>classpath:jbpm.task.hbm.xml</value>-->
-<!--			</list>-->
-<!--		</property>-->
+		<!-- 
+		<property name="mappingLocations">
+			<list>
+				<value>classpath:jbpm.execution.hbm.xml</value>
+				<value>classpath:jbpm.history.hbm.xml</value>
+				<value>classpath:jbpm.identity.hbm.xml</value>
+				<value>classpath:jbpm.repository.hbm.xml</value>
+				<value>classpath:jbpm.task.hbm.xml</value>
+			</list>
+		</property>
+		-->
 	</bean>
 	
 	<bean id="localSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
 		abstract="false" scope="singleton" lazy-init="default" autowire="default">
 		<property name="dataSource" ref="${defaultDs}" />
-<!--		<property name="lobHandler">-->
-<!--          	<ref bean="oracleLobHandler" />-->
-<!--     	</property>-->
-		<!-- property name="schemaUpdate" value="false" / -->
+		<!--
+		<property name="lobHandler" ref="oracleLobHandler" />
+		<property name="schemaUpdate" value="false" />
+		-->
 		<property name="hibernateProperties">
 			<props>
-<!--			<prop key="hibernate.default_schema">${hibernate.default_schema}</prop>-->
+				<!--			
+				<prop key="hibernate.default_schema">${hibernate.default_schema}</prop>
+				-->
 				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
@@ -199,12 +205,14 @@
 				<prop key="hibernate.current_session_context_class">${hibernate.current_session_context_class}</prop>
 			</props>
 		</property>
-<!--		<property name="mappingDirectoryLocations">  -->
-<!--			<list>    -->
-<!--				<value>classpath:org/platform/entity</value>  -->
-<!--				<value>classpath:org/platform/modules/**/entity</value>  -->
-<!--			</list>-->
-<!--		</property>-->
+		<!--  
+		<property name="mappingDirectoryLocations"> 
+			<list>   
+				<value>classpath:org/platform/entity</value> 
+				<value>classpath:org/platform/modules/**/entity</value> 
+			</list>
+		</property>
+		-->
 	</bean>
 	
 	<!-- 事务配置 -->
@@ -232,7 +240,9 @@
 		</tx:attributes>
 	</tx:advice>
 	
-<!-- 	<aop:config expose-proxy="true">   -->
+	<!-- 	
+	<aop:config expose-proxy="true">   
+	-->
 	<aop:config>  
        <aop:pointcut id="interceptorPointCuts"  
            expression="(execution(* org.platform.modules.*.biz.impl.*.*(..))) or
@@ -264,35 +274,36 @@
     </aop:config>       
 	
 	<!-- 拦截器事务配置 -->
-<!--	<bean id="transactionInterceptor"    -->
-<!--        class="org.springframework.transaction.interceptor.TransactionInterceptor">    -->
-<!--        <property name="transactionManager" ref="transactionManager" />    -->
-<!--        <property name="transactionAttributes">    -->
-<!--            <props>    -->
-<!--                <prop key="save*">PROPAGATION_REQUIRED</prop>    -->
-<!--                <prop key="update*">PROPAGATION_REQUIRED</prop>    -->
-<!--                <prop key="delete*">PROPAGATION_REQUIRED</prop>    -->
-<!--                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>    -->
-<!--                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>    -->
-<!--                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>    -->
-<!--                <prop key="read*">PROPAGATION_REQUIRED,readOnly</prop>    -->
-<!--            </props>    -->
-<!--        </property>    -->
-<!--    </bean>  -->
-<!--    -->
-<!--    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">    -->
-<!--        <property name="beanNames">    -->
-<!--            <list>    -->
-<!--                <value>*BusinessImpl</value>  -->
-<!--                <value>*ServiceImpl</value>  -->
-<!--            </list>    -->
-<!--        </property>    -->
-<!--        <property name="interceptorNames">    -->
-<!--            <list>    -->
-<!--                <value>transactionInterceptor</value>    -->
-<!--            </list>    -->
-<!--        </property>    -->
-<!--    </bean>    -->
+	<!-- 
+	<bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">   
+       <property name="transactionManager" ref="transactionManager" />   
+       <property name="transactionAttributes">   
+           <props>   
+               <prop key="save*">PROPAGATION_REQUIRED</prop>   
+               <prop key="update*">PROPAGATION_REQUIRED</prop>   
+               <prop key="delete*">PROPAGATION_REQUIRED</prop>   
+               <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>   
+               <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>   
+               <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>   
+               <prop key="read*">PROPAGATION_REQUIRED,readOnly</prop>   
+           </props>   
+       </property>   
+   </bean> 
+    -->
+  
+   <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">   
+       <property name="beanNames">   
+           <list>   
+               <value>*BusinessImpl</value> 
+               <value>*ServiceImpl</value> 
+           </list>   
+       </property>   
+       <property name="interceptorNames">   
+           <list>   
+               <value>transactionInterceptor</value>   
+           </list>   
+       </property>   
+   </bean>   
     
 	<!-- JDBC事务配置 -->
 	<bean id="jdbcTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -315,31 +326,33 @@
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
 	<!-- 工作流引擎配置 -->
-<!--    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">  -->
-<!--        <property name="dataSource" ref="${defaultDs}" />  -->
-<!--        <property name="transactionManager" ref="transactionManager" />  -->
-<!--        <property name="databaseSchemaUpdate" value="true" />  -->
-<!--        <property name="jobExecutorActivate" value="false" />  -->
-<!--        <property name="history" value="full" />  -->
-<!--    </bean>  -->
+	<!--  
+   <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration"> 
+       <property name="dataSource" ref="${defaultDs}" /> 
+       <property name="transactionManager" ref="transactionManager" /> 
+       <property name="databaseSchemaUpdate" value="true" /> 
+       <property name="jobExecutorActivate" value="false" /> 
+       <property name="history" value="full" /> 
+   </bean> 
 
-<!--    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean" >  -->
-<!--        <property name="processEngineConfiguration" ref="processEngineConfiguration" />  -->
-<!--    </bean>  -->
+   <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean" > 
+       <property name="processEngineConfiguration" ref="processEngineConfiguration" /> 
+   </bean> 
 
-<!--    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />  -->
-<!--    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />  -->
-<!--    <bean id="formService" factory-bean="processEngine" factory-method="getFormService" />  -->
-<!--    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />  -->
-<!--    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />  -->
-<!--    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />  -->
-<!--    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />  -->
+   <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" /> 
+   <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" /> 
+   <bean id="formService" factory-bean="processEngine" factory-method="getFormService" /> 
+   <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" /> 
+   <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" /> 
+   <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" /> 
+   <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" /> 
+   -->
     
     
 	<!-- MyBatis 配置 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="${defaultDs}" />
-		<property name="typeAliasesPackage" value="org.platform.modules.auth.entity,org.platform.modules.doc.entity" />
+		<property name="typeAliasesPackage" value="org.platform.modules.abstr.entity,org.platform.modules.auth.entity,org.platform.modules.doc.entity" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
 		<property name="mapperLocations" value="classpath*:org/platform/modules/*/mapper/**/*.xml" />
 	</bean>
@@ -348,30 +361,32 @@
        <constructor-arg index="0" ref="sqlSessionFactory" />
     </bean>
     
-<!--	<bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">  -->
-<!--        <property name="properties">  -->
-<!--            <props>  -->
-<!--                <prop key="SQL Server">sqlserver</prop>  -->
-<!--                <prop key="DB2">db2</prop>  -->
-<!--                <prop key="Oracle">oracle</prop>  -->
-<!--                <prop key="MySQL">mysql</prop>  -->
-<!--            </props>  -->
-<!--        </property>  -->
-<!--    </bean>  -->
+    <!--  
+	<bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean"> 
+       <property name="properties"> 
+           <props> 
+               <prop key="SQL Server">sqlserver</prop> 
+               <prop key="DB2">db2</prop> 
+               <prop key="Oracle">oracle</prop> 
+               <prop key="MySQL">mysql</prop> 
+           </props> 
+       </property> 
+    </bean> 
   
-<!--    <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">  -->
-<!--         <property name="properties" ref="vendorProperties"/>  -->
-<!--    </bean>  -->
+    <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider"> 
+        <property name="properties" ref="vendorProperties"/> 
+    </bean> 
 	
-<!-- 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"> -->
-<!-- 		<property name="basePackage" value="platform.module.*.mapper" /> -->
-<!-- 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />  -->
-<!-- 	</bean>  -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="platform.module.*.mapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
+	</bean> 
 	
-<!--	<bean id="mapperFactoryBean" class="org.mybatis.spring.mapper.MapperFactoryBean">  -->
-<!--	    <property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
-<!--		<property name="mapperInterface" value="platform.module.auth.mapper.UserMapper" />   -->
-<!--	</bean> -->
+	<bean id="mapperFactoryBean" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+		<property name="mapperInterface" value="platform.module.auth.mapper.UserMapper" />  
+	</bean>
+	-->
 
 	<!-- 国际化资源 -->
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">  
@@ -384,5 +399,17 @@
         <property name="defaultEncoding" value="UTF-8"/>  
         <property name="cacheSeconds" value="60"/>  
     </bean>  
+    
+    <!-- Import Resource -->
+    <import resource="classpath:spring/applicationContext-cache.xml"/>
+    <import resource="classpath:spring/applicationContext-mail.xml"/>
+    <import resource="classpath:spring/applicationContext-mongo.xml"/>
+    <import resource="classpath:spring/applicationContext-redis.xml"/>
+    <import resource="classpath:spring/applicationContext-shiro.xml"/>
+    <import resource="classpath:spring/applicationContext-task.xml"/>
+    <!-- 
+    <import resource="classpath:applicationContext-cassandra.xml"/>
+    <import resource="classpath:applicationContext-scheduler.xml"/>
+     -->
 	
 </beans>

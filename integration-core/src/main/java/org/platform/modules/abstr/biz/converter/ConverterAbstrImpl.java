@@ -6,15 +6,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
-import org.platform.utils.exception.BusinessException;
-
 import org.platform.entity.PKEntity;
+import org.platform.utils.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO extends Serializable>
 	implements IConverter<Entity, EntityDTO> {
 
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger LOG = LoggerFactory.getLogger(getClass());
 
 	protected Class<Entity> entityClass = null;
 
@@ -27,8 +27,6 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
         	Type[] parameterizedType = ((ParameterizedType) type).getActualTypeArguments();
             entityClass = (Class<Entity>) parameterizedType[0];
             entityDTOClass = (Class<EntityDTO>) parameterizedType[1];
-            logger.debug("entityClass: " + entityClass);
-    		logger.debug("entityDTOClass: " + entityDTOClass);
         }
 	}
 
@@ -49,7 +47,7 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 				convertDTO2Entity((EntityDTO) object, (Entity) objectTo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return objectTo;
 	}
@@ -62,7 +60,7 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 		try {
 			convert(entity, entityDTO);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -79,9 +77,9 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 				convertEntity2DTO(entity, entityDTO);
 				entityDTOCollection.add(entityDTO);
 			} catch (InstantiationException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -94,7 +92,7 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 		try {
 			convert(entityDTO, entity);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -111,16 +109,14 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 				convertDTO2Entity(entityDTO, entity);
 				entityCollection.add(entity);
 			} catch (InstantiationException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
 
 	protected void convert(Object objectFrom, Object objectTo) {
-		logger.debug("objectFrom: " + objectFrom);
-		logger.debug("objectTo: " + objectTo);
 		Class<?> clazz = null;
 		String objectFromClassName = objectFrom.getClass().getName();
 		if (objectFromClassName.indexOf("$$") == -1) {
@@ -147,7 +143,7 @@ public abstract class ConverterAbstrImpl<Entity extends Serializable, EntityDTO 
 					if (!name.equals(nameTo)) {
 						continue;
 					}
-					logger.debug("convert : " + objectFrom.getClass().getSimpleName() +
+					LOG.debug("convert : " + objectFrom.getClass().getSimpleName() +
 							"[" + name + "] to "+ objectTo.getClass().getSimpleName() +
 							"[" + fieldTo.getName() + "]");
 					fieldFrom.setAccessible(true);

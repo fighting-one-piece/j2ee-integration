@@ -8,8 +8,7 @@
 						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-						http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd"
-	default-autowire="byName">
+						http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd" default-autowire="byName">
 
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
 		<property name="maxActive" value="${redis.pool.maxActive}" />

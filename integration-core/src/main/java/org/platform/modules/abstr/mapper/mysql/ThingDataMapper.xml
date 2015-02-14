@@ -4,7 +4,8 @@
 <mapper namespace="mysql.org.platform.modules.abstr.entity.ThingData">
 
 	<resultMap type="ThingData" id="thingDataResultMap">  
-        <id property="thingId" column="THING_ID"/>  
+        <id property="id" column="ID"/>  
+        <result property="thingId" column="THING_ID"/>
         <result property="attribute" column="ATTRIBUTE"/>
         <result property="value" column="VALUE"/>  
         <result property="kind" column="KIND"/> 
@@ -23,11 +24,14 @@
     		<if test="value != null and value != ''">
     			AND VALUE = #{value}
     		</if>
+    		<if test="valueNE != null and valueNE != ''">
+    			AND VALUE != #{valueNE}
+    		</if>
     		<if test="valueGT != null and valueGT != ''">
-    			AND VALUE &gt; #{valueGT}  + 0
+    			AND VALUE &gt; #{valueGT} + 0
     		</if>
     		<if test="valueGE != null and valueGE != ''">
-    			AND VALUE &gt;= #{valueGE}  + 0
+    			AND VALUE &gt;= #{valueGE} + 0
     		</if>
     		<if test="valueLT != null and valueLT != ''">
     			AND VALUE &lt; #{valueLT} + 0
@@ -38,6 +42,12 @@
     		<if test="valueLike != null and valueLike != ''">
     			AND VALUE like "%"#{valueLike}"%"
     		</if>
+    		<if test="valueIN != null and valueIN.size() > 0">
+    			AND VALUE IN 
+    			<foreach collection="valueIN" index="index" item="item" open="(" separator="," close=")"> 
+            		#{item} 
+        		</foreach> 
+    		</if>
     		<if test="kind != null and kind != ''">
     			AND KIND = #{kind}
     		</if>
@@ -47,6 +57,14 @@
     <insert id="insert" parameterType="ThingData">
     	INSERT INTO ${table} (THING_ID, ATTRIBUTE, VALUE, KIND) 
         VALUES(#{thingId},#{attribute},#{value},#{kind})  
+    </insert>
+    
+    <insert id="insertBatch" parameterType="map">
+    	INSERT IGNORE INTO ${table} (THING_ID, ATTRIBUTE, VALUE, KIND)
+    	VALUES
+    	<foreach collection="list" index="index" item="item" separator=",">
+    		(#{item.thingId},#{item.attribute},#{item.value},#{item.kind})
+    	</foreach>
     </insert>
     
     <update id="update" parameterType="ThingData">

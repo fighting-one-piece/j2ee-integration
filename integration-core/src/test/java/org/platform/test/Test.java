@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import org.platform.utils.properties.PropertiesUtils;
 
-
 public class Test {
 
 	public static void main(String[] args) throws Exception {

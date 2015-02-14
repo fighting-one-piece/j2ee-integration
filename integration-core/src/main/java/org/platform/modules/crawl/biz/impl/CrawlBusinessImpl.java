@@ -36,7 +36,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 	private ICrawlDetailExtDAO crawlDetailExtDAO = null;
 	
 	@Override
-	protected IGenericDAO<CrawlDetail, Long> obtainDAOInstance() {
+	public IGenericDAO<CrawlDetail, Long> obtainDAOInstance() {
 		return crawlDetailDAO;
 	}
 	
@@ -60,9 +60,7 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		List<CrawlDetailExt> crawlDetailExts = crawlDetailExtDAO.readDataListByCondition(condition);
 		List<CrawlJob> resultList = new ArrayList<CrawlJob>();
 		for (CrawlDetailExt crawlDetailExt : crawlDetailExts) {
-			CrawlJob crawlJob = (CrawlJob) JSONUtils.json2Object(
-					crawlDetailExt.getValue(), CrawlJob.class);
-			LOG.debug(crawlJob);
+			CrawlJob crawlJob = (CrawlJob) JSONUtils.json2Object(crawlDetailExt.getValue(), CrawlJob.class);
 			resultList.add(crawlJob);
 		}
 		IIndexBusiness indexManager = type == IIndex.RAM ? new RAMIndexBusinessImpl() : new FSIndexBusinessImpl();
@@ -106,15 +104,13 @@ public class CrawlBusinessImpl extends GenericBusinessImpl<CrawlDetail, Long> im
 		QueryCondition condition = new QueryCondition();
 		condition.setEntityClass(CrawlJob.class);
 		condition.setKeyword(keyword);
-		condition.setQueryTag("c");
-		String[] queryFields = new String[]{"career", "company", "location", 
-				"updateTime", "require", "summary"};
+		String[] queryFields = new String[]{"career", "company", "location", "updateTime", "require", "summary"};
 		condition.setQueryFields(queryFields);
 		String[] highLighterFields = new String[]{"career", "company", "require", "summary"};
 		condition.setHighLighterFields(highLighterFields);
-		condition.setCurrentPageNum(currentPageNum);
-		condition.setRowNumPerPage(rowNumPerPage);
-		IIndexBusiness indexManager = index == IIndex.RAM ? 
+		condition.setCurrentPageNum(null == currentPageNum ? 1 : currentPageNum);
+		condition.setRowNumPerPage(null == rowNumPerPage ? 10 : rowNumPerPage);
+		IIndexBusiness indexManager = null == index || index == IIndex.RAM ? 
 				new RAMIndexBusinessImpl() : new FSIndexBusinessImpl();
 		return (QueryResult<CrawlJob>) indexManager.readDataListByCondition(condition);
 	}

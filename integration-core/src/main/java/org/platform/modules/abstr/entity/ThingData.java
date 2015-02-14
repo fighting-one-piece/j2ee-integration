@@ -6,6 +6,8 @@ public class ThingData implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	/** Id*/
+	private Long id = null;
 	/** Thing表标识*/
 	private Long thingId = null;
 	/** 属性名称*/
@@ -16,6 +18,14 @@ public class ThingData implements Serializable {
 	private String kind = null;
 	/** 操作表名字*/
 	private transient String table = null;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getThingId() {
 		return thingId;

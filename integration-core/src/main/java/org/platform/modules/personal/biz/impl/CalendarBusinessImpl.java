@@ -22,7 +22,7 @@ public class CalendarBusinessImpl extends GenericBusinessImpl<Calendar, Long>
 	private ICalendarDAO calendarDAO = null;
 
 	@Override
-	protected IGenericDAO<Calendar, Long> obtainDAOInstance() {
+	public IGenericDAO<Calendar, Long> obtainDAOInstance() {
 		return calendarDAO;
 	}
 

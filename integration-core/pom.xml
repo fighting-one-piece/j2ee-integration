@@ -32,14 +32,25 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<!--Data模块依赖包 -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.platform</groupId> -->
-<!-- 			<artifactId>integration-data</artifactId> -->
-<!-- 			<version>0.0.1-SNAPSHOT</version> -->
-<!-- 		</dependency> -->
+		<!--Scheduler依赖包 -->
+		<!-- 
+		<dependency>
+			<groupId>org.platform</groupId>
+			<artifactId>integration-scheduler</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		-->
 		
-		<!--ASPECTJ WEAVER依赖包 -->
+		<!--Data模块依赖包 -->
+		<!-- 
+		<dependency>
+			<groupId>org.platform</groupId>
+			<artifactId>integration-data</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		-->
+		
+		<!--Aspectj Weaver依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -96,7 +107,7 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
-		<!-- MYBATIS依赖包 -->
+		<!-- Mybatis依赖包 -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
@@ -112,20 +123,18 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 		
-		<!-- CASSANDRA依赖包 -->
+		<!-- Cassandra依赖包 -->
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
-			<version>${cassandra.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-dse</artifactId>
-			<version>${cassandra.version}</version>
 		</dependency>
 		
-		<!-- SPRING-DATA依赖包 -->
+		<!-- Spring-Data依赖包 -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>

@@ -7,8 +7,8 @@ import javax.annotation.Resource;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
-import org.platform.modules.auth.Constants;
 import org.platform.modules.auth.biz.IUserOnlineBusiness;
+import org.platform.modules.auth.common.Constants;
 import org.platform.modules.auth.entity.UserOnline;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +41,7 @@ public class OnlineSessionDAO extends EnterpriseCacheSessionDAO {
     @Override
     protected Session doReadSession(Serializable sessionId) {
         UserOnline userOnline = (UserOnline) 
-        		userOnlineBusiness.readDataByPK(String.valueOf(sessionId), false);
+        userOnlineBusiness.readDataByPK(String.valueOf(sessionId), false);
         if (userOnline == null) {
             return null;
         }

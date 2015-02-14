@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.platform.modules.auth.Constants;
 import org.platform.modules.auth.biz.IUserBusiness;
+import org.platform.modules.auth.common.Constants;
 import org.platform.modules.auth.entity.User;
 
 /**

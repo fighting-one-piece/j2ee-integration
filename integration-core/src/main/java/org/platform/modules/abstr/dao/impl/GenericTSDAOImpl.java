@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -93,17 +94,22 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 		query.addCondition(Query.TABLE, dataTable());
 		query.addCondition("thingId", thing.getId());
 		List<ThingData> existThingDatas = thingDataDAO.readDataListByCondition(query);
-		Set<String> attributes = new HashSet<String>();
-		for (ThingData existThingData : existThingDatas) {
-			attributes.add(existThingData.getAttribute());
+		Map<String, Object> attributeValueMap = new HashMap<String, Object>(); 
+		for (int i = 0, iLen = existThingDatas.size(); i < iLen; i++) {
+			ThingData existThingData = existThingDatas.get(i);
+			attributeValueMap.put(existThingData.getAttribute(), existThingData.getValue());
 		}
 		List<ThingData> insertThingDatas = new ArrayList<ThingData>();
 		List<ThingData> updateThingDatas = new ArrayList<ThingData>();
-		for (ThingData thingData : thingDatas) {
-			if (attributes.contains(thingData.getAttribute())) {
-				updateThingDatas.add(thingData);
-			} else {
+		for (int j = 0, jLen = thingDatas.size(); j < jLen; j++) {
+			ThingData thingData = thingDatas.get(j);
+			String attribute = thingData.getAttribute();
+			Object value = attributeValueMap.get(attribute);
+			if (null == value) {
 				insertThingDatas.add(thingData);
+			} else {
+				if (value.equals(thingData.getValue())) continue;
+				updateThingDatas.add(thingData);
 			}
 		}
 		if (insertThingDatas.size() > 0) {
@@ -161,13 +167,13 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 	}
 	
 	@Override
-	public void updateUpIncr(PK pk, int incr) throws DataAccessException {
-		thingDAO.updateUpIncr(thingTable(), (Long) pk, incr);
+	public void updateUpsIncr(PK pk, int incr) throws DataAccessException {
+		thingDAO.updateUpsIncr(thingTable(), (Long) pk, incr);
 	}
 	
 	@Override
-	public void updateDownIncr(PK pk, int incr) throws DataAccessException {
-		thingDAO.updateDownIncr(thingTable(), (Long) pk, incr);
+	public void updateDownsIncr(PK pk, int incr) throws DataAccessException {
+		thingDAO.updateDownsIncr(thingTable(), (Long) pk, incr);
 	}
 	
 	@Override
@@ -178,6 +184,27 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 	@Override
 	public void updateSpam(PK pk, boolean spam) throws DataAccessException {
 		thingDAO.updateSpam(thingTable(), (Long) pk, spam);
+	}
+	
+	@Override
+	public void updateAttribute(PK pk, String attribute, Object value) throws DataAccessException {
+		String[] valueAndKey = ThingUtils.getValueAndKind(value);
+		String dataValue = valueAndKey[0];
+		String dataKind = valueAndKey[1];
+		ThingData thingData = readThingDataByThingIdAndAttribute((Long) pk, attribute);
+		if (null == thingData) {
+			thingData = new ThingData();
+			thingData.setThingId((Long) pk);
+			thingData.setAttribute(attribute);
+			thingData.setValue(dataValue);
+			thingData.setKind(dataKind);
+			insert(thingData);
+		} else {
+			if (dataKind.equals(thingData.getKind()) && !dataValue.equals(thingData.getValue())) {
+				thingData.setValue(dataValue);
+				update(thingData);
+			}
+		}
 	}
 	
 	@Override
@@ -262,6 +289,7 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 	@Override
 	public Entity readDataByCondition(Query query) throws DataAccessException {
 		List<Entity> entities = readDataListByCondition(query);
+		if (entities.size() > 1) throw new RuntimeException("数据异常错误");
 		return entities.size() == 1 ? entities.get(0) : null;
 	}
 	
@@ -283,8 +311,7 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 		List<Set<Long>> idList = new ArrayList<Set<Long>>();
 		for (Map.Entry<String, Object> entry : dataAttributes.entrySet()) {
 			String attribute = entry.getKey();
-			String value = String.valueOf(entry.getValue());
-			Query thingDataQuery = genThingDataQuery(attribute, value);
+			Query thingDataQuery = genThingDataQuery(attribute, entry.getValue());
 			List<ThingData> thingDatas = thingDataDAO.readDataListByCondition(thingDataQuery);
 			Set<Long> thingIds = new HashSet<Long>();
 			for (ThingData thingData : thingDatas) {
@@ -294,10 +321,13 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 			}
 			if (thingIds.size() > 0) idList.add(thingIds);
 		}
-		if ((dataAttributes.size() > 0 && idList.size() == 0) ||
-				dataAttributes.size() != idList.size()) {
+		if ((dataAttributes.size() > 0 && idList.size() == 0) || dataAttributes.size() != idList.size()) {
 			return new ArrayList<Entity>();
 		}
+//		if (query.getConditions().containsKey("ids")) {
+//			List<Long> ids = (List<Long>) query.getConditions().get("ids");
+//			if (null != ids && ids.size() > 0) idList.add(new HashSet<Long>(ids));
+//		}
 		Set<Long> ids = new HashSet<Long>();
 		if (idList.size() > 0) {
 			for (Long id : idList.get(0)) {
@@ -311,9 +341,8 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 				if (flag) ids.add(id);
 			}
 		}
-		if (ids.size() > 0) {
-			query.addCondition("ids", new ArrayList<Long>(ids));
-		}
+		if (idList.size() > 0 && ids.size() == 0) return new ArrayList<Entity>();
+		if (ids.size() > 0) query.addCondition("ids", new ArrayList<Long>(ids));
 		List<Thing> things = readThingsByCondition(query);
 		boolean isRead = null == query.getDataOrderAttribute() ? false : true;
 		List<Entity> entities = new ArrayList<Entity>();
@@ -343,8 +372,7 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 		List<Set<Long>> idList = new ArrayList<Set<Long>>();
 		for (Map.Entry<String, Object> entry : dataAttributes.entrySet()) {
 			String attribute = entry.getKey();
-			String value = String.valueOf(entry.getValue());
-			Query thingDataQuery = genThingDataQuery(attribute, value);
+			Query thingDataQuery = genThingDataQuery(attribute, entry.getValue());
 			List<ThingData> thingDatas = thingDataDAO.readDataListByCondition(thingDataQuery);
 			Set<Long> thingIds = new HashSet<Long>();
 			for (ThingData thingData : thingDatas) {
@@ -354,10 +382,13 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 			}
 			if (thingIds.size() > 0) idList.add(thingIds);
 		}
-		if ((dataAttributes.size() > 0 && idList.size() == 0) ||
-				dataAttributes.size() != idList.size()) {
+		if ((dataAttributes.size() > 0 && idList.size() == 0) || dataAttributes.size() != idList.size()) {
 			return new QueryResult<Entity>();
 		}
+//		if (query.getConditions().containsKey("ids")) {
+//			List<Long> ids = (List<Long>) query.getConditions().get("ids");
+//			if (null != ids && ids.size() > 0) idList.add(new HashSet<Long>(ids));
+//		}
 		Set<Long> ids = new HashSet<Long>();
 		if (idList.size() > 0) {
 			for (Long id : idList.get(0)) {
@@ -371,9 +402,8 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 				if (flag) ids.add(id);
 			}
 		}
-		if (ids.size() > 0) {
-			query.addCondition("ids", new ArrayList<Long>(ids));
-		}
+		if (idList.size() > 0 && ids.size() == 0) return new QueryResult<Entity>();
+		if (ids.size() > 0) query.addCondition("ids", new ArrayList<Long>(ids));
 		query.setPagination(true);
 		QueryResult<Thing> qr = new QueryResult<Thing>();
 		if (null == query.getDataOrderAttribute()) {
@@ -404,29 +434,34 @@ public class GenericTSDAOImpl<Entity extends Serializable, PK extends Serializab
 		throw new UnsupportedOperationException();
 	}
 	
-	private Query genThingDataQuery(String attribute, String value) {
+	private Query genThingDataQuery(String attribute, Object value) {
+		String stringValue = String.valueOf(value);
 		Query query = new Query();
 		query.addCondition(Query.TABLE, dataTable());
 		if (attribute.contains("Like")) {
 			attribute = attribute.substring(0, attribute.indexOf("Like"));
-			query.addCondition("valueLike", value);
+			query.addCondition("valueLike", stringValue);
 		} else if (attribute.contains("GT")) {
 			attribute = attribute.substring(0, attribute.indexOf("GT"));
-			query.addCondition("valueGT", value);
+			query.addCondition("valueGT", stringValue);
 		} else if (attribute.contains("GE")) {
 			attribute = attribute.substring(0, attribute.indexOf("GE"));
-			query.addCondition("valueGE", value);
+			query.addCondition("valueGE", stringValue);
 		} else if (attribute.contains("LT")) {
 			attribute = attribute.substring(0, attribute.indexOf("LT"));
-			query.addCondition("valueLT", value);
+			query.addCondition("valueLT", stringValue);
 		} else if (attribute.contains("LE")) {
 			attribute = attribute.substring(0, attribute.indexOf("LE"));
-			query.addCondition("valueLE", value);
+			query.addCondition("valueLE", stringValue);
+		} else if (attribute.contains("IN")) {
+			attribute = attribute.substring(0, attribute.indexOf("IN"));
+			query.addCondition("valueIN", value);
 		} else {
-			query.addCondition("value", value);
+			query.addCondition("value", stringValue);
 		}
 		query.addCondition("attribute", attribute);
 		return query;
 	}
+	
 	
 }

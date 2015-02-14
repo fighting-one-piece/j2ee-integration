@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.platform.entity.Query;
@@ -23,7 +25,9 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 	extends SqlSessionDaoSupport implements IGenericDAO<Entity, PK> {
 
 	public static final String SQLID_INSERT = "insert";
+	public static final String SQLID_INSERT_BATCH = "insertBatch";
     public static final String SQLID_UPDATE = "update";
+    public static final String SQLID_UPDATE_BATCH = "updateBatch";
     public static final String SQLID_DELETE_BY_PK = "deleteByPK";
     public static final String SQLID_READ_DATA_BY_PK = "readDataByPK";
     public static final String SQLID_READ_DATA_BY_CONDITION = "readDataByCondition";
@@ -31,7 +35,7 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
     public static final String SQLID_READ_DATA_PAGINATION_BY_CONDITION = "readDataPaginationByCondition";
 
 	@Resource(name = "sqlSessionTemplate")
-	protected SqlSessionTemplate sqlSessionTemplate;
+	protected SqlSessionTemplate sqlSessionTemplate = null;
 
 	private Class<Entity> entityClass = null;
 
@@ -42,20 +46,19 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
             entityClass = (Class<Entity>) ((ParameterizedType) type).getActualTypeArguments()[0];
         }
 	}
+	
+	protected SqlSession batchSqlSession() {
+		return sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH);
+	}
 
 	protected String obtainSQLID(String sqlId) {
 		Configuration configuration = sqlSessionTemplate.getConfiguration();
-		String dialect = null;
+		String dialect = "mysql";
 		if (null != configuration.getVariables()) {
 			dialect = configuration.getVariables().getProperty("dialect");
 		}
-		if (null == dialect) {
-			dialect = "mysql";
-		}
 		StringBuffer sb = new StringBuffer();
-		sb.append(dialect).append(".")
-		  .append(entityClass.getName()).append(".")
-		  .append(sqlId);
+		sb.append(dialect).append(".").append(entityClass.getName()).append(".").append(sqlId);
 		return sb.toString();
 	}
 
@@ -106,20 +109,27 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 	@Override
 	public List<Entity> readDataListByCondition(Query query) throws DataAccessException {
 		Map<String, Object> map = query.getMybatisCondition();
-		List<Entity> resultList = (List<Entity>) sqlSessionTemplate.selectList(
+		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
 				obtainSQLID(SQLID_READ_DATA_LIST_BY_CONDITION), map);
-		return null == resultList ? new ArrayList<Entity>() : resultList;
+		List<Entity> entities = new ArrayList<Entity>();
+		for (int i = 0, len = resultList.size(); i < len; i++) {
+			entities.add((Entity) resultList.get(i));
+		}
+		return entities;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<Entity> readDataPaginationByCondition(Query query)
-			throws DataAccessException {
+	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException {
 		Map<String, Object> map = query.getMybatisCondition();
-		List<Entity> resultList = (List<Entity>) sqlSessionTemplate.selectList(
+		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
 				obtainSQLID(SQLID_READ_DATA_PAGINATION_BY_CONDITION), map);
+		List<Entity> entities = new ArrayList<Entity>();
+		for (int i = 0, len = resultList.size(); i < len; i++) {
+			entities.add((Entity) resultList.get(i));
+		}
 		int totalRowNum = (Integer) map.get(Query.TOTAL_ROW_NUM);
-		return new QueryResult<Entity>(totalRowNum, resultList);
+		return new QueryResult<Entity>(totalRowNum, entities);
 	}
 	
 	@Override

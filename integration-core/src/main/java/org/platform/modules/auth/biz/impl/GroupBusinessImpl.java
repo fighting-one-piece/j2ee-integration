@@ -20,8 +20,7 @@ public class GroupBusinessImpl extends GenericBusinessImpl<Group, Long> implemen
 	@Resource(name = "groupHibernateDAO")
 	private IGroupDAO groupHibernateDAO = null;
 	
-	@Override
-	protected IGenericDAO<Group, Long> obtainDAOInstance() {
+	public IGenericDAO<Group, Long> obtainDAOInstance() {
 		return groupHibernateDAO;
 	}
 	

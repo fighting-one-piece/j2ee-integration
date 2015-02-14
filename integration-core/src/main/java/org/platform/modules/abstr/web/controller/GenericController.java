@@ -1,4 +1,4 @@
-package org.platform.modules.abstr.controller;
+package org.platform.modules.abstr.web.controller;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -8,10 +8,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
+import org.platform.utils.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class GenericController<Entity extends Serializable, PK extends Serializable> {
 
 	/** 日志*/
-	protected Logger LOG = Logger.getLogger(getClass());
+	protected Logger LOG = LoggerFactory.getLogger(getClass());
 
 	protected Class<Entity> entityClass = null;
 	
@@ -65,9 +67,7 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
      * @return
      */
     protected String redirectToUrl(String backURL) {
-        if (StringUtils.isEmpty(backURL)) {
-            backURL = getViewPrefix();
-        }
+        if (StringUtils.isEmpty(backURL)) backURL = getViewPrefix();
         if (!backURL.startsWith("/") && !backURL.startsWith("http")) {
             backURL = "/" + backURL;
         }
@@ -80,9 +80,7 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
      * 2、如果没有就使用当前模型小写的简单类名
      */
     public void setViewPrefix(String viewPrefix) {
-        if (viewPrefix.startsWith("/")) {
-            viewPrefix = viewPrefix.substring(1);
-        }
+        if (viewPrefix.startsWith("/")) viewPrefix = viewPrefix.substring(1);
         this.viewPrefix = viewPrefix;
     }
 
@@ -98,52 +96,73 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 	
 	@RequestMapping(value = "/insert", method = RequestMethod.POST)
 	public String insert(@Valid Entity entity, BindingResult result) {
-		if (result.hasErrors()) {
-			return defaultViewPrefix() + "/insert";
+		if (result.hasErrors()) return defaultViewPrefix() + "/insert";
+		try {
+			obtainBusinessInstance().insert(entity);
+		} catch (BusinessException be) {
+			
+		} catch (Exception e) {
+			
 		}
-		obtainBusinessInstance().insert(entity);
 		return redirectToUrl(defaultViewPrefix());
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/{id}/update", method = RequestMethod.GET)
 	public String update(@PathVariable PK id, Model model) {
-		Entity entity = (Entity) obtainBusinessInstance().readDataByPK(id, false);
-		model.addAttribute("entity", entity);
+		try {
+			Entity entity = (Entity) obtainBusinessInstance().readDataByPK(id, false);
+			model.addAttribute("entity", entity);
+		} catch (BusinessException be) {
+			
+		} catch (Exception e) {
+			
+		}
 		return defaultViewPrefix() + "/insert";
 	}
 
 	@RequestMapping(value = "/{id}/update", method = RequestMethod.POST)
 	public String update(@Valid Entity entity, BindingResult result) {
-		if (result.hasErrors()) {
-			return defaultViewPrefix() + "/insert";
+		if (result.hasErrors()) return defaultViewPrefix() + "/insert";
+		try {
+			obtainBusinessInstance().update(entity);
+		} catch (BusinessException be) {
+			
+		} catch (Exception e) {
+			
 		}
-		obtainBusinessInstance().update(entity);
 		return redirectToUrl(defaultViewPrefix());
 	}
 
 	@RequestMapping(value = "/{id}/delete", method = RequestMethod.GET)
 	public String delete(@PathVariable PK id) {
-		obtainBusinessInstance().deleteByPK(id);
+		try {
+			obtainBusinessInstance().deleteByPK(id);
+		} catch (BusinessException be) {
+			
+		} catch (Exception e) {
+			
+		}
 		return redirectToUrl(defaultViewPrefix());
 	}
 	
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/{id}/json", method = RequestMethod.GET)
-	public Entity readDataByPKWithJson(@PathVariable PK id) {
-		return (Entity) obtainBusinessInstance().readDataByPK(id, false);
+	@RequestMapping(value = "/{pk}/json", method = RequestMethod.GET)
+	public Entity readDataByPKWithJson(@PathVariable PK pk) {
+		return (Entity) obtainBusinessInstance().readDataByPK(pk, false);
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public String readDataListWithPagination(Integer currentPageNum, Integer rowNumPerPage, Model model) {
+	@RequestMapping(value = "/p/{currentPageNum}/r/{rowNumPerPage}", method = RequestMethod.GET)
+	public String readDataListWithPagination(@PathVariable int currentPageNum, @PathVariable int 
+			rowNumPerPage, Model model) {
 		Query query = new Query();
-		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
-		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
 		query.setPagination(true);
-		QueryResult<Entity> qr = (QueryResult<Entity>) obtainBusinessInstance()
-				.readDataPaginationByCondition(query, false);
+		query.setCurrentPageNum(currentPageNum);
+		query.setRowNumPerPage(rowNumPerPage);
+		QueryResult<Entity> qr = (QueryResult<Entity>) 
+				obtainBusinessInstance().readDataPaginationByCondition(query, false);
 		model.addAttribute("currentPageNum", currentPageNum);
 		model.addAttribute("rowNumPerPage", rowNumPerPage);
 		model.addAttribute("totalRowNum", qr.getTotalRowNum());
@@ -153,14 +172,15 @@ public abstract class GenericController<Entity extends Serializable, PK extends 
 	
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/json", method = RequestMethod.GET)
-	public List<Entity> readDataListWithPaginationAndJson(Integer currentPageNum, Integer rowNumPerPage) {
+	@RequestMapping(value = "/p/{currentPageNum}/r/{rowNumPerPage}/json", method = RequestMethod.GET)
+	public List<Entity> readDataListWithPaginationAndJson(@PathVariable int currentPageNum, @PathVariable 
+			int rowNumPerPage) {
 		Query query = new Query();
-		if (null != currentPageNum) query.setCurrentPageNum(currentPageNum);
-		query.setRowNumPerPage(null == rowNumPerPage ? 5 : rowNumPerPage);
 		query.setPagination(true);
-		QueryResult<Entity> qr = (QueryResult<Entity>) obtainBusinessInstance()
-				.readDataListByCondition(query, false);
+		query.setCurrentPageNum(currentPageNum);
+		query.setRowNumPerPage(rowNumPerPage);
+		QueryResult<Entity> qr = (QueryResult<Entity>) 
+				obtainBusinessInstance().readDataListByCondition(query, false);
 		return qr.getResultList();
 	}
 	

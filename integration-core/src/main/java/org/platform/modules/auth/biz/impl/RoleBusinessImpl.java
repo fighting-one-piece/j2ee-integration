@@ -29,7 +29,7 @@ public class RoleBusinessImpl extends GenericBusinessImpl<Role, Long> implements
 	private IGroupBusiness groupBusiness = null;
 	
 	@Override
-	protected IGenericDAO<Role, Long> obtainDAOInstance() {
+	public IGenericDAO<Role, Long> obtainDAOInstance() {
 		return roleHibernateDAO;
 	}
 	

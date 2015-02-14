@@ -14,14 +14,7 @@
     
      <insert id="insert" parameterType="User">
             INSERT INTO T_PLAT_USER(NAME, PASSWORD, CODE, CREATE_TIME, EXPIRE_TIME, AVAILAN) 
-            VALUES(
-             	#{name},
-             	#{password},
-             	#{code},
-             	#{createTime},
-             	#{expireTime},
-             	#{availan}
-             )  
+            VALUES(#{name},#{password},#{code},#{createTime},#{expireTime},#{availan})  
     </insert>
     
     <select id="readDataListByCondition" resultType="User" resultMap="userResultMap">  

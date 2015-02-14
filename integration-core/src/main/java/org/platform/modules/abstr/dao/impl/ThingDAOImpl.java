@@ -1,8 +1,6 @@
 package org.platform.modules.abstr.dao.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.platform.entity.Query;
@@ -24,7 +22,7 @@ public class ThingDAOImpl extends GenericMyBatisDAOImpl<Thing, Long> implements 
 	public static final String READ_DATA_PAGINATION_BY_CONDITION_WITH_ORDER = "readDataPaginationByConditionWithOrder";
 
 	@Override
-	public void updateUpIncr(String table, Long id, int incr) throws DataAccessException {
+	public void updateUpsIncr(String table, Long id, int incr) throws DataAccessException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("table", table);
 		map.put("id", id);
@@ -33,7 +31,7 @@ public class ThingDAOImpl extends GenericMyBatisDAOImpl<Thing, Long> implements 
 	}
 	
 	@Override
-	public void updateDownIncr(String table, Long id, int incr) throws DataAccessException {
+	public void updateDownsIncr(String table, Long id, int incr) throws DataAccessException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("table", table);
 		map.put("id", id);
@@ -89,12 +87,12 @@ public class ThingDAOImpl extends GenericMyBatisDAOImpl<Thing, Long> implements 
 	
 	@Override
 	public QueryResult<Thing> readDataPaginationByConditionWithOrder(Query query) throws DataAccessException {
-		Map<String, Object> map = query.getMybatisCondition();
+//		Map<String, Object> map = query.getConditions();
 //		List<Thing> things = sqlSessionTemplate.selectList(
 //				obtainSQLID(READ_DATA_PAGINATION_BY_CONDITION_WITH_ORDER), map);
-		List<Thing> resultList = new ArrayList<Thing>();
-		Long totalRowNum = (Long) map.get(Query.TOTAL_ROW_NUM);
-		return new QueryResult<Thing>(totalRowNum.intValue(), resultList);
+//		long totalRowNum = (Long) map.get(Query.TOTAL_ROW_NUM);
+//		return new QueryResult<Thing>(totalRowNum, things);
+		return new QueryResult<Thing>();
 	}
 	
 }

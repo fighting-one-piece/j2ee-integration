@@ -22,7 +22,7 @@ public class PermissionBusinessImpl extends GenericBusinessImpl<Permission, Long
 	private IPermissionDAO permissionHibernateDAO = null;
 	
 	@Override
-	protected IGenericDAO<Permission, Long> obtainDAOInstance() {
+	public IGenericDAO<Permission, Long> obtainDAOInstance() {
 		return permissionHibernateDAO;
 	}
 	

@@ -22,7 +22,7 @@ public class ResourceBusinessImpl extends GenericBusinessImpl<Resource, Long> im
 	private IResourceDAO resourceDAO = null;
 	
 	@Override
-	protected IGenericDAO<Resource, Long> obtainDAOInstance() {
+	public IGenericDAO<Resource, Long> obtainDAOInstance() {
 		return resourceDAO;
 	}
 	

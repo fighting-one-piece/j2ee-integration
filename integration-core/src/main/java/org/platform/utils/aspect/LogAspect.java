@@ -1,52 +1,52 @@
 package org.platform.utils.aspect;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
 public class LogAspect {
 
-	private Logger logger = Logger.getLogger(getClass());
+	private Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
-	private static final String execution = "execution(* platform.modules.*.*.impl.*.*(..))";
+	private static final String EXECUTION = "execution(* org.platform.modules.*.*.impl.*.*(..))";
 
-	@Before(execution)
+	@Before(EXECUTION)
 	public void logBefore(JoinPoint joinPoint){
-		logger.info("------Log Before Method------" + joinPoint.getSignature().getName());
+		LOG.info("------Log Before Method------" + joinPoint.getSignature().getName());
 	}
 
-	@After(execution)
+	@After(EXECUTION)
 	public void logAfter(JoinPoint joinPoint){
-		logger.info("------Log After Method------" + joinPoint.getSignature().getName());
+		LOG.info("------Log After Method------" + joinPoint.getSignature().getName());
 	}
 
-	@AfterReturning(pointcut = execution, returning = "result")
+	@AfterReturning(pointcut = EXECUTION, returning = "result")
 	public void logAfterReturn(JoinPoint joinPoint, Object result) {
-		logger.info("------Log After Returning Method------" + joinPoint.getSignature().getName());
-		logger.info("------Log After Returning Method Return Value------" + result);
+		LOG.info("------Log After Returning Method------" + joinPoint.getSignature().getName());
+		LOG.info("------Log After Returning Method Return Value------" + result);
 	}
 
-	@AfterThrowing(pointcut = execution, throwing = "exception")
+	@AfterThrowing(pointcut = EXECUTION, throwing = "exception")
 	public void logAfterThrowing(JoinPoint joinPoint, Throwable exception){
-		logger.info("------Log After Throwing Method------" + joinPoint.getSignature().getName());
-		logger.info("------Log After Throwing Method Exception------" + exception.getMessage());
+		LOG.info("------Log After Throwing Method------" + joinPoint.getSignature().getName());
+		LOG.info("------Log After Throwing Method Exception------" + exception.getMessage());
 	}
 
-//	@Around(execution)
-//	public void around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable{
-//		logger.info("------Log Around Method------" + proceedingJoinPoint.getSignature().getName());
-//		logger.info("------Log Around Method Arguments------" + Arrays.toString(proceedingJoinPoint.getArgs()));
-//		logger.info("------Log Around Method Begin------");
-//		proceedingJoinPoint.proceed();
-//		logger.info("------Log Around Method End------");
-//	}
+	@Around(EXECUTION)
+	public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable{
+		LOG.info("------Log Around Method------" + proceedingJoinPoint.getSignature().getName());
+		return proceedingJoinPoint.proceed();
+	}
 
 
 }

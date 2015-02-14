@@ -12,7 +12,7 @@ public interface IGenericTSDAO<Entity extends Serializable, PK extends Serializa
 	 * @param incr
 	 * @throws DataAccessException
 	 */
-	public void updateUpIncr(PK pk, int incr) throws DataAccessException;
+	public void updateUpsIncr(PK pk, int incr) throws DataAccessException;
 	
 	/**
 	 * 根据主键修改踩增数
@@ -20,7 +20,7 @@ public interface IGenericTSDAO<Entity extends Serializable, PK extends Serializa
 	 * @param incr
 	 * @throws DataAccessException
 	 */
-	public void updateDownIncr(PK pk, int incr) throws DataAccessException;
+	public void updateDownsIncr(PK pk, int incr) throws DataAccessException;
 	
 	/**
 	 * 根据主键修改删除标记
@@ -37,6 +37,15 @@ public interface IGenericTSDAO<Entity extends Serializable, PK extends Serializa
 	 * @throws DataAccessException
 	 */
 	public void updateSpam(PK pk, boolean spam) throws DataAccessException;
+	
+	/**
+	 * 根据主键修改属性的值
+	 * @param pk
+	 * @param attribute
+	 * @param value
+	 * @throws DataAccessException
+	 */
+	public void updateAttribute(PK pk, String attribute, Object value) throws DataAccessException;
 	
 	/**
 	 * 根据主键修改整型属性增量数

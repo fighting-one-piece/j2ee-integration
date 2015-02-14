@@ -9,7 +9,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.platform.modules.auth.Constants;
+import org.platform.modules.auth.common.Constants;
 import org.platform.modules.auth.entity.User;
 import org.platform.modules.auth.shiro.session.OnlineSession;
 import org.platform.modules.auth.shiro.session.OnlineSessionDAO;

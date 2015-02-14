@@ -12,13 +12,13 @@ public class Thing implements Serializable {
 	/** 标识*/
 	private Long id = null;
 	/** 顶数*/
-	private int ups = 0;
+	private Integer ups = null;
 	/** 踩数*/
-	private int downs = 0;
+	private Integer downs = null;
 	/** 删除标记*/
-	private boolean deleted = false;
+	private Boolean deleted = null;
     /** 垃圾标记*/
-	private boolean spam = false;
+	private Boolean spam = null;
 	/** 创建人标识*/
 	private Long creatorId = null;
 	/** 创建日期*/
@@ -36,35 +36,35 @@ public class Thing implements Serializable {
 		this.id = id;
 	}
 
-	public int getUps() {
+	public Integer getUps() {
 		return ups;
 	}
 	
-	public void setUps(int ups) {
+	public void setUps(Integer ups) {
 		this.ups = ups;
 	}
 	
-	public int getDowns() {
+	public Integer getDowns() {
 		return downs;
 	}
 	
-	public void setDowns(int downs) {
+	public void setDowns(Integer downs) {
 		this.downs = downs;
 	}
 	
-	public boolean isDeleted() {
+	public Boolean isDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
 	
-	public boolean isSpam() {
+	public Boolean isSpam() {
 		return spam;
 	}
 
-	public void setSpam(boolean spam) {
+	public void setSpam(Boolean spam) {
 		this.spam = spam;
 	}
 	

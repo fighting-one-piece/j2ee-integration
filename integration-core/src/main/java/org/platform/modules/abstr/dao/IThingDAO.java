@@ -14,7 +14,7 @@ public interface IThingDAO extends IGenericDAO<Thing, Long> {
 	 * @param incr
 	 * @throws DataAccessException
 	 */
-	public void updateUpIncr(String table, Long id, int incr) throws DataAccessException;
+	public void updateUpsIncr(String table, Long id, int incr) throws DataAccessException;
 	
 	/**
 	 * 根据主键修改踩增数
@@ -23,7 +23,7 @@ public interface IThingDAO extends IGenericDAO<Thing, Long> {
 	 * @param incr
 	 * @throws DataAccessException
 	 */
-	public void updateDownIncr(String table, Long id, int incr) throws DataAccessException;
+	public void updateDownsIncr(String table, Long id, int incr) throws DataAccessException;
 	
 	/**
 	 * 根据主键修改删除标记
