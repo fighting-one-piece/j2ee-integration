@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -73,14 +74,14 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 	
 	@Override
 	public void insert(Object... objects) {
-		List<Document> documents = new ArrayList<Document>();
-		for (Object object : objects) {
-			documents.add(object2Document(object));
-		}
 		try {
+			List<Document> documents = new ArrayList<Document>();
+			for (Object object : objects) {
+				documents.add(object2Document(object));
+			}
 			obtainIndexWriter().addDocuments(documents);
 		} catch (IOException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -89,7 +90,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		try {
 			obtainIndexWriter().updateDocument(term, object2Document(object));
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -98,7 +99,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		try {
 			obtainIndexWriter().deleteDocuments(term);
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -107,7 +108,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		try {
 			obtainIndexWriter().deleteAll();
 		} catch (IOException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	
@@ -116,7 +117,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		try {
 			obtainIndexWriter().commit();
 		} catch (IOException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 	
@@ -126,7 +127,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		try {
 			indexWriter.addIndexes(directories);
 		} catch (IOException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}	
 	}
 	
@@ -138,8 +139,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		String[] highLighterFields = condition.getHighLighterFields();
 		int currentPageNum = condition.getCurrentPageNum();
 		int rowNumPerPage = condition.getRowNumPerPage(); 
-		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? 
-				rowNumPerPage : currentPageNum * rowNumPerPage;
+		int topN = Math.max(currentPageNum * rowNumPerPage, rowNumPerPage);
 		List<Object> objectList = new ArrayList<Object>();
 		IndexSearcher indexSearcher = obtainIndexSearcher();
 		try {
@@ -149,8 +149,8 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
 				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, query, filter,
-						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
+				int n = Math.min(rowNumPerPage, topDocs.totalHits);
+				topDocs = readAfterDataList(indexSearcher, prePageLastScoreDoc, query, filter, n, sort);
 			}
 			if (null != topDocs && null != topDocs.scoreDocs) {
 				Analyzer analyzer = condition.getAnalyzer();
@@ -164,67 +164,18 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 				}
 			}
 		} catch (Exception e) {
-			LOG.info(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		} finally {
 			releaseIndexSearcher(indexSearcher);
 		}
 		return new QueryResult<>(topN, objectList);
 	}
 	
-//	public QueryResult<?> readDataListByConditionV1(QueryCondition conditions) {
-//		Class<?> clazz = (Class<?>) conditions.getConditionValue(QueryCondition.ENTITY_CLASS);
-//		String keyword = (String) conditions.getConditionValue(QueryCondition.KEYWORD);
-//		Query lucene_query = (Query) conditions.getConditionValue(QueryCondition.QUERY);
-//		if (null == lucene_query) lucene_query = obtainQuery(clazz, keyword);
-//		Analyzer analyzer = (Analyzer) conditions.getConditionValue(QueryCondition.ANALYZER);
-//		Filter filter = (Filter) conditions.getConditionValue(QueryCondition.FILTER);
-//		Sort sort = (Sort) conditions.getConditionValue(QueryCondition.SORT);
-//		String[] highLighterFields = (String[]) conditions.getConditionValue(
-//				QueryCondition.HIGHLIGHTER_FIELDS);
-//		int currentPageNum = conditions.getCurrentPageNum();
-//		int rowNumPerPage = conditions.getRowNumPerPage();
-//		if (rowNumPerPage == 0) {
-//			Integer temp = (Integer) conditions.getConditionValue(
-//					QueryCondition.ROW_NUM_PER_PAGE);
-//			rowNumPerPage = null == temp ? Integer.MAX_VALUE : temp;
-//		}
-//		int topN = currentPageNum * rowNumPerPage < rowNumPerPage ? rowNumPerPage : currentPageNum * rowNumPerPage;
-//		List<Object> objectList = new ArrayList<>();
-//		IndexSearcher indexSearcher = obtainIndexSearcher();
-//		try {
-//			TopDocs topDocs = readData(indexSearcher, lucene_query, filter, topN, sort);
-//			topN = null == topDocs ? 0 :topDocs.totalHits;
-//			if (currentPageNum > 1) {
-//				int prePageIndexNum = (currentPageNum - 1) * rowNumPerPage - 1;
-//				ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-//				ScoreDoc prePageLastScoreDoc = scoreDocs[prePageIndexNum];
-//				topDocs = indexSearcher.searchAfter(prePageLastScoreDoc, lucene_query, filter,
-//						rowNumPerPage < topDocs.totalHits ? rowNumPerPage : topDocs.totalHits);
-//			}
-//			if (null != topDocs && null != topDocs.scoreDocs) {
-//				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-//					Document document = indexSearcher.doc(scoreDoc.doc);
-//					LOG.debug("document: " + document);
-//					Object object = document2Object(document, clazz);
-//					if (null == analyzer) {
-//						highLighterFast(indexSearcher, lucene_query, scoreDoc.doc, object, highLighterFields);
-//					} else {
-//						highLighter(analyzer, lucene_query, document, object, highLighterFields);
-//					}
-//					objectList.add(object);
-//				}
-//			}
-//		} catch (Exception e) {
-//			LOG.debug(e.getMessage(), e);
-//		} finally {
-//			releaseIndexSearcher(indexSearcher);
-//		}
-//		return new QueryResult<>(topN, objectList);
-//	}
-	
 	protected Document object2Document(Object object) {
 		Document document = new Document();
-		for (java.lang.reflect.Field field : object.getClass().getDeclaredFields()) {
+		Field[] fields = object.getClass().getDeclaredFields();
+		for (int i = 0, len = fields.length; i < len; i++) {
+			Field field = fields[i];
 			try {
 				field.setAccessible(true);
 				String fieldName = field.getName();
@@ -250,7 +201,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 					document.add(new StringField(fieldName, String.valueOf(fieldValue), Store.YES));
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				LOG.debug(e.getMessage(), e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 		return document;
@@ -260,7 +211,9 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		Object object = null;
 		try {
 			object = clazz.newInstance();
-			for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+			Field[] fields = clazz.getDeclaredFields();
+			for (int i = 0, len = fields.length; i < len; i++) {
+				Field field = fields[i];
 				field.setAccessible(true);
 				Class<?> fieldType = field.getType();
 				IndexableField indexableField = document.getField(field.getName());
@@ -285,7 +238,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 				} 
 			}
 		} catch (IllegalAccessException | InstantiationException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		return object;
 	}
@@ -304,10 +257,9 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 				field.setAccessible(false);
 			}
 		}
-		String queryTag = condition.getQueryTag();
-		if (null == queryTag) throw new RuntimeException("没有查询标识");
 		BooleanQuery orQuery = new BooleanQuery();
-		String[] words = WordUtils.splitBySeg(condition.getKeyword());
+		String keyword = condition.getKeyword();
+		String[] words = StringUtils.isBlank(keyword) ? new String[]{"*"} : WordUtils.splitBySeg(keyword);
 		for (int i = 0, wLen = words.length; i < wLen; i++) {
 			for (int j = 0, fLen = queryFields.length; j < fLen; j++) {
 				String wildcardWord = "*" + words[i] + "*";
@@ -315,6 +267,8 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 						BooleanClause.Occur.SHOULD);
 			}
 		}
+		String queryTag = condition.getQueryTag();
+		if (StringUtils.isBlank(queryTag)) return orQuery;
 		BooleanQuery andQuery = new BooleanQuery();
 		andQuery.add(new TermQuery(new Term("search", queryTag)), BooleanClause.Occur.MUST);
 		andQuery.add(orQuery, BooleanClause.Occur.MUST);
@@ -322,25 +276,23 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 	}
 	
 	protected Query obtainQuery(Class<?> clazz, String keyword) {
-		List<String> fields = new ArrayList<String>();
-		for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
-			field.setAccessible(true);
-			Class<?> type = field.getType();
-			if (Collection.class.isAssignableFrom(type) || PKEntity.class.isAssignableFrom(type)) {
-				continue;
-			} 
-			fields.add(field.getName());
-		}
-		MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
-				IIndex.VERSION, fields.toArray(new String[0]), 
-				IndexUtils.obtainDefaultAnalyzer());
-		Query query = null;
 		try {
-			query = queryParser.parse(keyword);
+			List<String> fields = new ArrayList<String>();
+			for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+				field.setAccessible(true);
+				Class<?> type = field.getType();
+				if (Collection.class.isAssignableFrom(type) || PKEntity.class.isAssignableFrom(type)) {
+					continue;
+				} 
+				fields.add(field.getName());
+			}
+			MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
+					IIndex.VERSION, fields.toArray(new String[0]), IndexUtils.obtainDefaultAnalyzer());
+			return queryParser.parse(keyword);
 		} catch (ParseException e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
-		return query;
+		return null;
 	}
 	
 	public Sort obtainSort(QueryCondition condition) {
@@ -350,8 +302,8 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 		return new Sort(sortFields);
 	}
 	
-	protected TopDocs readDataList(IndexSearcher indexSearcher, Query query, 
-			Filter filter, int topN, Sort sort) throws IOException {
+	protected TopDocs readDataList(IndexSearcher indexSearcher, Query query, Filter filter, 
+			int topN, Sort sort) throws IOException {
 		TopDocs topDocs = null;
 		if (null == filter && null == sort) {
 			topDocs = indexSearcher.search(query, topN);
@@ -361,6 +313,21 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 			topDocs = indexSearcher.search(query, topN, sort);
 		} else if (null != filter && null != sort) {
 			topDocs = indexSearcher.search(query, filter, topN, sort);
+		}
+		return topDocs;
+	}
+	
+	protected TopDocs readAfterDataList(IndexSearcher indexSearcher, ScoreDoc scoreDoc, Query query, 
+			Filter filter, int n, Sort sort) throws IOException {
+		TopDocs topDocs = null;
+		if (null == filter && null == sort) {
+			topDocs = indexSearcher.searchAfter(scoreDoc, query, n);
+		} else if (null != filter && null == sort) {
+			topDocs = indexSearcher.searchAfter(scoreDoc, query, filter, n);
+		} else if (null == filter && null != sort) {
+			topDocs = indexSearcher.searchAfter(scoreDoc, query, n, sort);
+		} else if (null != filter && null != sort) {
+			topDocs = indexSearcher.searchAfter(scoreDoc, query, filter, n, sort);
 		}
 		return topDocs;
 	}
@@ -388,7 +355,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 						null == highLighterText ? indexableField.stringValue() : highLighterText);
 			}
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		} 
 	}
 	
@@ -410,7 +377,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 				ReflectUtils.setValueByFieldName(object, highLighterField, highLighterText);
 			}
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		} 
 	}
 	
@@ -426,7 +393,7 @@ public abstract class AbstrIndexBusinessImpl implements IIndexBusiness {
 						analyzer.tokenStream(highLighterField, new StringReader(highLighterFieldValue)), 
 						highLighterFieldValue, 3, "......\n");
 		} catch (Exception e) {
-			LOG.debug(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		} 
 		return null == highLighterTxt ? highLighterFieldValue : highLighterTxt;
 	}
