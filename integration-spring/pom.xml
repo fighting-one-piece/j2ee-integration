@@ -11,6 +11,7 @@
 	</parent>
 
 	<dependencies>
+	
 		<!--Spring依赖包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -21,6 +22,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
+		
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-context-support</artifactId>
+	    </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -72,7 +78,7 @@
 			<artifactId>spring-jms</artifactId>
 		</dependency>
 		
-		<!--ASPECTJ WEAVER依赖包 -->
+		<!--Aspectj Weaver 依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
