@@ -4,6 +4,7 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0" metadata-complete="false">
+	
 	<display-name>integration-web</display-name>
     
     <!-- LOG4J配置 -->
@@ -17,11 +18,13 @@
 		<param-value>1000</param-value>
 	</context-param>
 
+	<!-- Context -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:spring/applicationContext.xml,classpath*:spring/applicationContext-*.xml</param-value>
+		<param-value>classpath*:spring/applicationContext.xml</param-value>
 	</context-param>
 
+	<!-- Listener -->
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
@@ -38,6 +41,7 @@
 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
 	</listener>
 
+	<!-- Filter -->
 	<filter>
 		<filter-name>CharacterEncoding</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -133,6 +137,7 @@
 		<url-pattern>/jcaptcha.jpg</url-pattern>
 	</filter-mapping>
 	
+	<!-- Servlet -->
 	<servlet>
 		<servlet-name>SpringServlet</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

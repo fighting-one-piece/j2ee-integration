@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.platform.entity.Query;
 import org.platform.entity.QueryResult;
 import org.platform.modules.abstr.biz.IGenericBusiness;
-import org.platform.modules.abstr.controller.GenericController;
+import org.platform.modules.abstr.web.controller.GenericController;
 import org.platform.modules.crawl.biz.ICrawlBusiness;
 import org.platform.modules.crawl.entity.CrawlDetail;
 import org.platform.modules.crawl.entity.CrawlJob;
@@ -60,14 +60,13 @@ public class CrawlController extends GenericController<CrawlDetail, Long> {
 		return redirectToUrl("/crawl/job/search");
 	}
 	
-	@RequestMapping(value = "/job/search", method = RequestMethod.GET)
-	public String search(String keyword, Integer index, Integer currentPageNum,
-			Integer rowNumPerPage, Model model) {
+	@RequestMapping(value = "/job/search", method = {RequestMethod.GET, RequestMethod.POST})
+	public String search(String keyword, Integer index, Integer currentPageNum, Integer rowNumPerPage, Model model) {
 		QueryResult<CrawlJob> qr = crawlBusiness.readIndex(keyword, index, currentPageNum, rowNumPerPage);
 		if (qr.getTotalRowNum() == 0) {
 			Query query = new Query();
-			query.setCurrentPageNum(currentPageNum);
-			query.setRowNumPerPage(rowNumPerPage);
+			query.setCurrentPageNum(null == currentPageNum ? 0 : currentPageNum);
+			query.setRowNumPerPage(null == rowNumPerPage ? 10 : rowNumPerPage);
 			query.setPagination(true);
 			qr = (QueryResult<CrawlJob>) crawlBusiness.readJobPaginationByCondition(query);
 		}

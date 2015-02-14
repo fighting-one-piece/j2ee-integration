@@ -3,7 +3,7 @@ package org.platform.modules.doc.controller;
 import javax.annotation.Resource;
 
 import org.platform.modules.abstr.biz.IGenericBusiness;
-import org.platform.modules.abstr.controller.GenericController;
+import org.platform.modules.abstr.web.controller.GenericController;
 import org.platform.modules.doc.biz.IDocBusiness;
 import org.platform.modules.doc.entity.Doc;
 import org.springframework.stereotype.Controller;

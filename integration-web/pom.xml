@@ -12,7 +12,7 @@
 	</parent>
 
 	<dependencies>
-		<!--BASIC依赖包 -->
+		<!--CORE依赖包 -->
 		<dependency>
 			<groupId>org.platform</groupId>
 			<artifactId>integration-core</artifactId>

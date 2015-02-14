@@ -14,7 +14,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.IGenericBusiness;
-import org.platform.modules.abstr.controller.GenericController;
+import org.platform.modules.abstr.web.controller.GenericController;
 import org.platform.modules.auth.entity.User;
 import org.platform.modules.front.annotation.CurrentUser;
 import org.platform.modules.personal.biz.ICalendarBusiness;

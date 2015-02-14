@@ -10,9 +10,16 @@
 </head>
 <body>
 	<h1>错误信息</h1>
-	<%Exception exception = (Exception) request.getAttribute("exception");%>
-	<H2>异常:<%= ((Exception) request.getAttribute("exception")).getMessage()%></H2> 
+	<%
+		Object object = request.getAttribute("exception");
+		if (null != object) {
+			Exception exception = (Exception) object;
+			exception.printStackTrace();
+		}
+	%>
+	<%-- 	
+	<H2>异常:<%= exception.getMessage()%></H2>  
+	--%>
 	<P/> 
-	<% exception.printStackTrace();%> 
 </body>
 </html>

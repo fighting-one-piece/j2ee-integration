@@ -5,7 +5,7 @@ import javax.validation.Valid;
 
 import org.platform.entity.Query;
 import org.platform.modules.abstr.biz.IGenericBusiness;
-import org.platform.modules.abstr.controller.GenericController;
+import org.platform.modules.abstr.web.controller.GenericController;
 import org.platform.modules.auth.biz.IUserBusiness;
 import org.platform.modules.auth.entity.User;
 import org.springframework.stereotype.Controller;
