@@ -1,4 +1,4 @@
-package org.platform.modules.scheduler.job;
+package org.platform.modules.scheduler.factory;
 
 import java.lang.reflect.Method;
 
