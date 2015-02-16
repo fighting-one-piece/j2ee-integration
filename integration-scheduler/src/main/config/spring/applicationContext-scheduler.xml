@@ -36,14 +36,19 @@
     <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     -->
     <bean id="schedulerFactory" class="org.platform.modules.scheduler.factory.SchedulerFactoryExtBean">
+    	<!-- Scheduler自动启动标记 -->
     	<property name="autoStartup" value="false"/>  
+    	<!-- 启动延迟时间配置 -->
     	<property name="startupDelay" value="10"/>  
+    	<!-- 数据源配置 -->
 		<property name="dataSource" ref="dataSource"/>  
+    	<!-- 事务配置 -->
     	<property name="transactionManager" ref="transactionManager"/>
+    	<!-- Quartz相关配置 -->
     	<property name="configLocation" value="classpath:quartz/quartz.properties" />  
         <!-- 通过applicationContextSchedulerContextKey属性配置spring上下文 -->    
         <property name="applicationContextSchedulerContextKey" value="applicationContext"/>    
-        <!-- spring 管理的service需要放到这里，才能够注入成功 -->    
+        <!-- spring管理的service需要放到这里，才能够注入成功 -->    
         <property name="schedulerContextAsMap">    
             <map>    
                 <description>schedulerContextAsMap</description>    
@@ -57,17 +62,35 @@
         </property>      
     </bean>         
     
-    <bean id="tempTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">          
+    <!-- Trigger配置 -->
+    <bean id="tempTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> 
+    	<!-- Trigger名称 -->
+    	<property name="name" value="temp" />       
+    	<!-- Trigger组名 -->
+		<property name="group" value="default" />               
+    	<!-- Trigger描述 -->
+		<property name="description" value="TempTaskCronTrigger" />               
+    	<!-- Trigger绑定的Job -->
     	<property name="jobDetail" ref="tempTaskJobDetail"/>          
+    	<!-- Trigger的Cron表达式 -->
     	<property name="cronExpression" value="0/15 * * * * ?"/>      
     </bean>        
     
+    <!-- Job实例配置 -->
     <bean id="tempTaskJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">  
+    	<!-- Job实例名称 -->
 		<property name="name" value="temp" />       
+    	<!-- Job实例组名 -->
 		<property name="group" value="default" />       
+    	<!-- Job实例描述 -->
+		<property name="description" value="TempTask" />      
+    	<!-- Job实例实现类 -->
         <property name="jobClass" value="org.platform.modules.scheduler.task.TempTask" />  
+    	<!-- Job实例持久化标记 -->
         <property name="durability" value="true" />     
-        <property name="requestsRecovery" value="true" />       
+    	<!-- Job实例恢复标记 -->
+        <property name="requestsRecovery" value="true" />  
+        <!-- 用来保存任何需要传递给Job实例的对象 -->     
         <property name="jobDataMap">
         	<map>
         		<entry key="timeout" value = "10" />
