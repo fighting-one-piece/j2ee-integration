@@ -19,7 +19,7 @@ public class ThingDataDAOImpl extends GenericMyBatisDAOImpl<ThingData, Long> imp
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(Query.TABLE, entities.get(0).getTable());
 		map.put("list", entities);
-		sqlSessionTemplate.insert(obtainSQLID(SQLID_INSERT_BATCH), map);
+		sqlSessionTemplate.insert(obtainSQLID(INSERT_BATCH), map);
 	}
 	
 }

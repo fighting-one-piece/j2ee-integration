@@ -24,15 +24,16 @@ import org.springframework.stereotype.Repository;
 public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Serializable>
 	extends SqlSessionDaoSupport implements IGenericDAO<Entity, PK> {
 
-	public static final String SQLID_INSERT = "insert";
-	public static final String SQLID_INSERT_BATCH = "insertBatch";
-    public static final String SQLID_UPDATE = "update";
-    public static final String SQLID_UPDATE_BATCH = "updateBatch";
-    public static final String SQLID_DELETE_BY_PK = "deleteByPK";
-    public static final String SQLID_READ_DATA_BY_PK = "readDataByPK";
-    public static final String SQLID_READ_DATA_BY_CONDITION = "readDataByCondition";
-    public static final String SQLID_READ_DATA_LIST_BY_CONDITION = "readDataListByCondition";
-    public static final String SQLID_READ_DATA_PAGINATION_BY_CONDITION = "readDataPaginationByCondition";
+	public static final String INSERT = "insert";
+	public static final String INSERT_BATCH = "insertBatch";
+    public static final String UPDATE = "update";
+    public static final String UPDATE_BATCH = "updateBatch";
+    public static final String DELETE_BY_PK = "deleteByPK";
+    public static final String READ_DATA_BY_PK = "readDataByPK";
+    public static final String READ_DATA_BY_CONDITION = "readDataByCondition";
+    public static final String READ_DATA_LIST_BY_CONDITION = "readDataListByCondition";
+    public static final String READ_DATA_PAGINATION_BY_CONDITION = "readDataPaginationByCondition";
+    public static final String READ_COUNT_BY_CONDITION = "readCountByCondition";
 
 	@Resource(name = "sqlSessionTemplate")
 	protected SqlSessionTemplate sqlSessionTemplate = null;
@@ -45,6 +46,10 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
         if (type instanceof ParameterizedType) {
             entityClass = (Class<Entity>) ((ParameterizedType) type).getActualTypeArguments()[0];
         }
+	}
+	
+	protected SqlSession sqlSession() {
+		return sqlSessionTemplate.getSqlSessionFactory().openSession();
 	}
 	
 	protected SqlSession batchSqlSession() {
@@ -64,22 +69,30 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 
 	@Override
 	public void insert(Entity entity) {
-		sqlSessionTemplate.insert(obtainSQLID(SQLID_INSERT), entity);
+		sqlSessionTemplate.insert(obtainSQLID(INSERT), entity);
 	}
 	
 	@Override
 	public void insert(List<Entity> entities) throws DataAccessException {
-		
+		SqlSession sqlSession = batchSqlSession();
+		for (int i = 0, len = entities.size(); i < len; i++) {
+			sqlSession.insert(obtainSQLID(INSERT), entities.get(i));
+		}
+		sqlSession.flushStatements();
 	}
 
 	@Override
 	public void update(Entity entity) {
-		sqlSessionTemplate.update(obtainSQLID(SQLID_UPDATE), entity);
+		sqlSessionTemplate.update(obtainSQLID(UPDATE), entity);
 	}
 
 	@Override
 	public void update(List<Entity> entities) throws DataAccessException {
-		
+		SqlSession sqlSession = batchSqlSession();
+		for (int i = 0, len = entities.size(); i < len; i++) {
+			sqlSession.update(obtainSQLID(UPDATE), entities.get(i));
+		}
+		sqlSession.flushStatements();
 	}
 	
 	@Override
@@ -89,28 +102,28 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 
 	@Override
 	public void deleteByPK(PK primaryKey) {
-		sqlSessionTemplate.delete(obtainSQLID(SQLID_DELETE_BY_PK), primaryKey);
+		sqlSessionTemplate.delete(obtainSQLID(DELETE_BY_PK), primaryKey);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Entity readDataByPK(PK pk) {
-		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(SQLID_READ_DATA_BY_PK), pk);
+		return (Entity) sqlSession().selectOne(obtainSQLID(READ_DATA_BY_PK), pk);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Entity readDataByCondition(Query query) {
 		Map<String, Object> map = query.getMybatisCondition();
-		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(SQLID_READ_DATA_BY_CONDITION), map);
+		return (Entity) sqlSession().selectOne(obtainSQLID(READ_DATA_BY_CONDITION), map);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Entity> readDataListByCondition(Query query) throws DataAccessException {
 		Map<String, Object> map = query.getMybatisCondition();
-		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
-				obtainSQLID(SQLID_READ_DATA_LIST_BY_CONDITION), map);
+		List<Object> resultList = (List<Object>) sqlSession().selectList(
+				obtainSQLID(READ_DATA_LIST_BY_CONDITION), map);
 		List<Entity> entities = new ArrayList<Entity>();
 		for (int i = 0, len = resultList.size(); i < len; i++) {
 			entities.add((Entity) resultList.get(i));
@@ -122,8 +135,8 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 	@Override
 	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException {
 		Map<String, Object> map = query.getMybatisCondition();
-		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
-				obtainSQLID(SQLID_READ_DATA_PAGINATION_BY_CONDITION), map);
+		List<Object> resultList = (List<Object>) sqlSession().selectList(
+				obtainSQLID(READ_DATA_PAGINATION_BY_CONDITION), map);
 		List<Entity> entities = new ArrayList<Entity>();
 		for (int i = 0, len = resultList.size(); i < len; i++) {
 			entities.add((Entity) resultList.get(i));
@@ -134,7 +147,8 @@ public class GenericMyBatisDAOImpl<Entity extends Serializable, PK extends Seria
 	
 	@Override
 	public Long readCountByCondition(Query query) throws DataAccessException {
-		return null;
+		Map<String, Object> map = query.getMybatisCondition();
+		return  (Long) sqlSession().selectOne(obtainSQLID(READ_COUNT_BY_CONDITION), map);
 	}
 
 	@Override

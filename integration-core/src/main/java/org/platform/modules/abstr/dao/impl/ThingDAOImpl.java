@@ -81,7 +81,7 @@ public class ThingDAOImpl extends GenericMyBatisDAOImpl<Thing, Long> implements 
 		map.put("thingTable", thingTable);
 		map.put("dataTable", dataTable);
 		map.put("id", id);
-		Object result = sqlSessionTemplate.selectOne(obtainSQLID(SQLID_READ_DATA_BY_PK), map);
+		Object result = sqlSessionTemplate.selectOne(obtainSQLID(READ_DATA_BY_PK), map);
 		return null == result ? null : (Thing) result;
 	}
 	

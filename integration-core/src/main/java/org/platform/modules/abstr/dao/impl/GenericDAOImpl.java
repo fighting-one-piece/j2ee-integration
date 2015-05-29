@@ -48,6 +48,10 @@ public class GenericDAOImpl<Entity extends Serializable, PK extends Serializable
         }
     }
 	
+	protected SqlSession sqlSession() {
+		return sqlSessionTemplate.getSqlSessionFactory().openSession();
+	}
+	
 	protected SqlSession batchSqlSession() {
 		return sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH);
 	}
