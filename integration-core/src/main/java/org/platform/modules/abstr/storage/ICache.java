@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface ICacheProtocol {
+public interface ICache {
     
     public String set(String key, Object o) throws IOException;
 
@@ -54,9 +54,9 @@ public interface ICacheProtocol {
     
     public List<Long> zRemByValue(String[] keys, Object[] os) throws IOException;
 
-    long zRemrangeByRank(String key, int start, int end) throws IOException;
+    long zRemRangeByRank(String key, int start, int end) throws IOException;
 
-    long zRemrangeByScore(String key, double start, double end) throws IOException;
+    long zRemRangeByScore(String key, double start, double end) throws IOException;
 
     /**
      * redis原生操作，支持类似0 -1返回所有对象操作，返回从start到end的所有值（包含end）

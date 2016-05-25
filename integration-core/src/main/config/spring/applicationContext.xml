@@ -403,13 +403,13 @@
     <!-- Import Resource -->
     <import resource="classpath:spring/applicationContext-cache.xml"/>
     <import resource="classpath:spring/applicationContext-mail.xml"/>
-    <import resource="classpath:spring/applicationContext-mongo.xml"/>
-    <import resource="classpath:spring/applicationContext-redis.xml"/>
     <import resource="classpath:spring/applicationContext-shiro.xml"/>
     <import resource="classpath:spring/applicationContext-task.xml"/>
+    <import resource="classpath:spring/applicationContext-mongo.xml"/>
     <!-- 
-    <import resource="classpath:applicationContext-cassandra.xml"/>
-    <import resource="classpath:applicationContext-scheduler.xml"/>
+    <import resource="classpath:spring/applicationContext-redis.xml"/>
+    <import resource="classpath:spring/applicationContext-scheduler.xml"/>
+    <import resource="classpath:sprint/applicationContext-cassandra.xml"/>
      -->
 	
 </beans>

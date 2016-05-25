@@ -12,11 +12,16 @@
 
 	<modules>
 		<module>../integration-common</module>
+		<module>../integration-hibernate</module>
+		<module>../integration-mybatis</module>
 		<module>../integration-spring</module>
 		<module>../integration-lucene</module>
 		<module>../integration-scheduler</module>
 		<module>../integration-core</module>
+		<module>../integration-struts</module>
+		<module>../integration-springboot</module>
 		<module>../integration-web</module>
+		<module>../integration</module>
 	</modules>
 
 	<repositories>
@@ -331,7 +336,7 @@
 		<jcaptcha.version>2.0-alpha-1</jcaptcha.version>
 		<mail.version>1.5.0-b01</mail.version>
 
-		<struts.version>2.3.1.2</struts.version>
+		<struts.core.version>2.3.24.1</struts.core.version>
 		
 		<!-- 3.1.2.RELEASE -->
 		<spring.tx.version>3.2.11.RELEASE</spring.tx.version>
@@ -360,6 +365,9 @@
 		<spring.security.taglibs.version>3.2.11.RELEASE</spring.security.taglibs.version>
 		<spring.security.openid.version>3.2.11.RELEASE</spring.security.openid.version>
 		<spring.security.ldap.version>3.2.11.RELEASE</spring.security.ldap.version>
+		
+		<spring.boot.web.starter.version>1.2.3.RELEASE</spring.boot.web.starter.version>
+		<spring.boot.actuator.starter.version>1.2.3.RELEASE</spring.boot.actuator.starter.version>
 
 		<hibernate.core.version>4.1.7.Final</hibernate.core.version>
 		<hibernate.ehcache.version>4.1.7.Final</hibernate.ehcache.version>
@@ -379,6 +387,11 @@
 <!-- 		<mybatis.spring.version>1.0.1</mybatis.spring.version> -->
 		
 		<cassandra.version>2.1.0</cassandra.version>
+		
+		<persistence.version>1.0</persistence.version>
+		
+		<validation.version>1.1.0.Final</validation.version>
+		<bval.jsr303.version>0.5</bval.jsr303.version>
 
 		<gxt.version>2.2.0</gxt.version>
 		<gwt.dev.version>1.5.3</gwt.dev.version>
@@ -392,6 +405,8 @@
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
 		<cxf.version>2.6.2</cxf.version>
+		
+		<netty.version>3.10.5.Final</netty.version>
 
 		<blazeds.version>3.0.0.544</blazeds.version>
 		<blazeds.rds.version>4.0.0.14931.1</blazeds.rds.version>
@@ -406,7 +421,7 @@
 
 		<stax.version>3.1.0</stax.version>
 
-		<freemarker.version>2.3.19</freemarker.version>
+		<freemarker.version>2.3.23</freemarker.version>
 		<freemarker.template.version>2.3.9</freemarker.template.version>
 
 		<velocity.version>1.5</velocity.version>
@@ -416,11 +431,27 @@
 		<lucene.queries.version>4.5.1</lucene.queries.version>
 		<lucene.highlighter.version>4.5.1</lucene.highlighter.version>
 
+		<!--  
+		<lucene.core.version>5.3.1</lucene.core.version>
+		<lucene.analyzers.version>3.6.2</lucene.analyzers.version>
+		<lucene.queries.version>5.3.1</lucene.queries.version>
+		<lucene.highlighter.version>5.3.1</lucene.highlighter.version>
+		-->
+
 		<solr.version>4.5.1</solr.version>
 		<solr.core.version>4.5.1</solr.core.version>
 		<solr.solrj.version>4.5.1</solr.solrj.version>
 
 		<mmseg4j.version>1.9.1</mmseg4j.version>
+
+		<!-- 		
+		<elasticsearch.version>1.6.0</elasticsearch.version>
+		<elasticsearch.core.version>1.6.0</elasticsearch.core.version>
+		-->
+		
+		<elasticsearch.version>2.0.0</elasticsearch.version>
+		<elasticsearch.core.version>2.0.0</elasticsearch.core.version>
+		<elasticsearch.hadoop.version>2.1.2</elasticsearch.hadoop.version>
 
 		<poi.version>3.9</poi.version>
 		<quartz.version>2.2.1</quartz.version>
@@ -993,6 +1024,19 @@
 				<artifactId>spring-security-ldap</artifactId>
 				<version>${spring.security.ldap.version}</version>
 			</dependency>
+			
+			<!-- Spring Boot依赖包 -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+				<version>${spring.boot.web.starter.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-actuator</artifactId>
+				<version>${spring.boot.actuator.starter.version}</version>
+			</dependency>
 
 			<!--Hibernate依赖包 -->
 			<dependency>
@@ -1088,11 +1132,31 @@
 				<version>${cassandra.version}</version>
 			</dependency>
 			
+			<!-- Persistence依赖包 -->
+			<dependency>
+				<groupId>javax.persistence</groupId>
+				<artifactId>persistence-api</artifactId>
+				<version>${persistence.version}</version>
+			</dependency>
+			
+			<!-- Validation依赖包 -->
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${validation.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.bval</groupId>
+				<artifactId>bval-jsr303</artifactId>
+				<version>${bval.jsr303.version}</version>
+			</dependency>
+			
 			<!--Struts2依赖包 -->
 			<dependency>
 				<groupId>org.apache.struts</groupId>
 				<artifactId>struts2-core</artifactId>
-				<version>${struts.version}</version>
+				<version>${struts.core.version}</version>
 			</dependency>
 
 			<!--GWT依赖包 -->
@@ -1458,6 +1522,19 @@
 				<groupId>com.chenlb.mmseg4j</groupId>
 				<artifactId>mmseg4j-solr</artifactId>
 				<version>${mmseg4j.version}</version>
+			</dependency>
+			
+			<!--ELASTICSEARCH依赖包 -->
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.core.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch-hadoop</artifactId>
+				<version>${elasticsearch.hadoop.version}</version>
 			</dependency>
 
 			<!--POI依赖包 -->
@@ -2243,7 +2320,7 @@
 				<version>${crawler4j.version}</version>
 			</dependency>
 			
-			<!--SPARK依赖包 -->
+			<!-- SPARK依赖包 -->
 			<dependency>
 				<groupId>org.apache.spark</groupId>
 				<artifactId>spark-core_2.10</artifactId>
@@ -2284,6 +2361,13 @@
 				<groupId>org.apache.spark</groupId>
 				<artifactId>spark-sql_2.10</artifactId>
 				<version>${spark.version}</version>
+			</dependency>
+			
+			<!-- NETTY依赖包 -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>${netty.version}</version>
 			</dependency>
 
 		</dependencies>

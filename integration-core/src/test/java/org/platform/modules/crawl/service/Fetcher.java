@@ -1,23 +1,23 @@
 package org.platform.modules.crawl.service;
 
-import java.io.IOException;
-import java.io.StringReader;
+//import java.io.IOException;
+//import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
+//import org.apache.lucene.analysis.Analyzer;
+//import org.apache.lucene.analysis.TokenStream;
+//import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+//import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+//import org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.platform.modules.crawl.entity.CrawlJob;
-import org.platform.modules.lucene.IIndex;
-import org.platform.modules.lucene.IndexUtils;
+//import org.platform.modules.lucene.IIndex;
+//import org.platform.modules.lucene.IndexUtils;
 import org.platform.modules.lucene.biz.IIndexBusiness;
 import org.platform.modules.lucene.biz.impl.FSIndexBusinessImpl;
 import org.platform.utils.http.HttpClientUtils;
@@ -178,24 +178,24 @@ public class Fetcher {
 	}
 	
 	public static void analyzer() {
-		String word = "职位标签:  java 互联网支付 软件工程师职位职能:  高级软件工程师  职位描述: 本公司为大中型第三方支付公司提供基于自有产品的支付核心及相关系统的客户化开发服务，岗位要求如下： 1、本科以上学历，计算机相关专业。 2、两年以上JAVA开发经验。 3、熟悉UNIX操作系统，熟悉ORACLE或DB2数据库。 4、有银行支付系统、第三方支付系统开发经验者优先。 5、具有良好的沟通、团队协作、计划和创新的能力。 6、具备架构设计能力及初级项目管理能力的开发组长优先。 岗位职责： 高级软件工程师： 1、高级专业技术人员职位，独立负责工作小组，给下级成员提供引导或支持并监督他们的日常活动； 2、参与软件产品项目规划工作，制定具体项目实施方案； 3、整合并优化项目开发所需各种资源； 4、负责软件开发技术和规范及标准流程的改进； 5、参与软件系统的设计和分析； 6、根据开发进度和任务分配，完成相应模块软件的设计、开发、编程任务。 软件工程师： 1、技术人员职位，在上级的领导和监督下定期完成量化的工作要求； 2、能独立处理和解决所负责的任务； 3、根据开发进度和任务分配，完成相应模块软件的设计、开发、编程任务； 4、进行程序单元、功能的测试，查出软件存在的缺陷并保证其质量； 5、进行编制项目文档和质量记录的工作； 6、维护软件使之保持可用性和稳定性。";
-		Analyzer analyzer = IndexUtils.obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD);
-		try {
-			TokenStream tokenStream = analyzer.tokenStream("field", new StringReader(word));
-			CharTermAttribute charTermAttr = tokenStream.addAttribute(CharTermAttribute.class);
-			PositionLengthAttribute positionLengthAttr = tokenStream.addAttribute(PositionLengthAttribute.class);
-			PositionIncrementAttribute positionIncAttr = tokenStream.addAttribute(PositionIncrementAttribute.class);
-			tokenStream.reset();
-			while (tokenStream.incrementToken()) {
-				System.out.print(charTermAttr.toString());
-				System.out.print(positionLengthAttr.getPositionLength() + ":");
-				System.out.println(positionIncAttr.getPositionIncrement());
-			}
-			tokenStream.end();
-			tokenStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		String word = "职位标签:  java 互联网支付 软件工程师职位职能:  高级软件工程师  职位描述: 本公司为大中型第三方支付公司提供基于自有产品的支付核心及相关系统的客户化开发服务，岗位要求如下： 1、本科以上学历，计算机相关专业。 2、两年以上JAVA开发经验。 3、熟悉UNIX操作系统，熟悉ORACLE或DB2数据库。 4、有银行支付系统、第三方支付系统开发经验者优先。 5、具有良好的沟通、团队协作、计划和创新的能力。 6、具备架构设计能力及初级项目管理能力的开发组长优先。 岗位职责： 高级软件工程师： 1、高级专业技术人员职位，独立负责工作小组，给下级成员提供引导或支持并监督他们的日常活动； 2、参与软件产品项目规划工作，制定具体项目实施方案； 3、整合并优化项目开发所需各种资源； 4、负责软件开发技术和规范及标准流程的改进； 5、参与软件系统的设计和分析； 6、根据开发进度和任务分配，完成相应模块软件的设计、开发、编程任务。 软件工程师： 1、技术人员职位，在上级的领导和监督下定期完成量化的工作要求； 2、能独立处理和解决所负责的任务； 3、根据开发进度和任务分配，完成相应模块软件的设计、开发、编程任务； 4、进行程序单元、功能的测试，查出软件存在的缺陷并保证其质量； 5、进行编制项目文档和质量记录的工作； 6、维护软件使之保持可用性和稳定性。";
+//		Analyzer analyzer = IndexUtils.obtainAnalyzer(IIndex.ANALYZER_MMSEG4J_MAXWORD);
+//		try {
+//			TokenStream tokenStream = analyzer.tokenStream("field", new StringReader(word));
+//			CharTermAttribute charTermAttr = tokenStream.addAttribute(CharTermAttribute.class);
+//			PositionLengthAttribute positionLengthAttr = tokenStream.addAttribute(PositionLengthAttribute.class);
+//			PositionIncrementAttribute positionIncAttr = tokenStream.addAttribute(PositionIncrementAttribute.class);
+//			tokenStream.reset();
+//			while (tokenStream.incrementToken()) {
+//				System.out.print(charTermAttr.toString());
+//				System.out.print(positionLengthAttr.getPositionLength() + ":");
+//				System.out.println(positionIncAttr.getPositionIncrement());
+//			}
+//			tokenStream.end();
+//			tokenStream.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	public static void insertIndex() {

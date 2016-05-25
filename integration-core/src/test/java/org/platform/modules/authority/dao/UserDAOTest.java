@@ -22,11 +22,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/applicationContext.xml",
-		"classpath:spring/applicationContext-cache.xml",
-		"classpath:spring/applicationContext-redis.xml",
-		"classpath:spring/applicationContext-mongo.xml"})
-@TransactionConfiguration(transactionManager="transactionManager",defaultRollback=false)
+@ContextConfiguration(locations = {"classpath:spring/applicationContext.xml"})
+@TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
 @Transactional
 public class UserDAOTest {
 	

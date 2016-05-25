@@ -21,6 +21,17 @@ import org.platform.utils.http.HttpUnitUtils;
 public class CrawlTest {
 	
 	@Test
+	public void testGetUrl() {
+//		String url = "http://search.51job.com/list/090200%252C00,000000,0000,00,9,99,java%25B9%25A4%25B3%25CC%25CA%25A6,0,1.html?lang=c&stype=2&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&confirmdate=9&dibiaoid=0";
+		String url = "http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=090200%2C00&district=000000&funtype=0000&industrytype=00&issuedate=9&providesalary=99&keyword=java%E5%B7%A5%E7%A8%8B%E5%B8%88&keywordtype=0&curr_page=1&lang=c&stype=2&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&list_type=0&fromType=14&dibiaoid=0&confirmdate=9";
+		String html = HttpUnitUtils.get(url);
+//		System.out.println("------html------");
+//		System.out.println(html);
+		Document document = Jsoup.parse(html);
+		System.out.println(document);
+	}
+	
+	@Test
 	public void testGet() {
 		String url = "http://www.youku.com/";
 		String html = HttpUnitUtils.get(url);

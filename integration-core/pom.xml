@@ -281,6 +281,7 @@
 		</dependency>
 		
 		<!--SPARK依赖包 -->
+		<!--  
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
@@ -315,7 +316,7 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
 		</dependency>
-		
+		-->
 	</dependencies>
 
 	<build>

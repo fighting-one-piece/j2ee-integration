@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 
+	<constant name="struts.objectFactory" value="spring"></constant>
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.serve.static.browserCache" value="false"></constant>
+	<constant name="struts.objectFactory.spring.autoWire" value="name"></constant>
+    <constant name="struts.action.extension" value="action,do"/>
+    <constant name="struts.configuration.xml.reload" value="true"/>
+    <constant name="struts.ui.theme" value="simple"/>
+    -->
+	
+	<package name="auth" extends="struts-default" namespace="/auth">
+		<action name="user" class="org.platform.modules.auth.action.UserAction" method="list">
+			<result name="success">/index.jsp</result>
+		</action>
+	</package>
+	
+</struts>    

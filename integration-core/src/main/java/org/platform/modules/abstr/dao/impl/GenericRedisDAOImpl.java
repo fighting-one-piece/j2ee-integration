@@ -5,7 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
 
 import net.sf.json.JSONObject;
 
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 @Repository("genericRedisDAO")
 public class GenericRedisDAOImpl <Entity extends Serializable, PK extends Serializable> implements IGenericDAO<Entity, PK> {
 	
-	@Resource(name = "redisTemplate")
+//	@Resource(name = "redisTemplate")
 	protected RedisTemplate<Serializable, Serializable> redisTemplate = null;
 	
 	/** 实体类*/

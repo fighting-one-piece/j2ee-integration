@@ -15,8 +15,10 @@
 		<property name="maxActive" value="${redis.pool.maxActive}" />
 		<property name="maxIdle" value="${redis.pool.maxIdle}" />
 		<property name="maxWait" value="${redis.pool.maxWait}" />
+		<!-- 
 		<property name="minEvictableIdleTimeMillis" value="${redis.pool.minEvictableIdleTimeMillis}" />
         <property name="timeBetweenEvictionRunsMillis" value="${redis.pool.timeBetweenEvictionRunsMillis}" />
+		 -->
 		<property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
 	</bean>
 
@@ -30,7 +32,7 @@
 		 p:connection-factory-ref="jedisConnectionFactory" /> 
 		 
     <!-- 持久化Redis的 Jedis Pool 配置 -->
-    <bean id="persistenceJedisPool" class="org.platform.modules.abstr.storageShardedJedisPoolWrapper">
+    <bean id="persistenceJedisPool" class="org.platform.modules.abstr.storage.ShardedJedisPoolWrapper">
         <constructor-arg index="0" ref="jedisPoolConfig" />
         <constructor-arg index="1" value="${jedis.pool.address}" />
         <constructor-arg index="2" value="${jedis.pool.password}" />

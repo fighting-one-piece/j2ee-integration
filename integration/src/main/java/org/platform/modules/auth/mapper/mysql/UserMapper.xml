@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mysql.org.platform.modules.auth.entity.User">
+
+	<resultMap type="User" id="userResultMap">  
+        <id property="id" column="ID"/>  
+        <result property="name" column="NAME"/>
+        <result property="password" column="PASSWORD"/>  
+        <result property="code" column="CODE"/> 
+        <result property="createTime" column="CREATETIME"/> 
+        <result property="expireTime" column="EXPIRETIME"/> 
+        <result property="availan" column="AVAILAN"/> 
+    </resultMap>
+    
+     <insert id="insert" parameterType="User">
+            INSERT INTO T_PLAT_USER(NAME, PASSWORD, CODE, CREATE_TIME, EXPIRE_TIME, AVAILAN) 
+            VALUES(#{name},#{password},#{code},#{createTime},#{expireTime},#{availan})  
+    </insert>
+    
+    <select id="readDataListByCondition" resultType="User" resultMap="userResultMap">  
+        <![CDATA[ 
+            SELECT * FROM T_PLAT_USER
+        ]]>   
+    </select>
+    
+    <select id="readDataPaginationByCondition" resultType="User" resultMap="userResultMap">  
+        <![CDATA[ 
+            SELECT * FROM T_PLAT_USER
+        ]]>   
+    </select>
+    
+</mapper>

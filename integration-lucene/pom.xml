@@ -66,6 +66,17 @@
 			<artifactId>mmseg4j-solr</artifactId>
 		</dependency>
 		
+		<!--ELASTICSEARCH依赖包 -->
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch-hadoop</artifactId>
+		</dependency>
+		
 		<!-- ANSJ依赖包 -->
 		<dependency>
 			<groupId>org.ansj</groupId>

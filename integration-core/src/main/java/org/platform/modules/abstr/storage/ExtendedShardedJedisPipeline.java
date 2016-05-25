@@ -25,18 +25,6 @@ public class ExtendedShardedJedisPipeline extends Queable {
 	private List<FutureResult> results = new ArrayList<FutureResult>();
 	private Queue<Client> clients = new LinkedList<Client>();
 
-	private static class FutureResult {
-		private Client client = null;
-
-		public FutureResult(Client client) {
-			this.client = client;
-		}
-
-		public Object get() {
-			return client.getOne();
-		}
-	}
-
 	public ExtendedShardedJedisPipeline() {
 	}
 
@@ -522,10 +510,9 @@ public class ExtendedShardedJedisPipeline extends Queable {
 	}
 
 	/**
-	 * 默认的BuilderFactory为ZSET_BINARY，若按此方式使用会报错：java.io.StreamCorruptedException
-	 * : invalid stream header: EFBFBDEF<br>
+	 * 默认的BuilderFactory为ZSET_BINARY，若按此方式使用会报错：
+	 * java.io.StreamCorruptedException invalid stream header: EFBFBDEF
 	 * 应使用TUPLE_ZSET_BINARY
-	 * 
 	 * @param key
 	 * @param min
 	 * @param max
@@ -542,17 +529,15 @@ public class ExtendedShardedJedisPipeline extends Queable {
 	public Response<Set<Tuple>> zrangeByScoreWithScores(byte[] key, double min,
 			double max, int offset, int count) {
 		Client c = getClient(key);
-		c.zrangeByScoreWithScores(key, toByteArray(min), toByteArray(max),
-				offset, count);
+		c.zrangeByScoreWithScores(key, toByteArray(min), toByteArray(max), offset, count);
 		results.add(new FutureResult(c));
 		return getResponse(BuilderFactory.TUPLE_ZSET_BINARY);
 	}
 
 	/**
-	 * add by xjyin 默认的BuilderFactory为ZSET_BINARY，若按此方式使用会报错：java.io.
-	 * StreamCorruptedException: invalid stream header: EFBFBDEF<br>
+	 * 默认的BuilderFactory为ZSET_BINARY，若按此方式使用会报错：
+	 * java.io.StreamCorruptedException: invalid stream header: EFBFBDEF
 	 * 应使用TUPLE_ZSET_BINARY
-	 *
 	 * @param key
 	 * @param min
 	 * @param max
@@ -651,7 +636,6 @@ public class ExtendedShardedJedisPipeline extends Queable {
 	 * pipeline. Whenever possible try to avoid using this version and use
 	 * ShardedJedisPipeline.sync() as it won't go through all the responses and
 	 * generate the right response type (usually it is a waste of time).
-	 *
 	 * @return A list of all the responses in the order you executed them.
 	 */
 	public List<Object> syncAndReturnAll() {
@@ -660,14 +644,6 @@ public class ExtendedShardedJedisPipeline extends Queable {
 			formatted.add(generateResponse(client.getOne()).get());
 		}
 		return formatted;
-	}
-
-	/**
-	 * This method will be removed in Jedis 3.0. Use the methods that return
-	 * Response's and call sync().
-	 */
-	@Deprecated
-	public void execute() {
 	}
 
 	private Client getClient(byte[] key) {
@@ -680,5 +656,17 @@ public class ExtendedShardedJedisPipeline extends Queable {
 		Client client = jedis.getShard(key).getClient();
 		clients.add(client);
 		return client;
+	}
+	
+	private static class FutureResult {
+		private Client client = null;
+
+		public FutureResult(Client client) {
+			this.client = client;
+		}
+
+		public Object get() {
+			return client.getOne();
+		}
 	}
 }
