@@ -103,8 +103,4 @@ public class User extends IdAutoEntity<Long> {
 		this.availan = availan;
 	}
 
-	public boolean isAvailan() {
-		return availan;
-	}
-
 }

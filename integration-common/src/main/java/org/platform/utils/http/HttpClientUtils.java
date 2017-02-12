@@ -18,10 +18,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.httpclient.HttpHost;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -35,8 +38,10 @@ import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -105,6 +110,49 @@ public class HttpClientUtils extends HttpUtils {
 			logger.error("NoSuchAlgorithmException", e);
 		}
 	}
+	
+	@SuppressWarnings("unused")
+	public static HttpClientBuilder getInstanceClientBuilder(boolean isNeedProxy, CookieStore store, HttpHost host, HttpRequestRetryHandler handler, String userAgent) {  
+		SSLContextBuilder context_b = new SSLContextBuilder();
+//        org.apache.http.ssl.SSLContextBuilder context_b = SSLContextBuilder.create();  
+        SSLContext ssl_context = null;  
+        try {  
+//            context_b.loadTrustMaterial(null, (x509Certificates, s) -> true);  
+            //信任所有证书，解决https证书问题  
+            ssl_context = context_b.build();  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        ConnectionSocketFactory sslSocketFactory = null;  
+        Registry<ConnectionSocketFactory> registry = null;  
+        if (ssl_context != null) {  
+//            sslSocketFactory = new SSLConnectionSocketFactory(ssl_context, new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"}, null, (s, sslSession) -> true);  
+//            //应用多种tls协议，解决偶尔握手中断问题  
+//            registry = RegistryBuilder.<ConnectionSocketFactory>create().register("https", sslSocketFactory).register("http", new PlainConnectionSocketFactory()).build();  
+        }  
+        PoolingHttpClientConnectionManager manager = null;  
+        if (registry != null) {  
+            manager = new PoolingHttpClientConnectionManager(registry);  
+        } else {  
+            manager = new PoolingHttpClientConnectionManager();  
+        }  
+        manager.setMaxTotal(150);  
+        manager.setDefaultMaxPerRoute(200);  
+        HttpClientBuilder builder = HttpClients.custom().setRetryHandler(handler)  
+//                .setConnectionTimeToLive(6000, TimeUnit.SECONDS)  
+                .setUserAgent(userAgent);  
+        if (store != null) {  
+            builder.setDefaultCookieStore(store);  
+        }  
+        if (isNeedProxy && host != null) {  
+//            HttpHost proxy = new HttpHost("127.0.0.1", 1080);// 代理ip  
+//            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(host);  
+//            builder = builder.setRoutePlanner(routePlanner);  
+        }  
+        builder.setConnectionManager(manager);//httpclient连接池  
+//        builder.setRedirectStrategy(new AllowAllRedirectStrategy());//默认重定向所有302和307，否则httpclient只自动处理get请求导致的302和307  
+        return builder;  
+    }  
 	
 	/**
 	  * HTTP请求，默认超时为5S

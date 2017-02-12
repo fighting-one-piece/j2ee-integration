@@ -60,7 +60,6 @@ public class DataSourceFactoryBean implements FactoryBean, InitializingBean {
 		return ds;
 	}
 
-	@SuppressWarnings("deprecation")
 	protected DataSource createDataSource() {
 		DataSource ds = this.dataSource;
 		if (ds == null) {
@@ -68,7 +67,8 @@ public class DataSourceFactoryBean implements FactoryBean, InitializingBean {
 				if (PlatformConstants.DATASOURCE_TYPE_JNDI.equals(dataSourceType)) {
 					ds = new JndiDataSourceSupport().lookupDataSource(this.jndiName);
 				} else if(PlatformConstants.DATASOURCE_TYPE_JDBC.equals(dataSourceType)){
-					ds = new DriverManagerDataSource(driver, driverUrl, user, password);
+//					ds = new DriverManagerDataSource(driver, driverUrl, user, password);
+					ds = new DriverManagerDataSource(driverUrl, user, password);
 				}else if(PlatformConstants.DATASOURCE_TYPE_PROXOOL.equals(dataSourceType)){
 					ds = createProxoolDataSource();
 				}

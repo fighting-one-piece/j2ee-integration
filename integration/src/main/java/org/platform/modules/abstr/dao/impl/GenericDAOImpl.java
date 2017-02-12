@@ -1,6 +1,11 @@
 package org.platform.modules.abstr.dao.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -9,43 +14,46 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
+import org.platform.entity.Query;
+import org.platform.entity.QueryResult;
+import org.platform.modules.abstr.dao.IGenericDAO;
+import org.platform.utils.exception.DataAccessException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository("genericDAO")
-public class GenericDAOImpl<Entity extends Serializable, PK extends Serializable> extends SqlSessionDaoSupport {
+public class GenericDAOImpl<Entity extends Serializable, PK extends Serializable>
+	extends SqlSessionDaoSupport implements IGenericDAO<Entity, PK> {
 
 	public static final String INSERT = "insert";
+	public static final String INSERT_BATCH = "insertBatch";
     public static final String UPDATE = "update";
-    public static final String UPDATE_UP = "updateUp";
-    public static final String UPDATE_DOWN = "updateDown";
-    public static final String UPDATE_DELETED = "updateDeleted";
-    public static final String UPDATE_SPAM = "updateSpam";
-    public static final String DELETE = "delete";
+    public static final String UPDATE_BATCH = "updateBatch";
     public static final String DELETE_BY_PK = "deleteByPK";
     public static final String READ_DATA_BY_PK = "readDataByPK";
-    public static final String READ_UPS_BY_PK = "readUpsByPK";
-    public static final String READ_DOWNS_BY_PK = "readDownsByPK";
     public static final String READ_DATA_BY_CONDITION = "readDataByCondition";
     public static final String READ_DATA_LIST_BY_CONDITION = "readDataListByCondition";
     public static final String READ_DATA_PAGINATION_BY_CONDITION = "readDataPaginationByCondition";
     public static final String READ_COUNT_BY_CONDITION = "readCountByCondition";
-    
+
 	@Resource(name = "sqlSessionTemplate")
 	protected SqlSessionTemplate sqlSessionTemplate = null;
-	
-	protected Class<Entity> entityClass = null;
-	
-	protected void setEntityClass(Class<Entity> entityClass) {
-		this.entityClass = entityClass;
+
+	private Class<Entity> entityClass = null;
+
+	@SuppressWarnings("unchecked")
+	public GenericDAOImpl() {
+        Type type = getClass().getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            entityClass = (Class<Entity>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        }
 	}
 	
-	protected Entity newEntity() {
-        try {
-            return entityClass.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("can not instantiated entity : " + this.entityClass, e);
-        }
-    }
+	@Override
+	@Autowired
+	public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
+		super.setSqlSessionTemplate(sqlSessionTemplate);
+	}
 	
 	protected SqlSession sqlSession() {
 		return sqlSessionTemplate.getSqlSessionFactory().openSession();
@@ -55,20 +63,110 @@ public class GenericDAOImpl<Entity extends Serializable, PK extends Serializable
 		return sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH);
 	}
 	
+	protected void closeSession(SqlSession sqlSession) {
+		if (null != sqlSession) sqlSession.close();
+	}
+
 	protected String obtainSQLID(String sqlId) {
 		Configuration configuration = sqlSessionTemplate.getConfiguration();
-		String dialect = null;
+		String dialect = "mysql";
 		if (null != configuration.getVariables()) {
 			dialect = configuration.getVariables().getProperty("dialect");
 		}
-		if (null == dialect) {
-			dialect = "mysql";
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(dialect).append(".")
-		  .append(entityClass.getName()).append(".")
-		  .append(sqlId);
+		StringBuffer sb = new StringBuffer();
+		sb.append(dialect).append(".").append(entityClass.getName()).append(".").append(sqlId);
 		return sb.toString();
 	}
+
+	@Override
+	public void insert(Entity entity) {
+		sqlSessionTemplate.insert(obtainSQLID(INSERT), entity);
+	}
 	
+	@Override
+	public void insert(List<Entity> entities) throws DataAccessException {
+		SqlSession sqlSession = batchSqlSession();
+		for (int i = 0, len = entities.size(); i < len; i++) {
+			sqlSession.insert(obtainSQLID(INSERT), entities.get(i));
+		}
+		sqlSession.flushStatements();
+		closeSession(sqlSession);
+	}
+
+	@Override
+	public void update(Entity entity) {
+		sqlSessionTemplate.update(obtainSQLID(UPDATE), entity);
+	}
+
+	@Override
+	public void update(List<Entity> entities) throws DataAccessException {
+		SqlSession sqlSession = batchSqlSession();
+		for (int i = 0, len = entities.size(); i < len; i++) {
+			sqlSession.update(obtainSQLID(UPDATE), entities.get(i));
+		}
+		sqlSession.flushStatements();
+		closeSession(sqlSession);
+	}
+	
+	@Override
+	public void delete(Entity entity) throws DataAccessException {
+		
+	}
+
+	@Override
+	public void deleteByPK(PK primaryKey) {
+		sqlSessionTemplate.delete(obtainSQLID(DELETE_BY_PK), primaryKey);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Entity readDataByPK(PK pk) {
+		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(READ_DATA_BY_PK), pk);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Entity readDataByCondition(Query query) {
+		Map<String, Object> map = query.getMybatisCondition();
+		return (Entity) sqlSessionTemplate.selectOne(obtainSQLID(READ_DATA_BY_CONDITION), map);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Entity> readDataListByCondition(Query query) throws DataAccessException {
+		Map<String, Object> map = query.getMybatisCondition();
+		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
+				obtainSQLID(READ_DATA_LIST_BY_CONDITION), map);
+		List<Entity> entities = new ArrayList<Entity>();
+		for (int i = 0, len = resultList.size(); i < len; i++) {
+			entities.add((Entity) resultList.get(i));
+		}
+		return entities;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public QueryResult<Entity> readDataPaginationByCondition(Query query) throws DataAccessException {
+		Map<String, Object> map = query.getMybatisCondition();
+		List<Object> resultList = (List<Object>) sqlSessionTemplate.selectList(
+				obtainSQLID(READ_DATA_PAGINATION_BY_CONDITION), map);
+		List<Entity> entities = new ArrayList<Entity>();
+		for (int i = 0, len = resultList.size(); i < len; i++) {
+			entities.add((Entity) resultList.get(i));
+		}
+		int totalRowNum = (Integer) map.get(Query.TOTAL_ROW_NUM);
+		return new QueryResult<Entity>(totalRowNum, entities);
+	}
+	
+	@Override
+	public Long readCountByCondition(Query query) throws DataAccessException {
+		Map<String, Object> map = query.getMybatisCondition();
+		return  (Long) sqlSessionTemplate.selectOne(obtainSQLID(READ_COUNT_BY_CONDITION), map);
+	}
+
+	@Override
+	public void flush() throws DataAccessException {
+		sqlSessionTemplate.clearCache();
+	}
+
 }

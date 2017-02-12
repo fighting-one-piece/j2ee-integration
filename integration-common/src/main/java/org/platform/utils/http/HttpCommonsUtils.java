@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class HttpCommonsUtils extends HttpUtils {
 
-	private final static Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
+	private final static Logger logger = LoggerFactory.getLogger(HttpCommonsUtils.class);
     
     private static MultiThreadedHttpConnectionManager connectionManager = null;  
   

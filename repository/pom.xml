@@ -20,6 +20,7 @@
 		<module>../integration-core</module>
 		<module>../integration-struts</module>
 		<module>../integration-springboot</module>
+		<module>../integration-webmagic</module>
 		<module>../integration-web</module>
 		<module>../integration</module>
 	</modules>
@@ -297,23 +298,27 @@
 		<servlet.version>2.4</servlet.version>
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
-		<junit.version>4.10</junit.version>
+		<junit.version>4.12</junit.version>
 		<ant.version>1.8.4</ant.version>
-		<log4j.version>1.2.16</log4j.version>
-		<logback.version>1.0.13</logback.version>
-		<slf4j.api.version>1.7.5</slf4j.api.version>
-		<slf4j.log4j.version>1.7.5</slf4j.log4j.version>
+		<log4j.version>1.2.17</log4j.version>
+		<logback.version>1.1.7</logback.version>
+		<logback.spring.version>0.1.4</logback.spring.version>
+		<slf4j.api.version>1.7.21</slf4j.api.version>
+		<slf4j.log4j.version>1.7.21</slf4j.log4j.version>
+		<slf4j.jcl.version>1.7.21</slf4j.jcl.version>
 
 		<commons.io.version>2.4</commons.io.version>
-		<commons.logging.version>1.1.1</commons.logging.version>
 		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<commons.lang.version>2.6</commons.lang.version>
+		<commons.logging.version>1.1.1</commons.logging.version>
 		<commons.compress.version>1.4.1</commons.compress.version>
 		<commons.collections.version>3.2.1</commons.collections.version>
 		<commons.fileupload.version>1.2.2</commons.fileupload.version>
-		<commons.httpclient.version>3.0.1</commons.httpclient.version>
+		<commons.httpclient.version>3.1</commons.httpclient.version>
 
 		<json.version>2.4</json.version>
 		<jackson.version>1.9.9</jackson.version>
+		<jackson.core.version>2.7.3</jackson.core.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<cglib.version>2.2.2</cglib.version>
@@ -338,33 +343,35 @@
 
 		<struts.core.version>2.3.24.1</struts.core.version>
 		
-		<!-- 3.1.2.RELEASE -->
-		<spring.tx.version>3.2.11.RELEASE</spring.tx.version>
-		<spring.web.version>3.2.11.RELEASE</spring.web.version>
-		<spring.aop.version>3.2.11.RELEASE</spring.aop.version>
-		<spring.orm.version>3.1.1.RELEASE</spring.orm.version>
-		<spring.oxm.version>3.1.1.RELEASE</spring.oxm.version>
-		<spring.jms.version>3.2.11.RELEASE</spring.jms.version>
-		<spring.core.version>3.2.11.RELEASE</spring.core.version>
-		<spring.test.version>3.2.11.RELEASE</spring.test.version>
-		<spring.jdbc.version>3.2.11.RELEASE</spring.jdbc.version>
+		<!-- 3.2.11.RELEASE -->
+		<spring.tx.version>4.3.1.RELEASE</spring.tx.version>
+		<spring.web.version>4.3.1.RELEASE</spring.web.version>
+		<spring.aop.version>4.3.1.RELEASE</spring.aop.version>
+		<spring.orm.version>4.3.1.RELEASE</spring.orm.version>
+		<spring.oxm.version>4.3.1.RELEASE</spring.oxm.version>
+		<spring.jms.version>4.3.1.RELEASE</spring.jms.version>
+		<spring.core.version>4.3.1.RELEASE</spring.core.version>
+		<spring.test.version>4.3.1.RELEASE</spring.test.version>
+		<spring.jdbc.version>4.3.1.RELEASE</spring.jdbc.version>
+		<spring.beans.version>4.3.1.RELEASE</spring.beans.version>
+		<spring.webmvc.version>4.3.1.RELEASE</spring.webmvc.version>
+		<spring.context.version>4.3.1.RELEASE</spring.context.version>
+		<spring.messaging.version>4.3.1.RELEASE</spring.messaging.version>
 		<spring.flex.version>1.0.2.RELEASE</spring.flex.version>
-		<spring.beans.version>3.2.11.RELEASE</spring.beans.version>
-		<spring.webmvc.version>3.2.11.RELEASE</spring.webmvc.version>
-		<spring.context.version>3.2.11.RELEASE</spring.context.version>
 
-		<spring.data.jpa.version>1.4.1.RELEASE</spring.data.jpa.version>
-		<spring.data.redis.version>1.1.0.RELEASE</spring.data.redis.version>
-		<spring.data.mongodb.version>1.3.1.RELEASE</spring.data.mongodb.version>
+		<spring.data.jpa.version>1.10.2.RELEASE</spring.data.jpa.version>
+		<spring.data.redis.version>1.7.2.RELEASE</spring.data.redis.version>
+		<spring.data.mongodb.version>1.9.2.RELEASE</spring.data.mongodb.version>
+		<spring.data.neo4j.version>4.1.2.RELEASE</spring.data.neo4j.version>
 		<spring.data.hadoop.version>1.0.1.RELEASE-hadoop21</spring.data.hadoop.version>
 
-		<spring.security.core.version>3.2.11.RELEASE</spring.security.core.version>
-		<spring.security.config.version>3.2.11.RELEASE</spring.security.config.version>
-		<spring.security.web.version>3.2.11.RELEASE</spring.security.web.version>
-		<spring.security.acl.version>3.2.11.RELEASE</spring.security.acl.version>
-		<spring.security.taglibs.version>3.2.11.RELEASE</spring.security.taglibs.version>
-		<spring.security.openid.version>3.2.11.RELEASE</spring.security.openid.version>
-		<spring.security.ldap.version>3.2.11.RELEASE</spring.security.ldap.version>
+		<spring.security.core.version>4.1.1.RELEASE</spring.security.core.version>
+		<spring.security.config.version>4.1.1.RELEASE</spring.security.config.version>
+		<spring.security.web.version>4.1.1.RELEASE</spring.security.web.version>
+		<spring.security.acl.version>4.1.1.RELEASE</spring.security.acl.version>
+		<spring.security.taglibs.version>4.1.1.RELEASE</spring.security.taglibs.version>
+		<spring.security.openid.version>4.1.1.RELEASE</spring.security.openid.version>
+		<spring.security.ldap.version>4.1.1.RELEASE</spring.security.ldap.version>
 		
 		<spring.boot.web.starter.version>1.2.3.RELEASE</spring.boot.web.starter.version>
 		<spring.boot.actuator.starter.version>1.2.3.RELEASE</spring.boot.actuator.starter.version>
@@ -379,16 +386,22 @@
 		<ibatis.core.version>3.0</ibatis.core.version>
 		<ibatis.sqlmap.version>3.0-beta-6</ibatis.sqlmap.version>
 
-		<mybatis.version>3.2.2</mybatis.version>
-		<mybatis.core.version>1.3.2</mybatis.core.version>
-		<mybatis.spring.version>1.1.1</mybatis.spring.version>
-<!-- 		<mybatis.version>3.0.6</mybatis.version> -->
-<!-- 		<mybatis.core.version>1.3.1</mybatis.core.version> -->
-<!-- 		<mybatis.spring.version>1.0.1</mybatis.spring.version> -->
+		<mybatis.version>3.4.0</mybatis.version>
+		<mybatis.spring.version>1.3.0</mybatis.spring.version>
+		<mybatis.generator.version>1.3.2</mybatis.generator.version>
+		<!-- 		
+		<mybatis.version>3.0.6</mybatis.version>
+		<mybatis.spring.version>1.0.1</mybatis.spring.version>
+	    <mybatis.generator.version>1.3.1</mybatis.generator.version> 
+	    -->
 		
 		<cassandra.version>2.1.0</cassandra.version>
 		
 		<persistence.version>1.0</persistence.version>
+		
+		<neo4j.version>3.0.3</neo4j.version>
+		
+		<titan.hadoop.version>1.0.0</titan.hadoop.version>
 		
 		<validation.version>1.1.0.Final</validation.version>
 		<bval.jsr303.version>0.5</bval.jsr303.version>
@@ -400,8 +413,8 @@
 		<gwt.servlet.version>2.5.0</gwt.servlet.version>
 
 		<jetty.version>7.2.2.v20101205</jetty.version>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
 		<cxf.version>2.6.2</cxf.version>
@@ -449,11 +462,11 @@
 		<elasticsearch.core.version>1.6.0</elasticsearch.core.version>
 		-->
 		
-		<elasticsearch.version>2.0.0</elasticsearch.version>
+		<elasticsearch.version>2.3.4</elasticsearch.version>
 		<elasticsearch.core.version>2.0.0</elasticsearch.core.version>
 		<elasticsearch.hadoop.version>2.1.2</elasticsearch.hadoop.version>
 
-		<poi.version>3.9</poi.version>
+		<poi.version>3.15</poi.version>
 		<quartz.version>2.2.1</quartz.version>
 		<jacob.version>1.10</jacob.version>
 		<jacob.sf.version>1.14.3</jacob.sf.version>
@@ -489,9 +502,13 @@
 
 		<shiro.version>1.2.2</shiro.version>
 
-		<seleniumhq.version>2.37.1</seleniumhq.version>
-		<htmlunit.version>2.13</htmlunit.version>
+		<seleniumhq.version>2.53.1</seleniumhq.version>
+		<htmlunit.version>1.13</htmlunit.version>
 		<crawler4j.version>3.5</crawler4j.version>
+		<webmagic.core.version>0.5.3</webmagic.core.version>
+		<webmagic.extension.version>0.5.3</webmagic.extension.version>
+		<webmagic.selenium.version>0.5.2</webmagic.selenium.version>
+		<net.sourceforge.htmlunit.version>2.13</net.sourceforge.htmlunit.version>
 		
 		<spark.version>1.1.0</spark.version>
 		<spark.mllib.version>1.0.0</spark.mllib.version>
@@ -591,6 +608,12 @@
 				<artifactId>logback-access</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
+			
+			<dependency>
+			    <groupId>org.logback-extensions</groupId>
+			    <artifactId>logback-ext-spring</artifactId>
+			    <version>${logback.spring.version}</version>
+			</dependency>
 
 			<!-- Slf4j -->
 			<dependency>
@@ -604,6 +627,12 @@
 				<artifactId>slf4j-log4j12</artifactId>
 				<version>${slf4j.log4j.version}</version>
 			</dependency>
+			
+			<dependency>
+			    <groupId>org.slf4j</groupId>
+			    <artifactId>jcl-over-slf4j</artifactId>
+			    <version>${slf4j.jcl.version}</version>
+			</dependency> 
 
 			<!--Dom4j依赖包 -->
 			<dependency>
@@ -617,6 +646,13 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>${commons.logging.version}</version>
+			</dependency>
+			
+			<!--Lang依赖包 -->
+			<dependency>
+				<groupId>commons-lang</groupId>
+   				<artifactId>commons-lang</artifactId>
+				<version>${commons.lang.version}</version>
 			</dependency>
 
 			<!--DBCP依赖包 -->
@@ -671,6 +707,24 @@
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>${jackson.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-core</artifactId>
+			    <version>${jackson.core.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-databind</artifactId>
+			    <version>${jackson.core.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-annotations</artifactId>
+			    <version>${jackson.core.version}</version>
 			</dependency>
 
 			<!--JSOUP依赖包 -->
@@ -918,6 +972,12 @@
 				<artifactId>spring-jdbc</artifactId>
 				<version>${spring.jdbc.version}</version>
 			</dependency>
+			
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-messaging</artifactId>
+			    <version>${spring.messaging.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.flex</groupId>
@@ -942,6 +1002,12 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-mongodb</artifactId>
 				<version>${spring.data.mongodb.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-neo4j</artifactId>
+				<version>${spring.data.neo4j.version}</version>
 			</dependency>
 
 			<dependency>
@@ -1108,15 +1174,15 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.mybatis.generator</groupId>
-				<artifactId>mybatis-generator-core</artifactId>
-				<version>${mybatis.core.version}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis-spring</artifactId>
 				<version>${mybatis.spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-core</artifactId>
+				<version>${mybatis.generator.version}</version>
 			</dependency>
 			
 			<!-- Cassandra依赖包 -->
@@ -1130,6 +1196,44 @@
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-driver-dse</artifactId>
 				<version>${cassandra.version}</version>
+			</dependency>
+			
+			<!-- Neo4j依赖包 -->
+			<dependency>
+			    <groupId>org.neo4j</groupId>
+			    <artifactId>neo4j</artifactId>
+			    <version>${neo4j.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.neo4j</groupId>
+			    <artifactId>neo4j-io</artifactId>
+			    <version>${neo4j.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.neo4j</groupId>
+			    <artifactId>neo4j-kernel</artifactId>
+			    <version>${neo4j.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.neo4j</groupId>
+			    <artifactId>neo4j-remote-graphdb</artifactId>
+			    <version>0.8-1.2</version>
+			</dependency>
+			
+			<!-- Titan依赖包 -->
+			<dependency>
+			    <groupId>com.thinkaurelius.titan</groupId>
+			    <artifactId>titan-hadoop</artifactId>
+			    <version>${titan.hadoop.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>com.thinkaurelius.titan</groupId>
+			    <artifactId>titan-hadoop-core</artifactId>
+			    <version>${titan.hadoop.version}</version>
 			</dependency>
 			
 			<!-- Persistence依赖包 -->
@@ -2310,7 +2414,13 @@
 			<dependency>
 				<groupId>net.sourceforge.htmlunit</groupId>
 				<artifactId>htmlunit</artifactId>
-				<version>${htmlunit.version}</version>
+				<version>${net.sourceforge.htmlunit.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>htmlunit</groupId>
+			    <artifactId>htmlunit</artifactId>
+			    <version>${htmlunit.version}</version>
 			</dependency>
 			
 			<!-- Crawler4j 依赖 -->
@@ -2370,6 +2480,25 @@
 				<version>${netty.version}</version>
 			</dependency>
 
+			<!-- WEBMAGIC依赖包 -->
+			<dependency>
+			    <groupId>us.codecraft</groupId>
+			    <artifactId>webmagic-core</artifactId>
+			    <version>${webmagic.core.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>us.codecraft</groupId>
+			    <artifactId>webmagic-extension</artifactId>
+			    <version>${webmagic.extension.version}</version>
+			</dependency>
+			
+			<dependency>
+			    <groupId>us.codecraft</groupId>
+			    <artifactId>webmagic-selenium</artifactId>
+			    <version>${webmagic.selenium.version}</version>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -2475,8 +2604,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven.compiler.plugin.version}</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>

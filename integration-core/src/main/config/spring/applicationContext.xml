@@ -41,6 +41,14 @@
 		<property name="url" value="${url}"></property> 
 		<property name="username" value="${username}"></property> 
 		<property name="password" value="${password}"></property> 
+		<property name="initialSize" value="${dbcp.initialSize}"></property> 
+		<property name="maxActive" value="${dbcp.maxActive}"></property> 
+		<property name="maxIdle" value="${dbcp.maxIdle}"></property> 
+		<property name="minIdle" value="${dbcp.minIdle}"></property> 
+		<property name="maxWait" value="${dbcp.maxWait}"></property> 
+		<property name="removeAbandoned" value="${dbcp.removeAbandoned}"></property> 
+		<property name="defaultAutoCommit" value="${dbcp.defaultAutoCommit}"></property> 
+		<property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}"></property> 
 	</bean> 
 	
 	<!-- PROXOOL数据源配置 -->
@@ -58,22 +66,6 @@
 		<property name="delegateProperties" value="user=${username},password=${password}" />
 	</bean>
 
-	<!-- DBCP数据源配置 -->
-	<bean id="dataSourceDBCP" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${driverClassName}"></property> 
-		<property name="url" value="${url}"></property> 
-		<property name="username" value="${username}"></property> 
-		<property name="password" value="${password}"></property> 
-		<property name="initialSize" value="${dbcp.initialSize}"></property> 
-		<property name="maxActive" value="${dbcp.maxActive}"></property> 
-		<property name="maxIdle" value="${dbcp.maxIdle}"></property> 
-		<property name="minIdle" value="${dbcp.minIdle}"></property> 
-		<property name="maxWait" value="${dbcp.maxWait}"></property> 
-		<property name="removeAbandoned" value="${dbcp.removeAbandoned}"></property> 
-		<property name="defaultAutoCommit" value="${dbcp.defaultAutoCommit}"></property> 
-		<property name="removeAbandonedTimeout" value="${dbcp.removeAbandonedTimeout}"></property> 
-	</bean> 
-	
 	<!-- BONECP数据源配置 -->
 	<bean id="dataSourceBoneCP" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
    		<property name="driverClass" value="${driverClassName}" />
@@ -405,9 +397,9 @@
     <import resource="classpath:spring/applicationContext-mail.xml"/>
     <import resource="classpath:spring/applicationContext-shiro.xml"/>
     <import resource="classpath:spring/applicationContext-task.xml"/>
-    <import resource="classpath:spring/applicationContext-mongo.xml"/>
     <!-- 
     <import resource="classpath:spring/applicationContext-redis.xml"/>
+    <import resource="classpath:spring/applicationContext-mongo.xml"/>
     <import resource="classpath:spring/applicationContext-scheduler.xml"/>
     <import resource="classpath:sprint/applicationContext-cassandra.xml"/>
      -->

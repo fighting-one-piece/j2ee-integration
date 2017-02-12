@@ -103,6 +103,21 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		</dependency>
 
 		<!--FileUpload依赖包 -->
 		<dependency>
@@ -148,7 +163,7 @@
 		<!-- </dependency> -->
 
 		<!--HttpClient依赖包 -->
-		<dependency>
+		<dependency> 
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
@@ -176,7 +191,7 @@
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
 		</dependency>
-
+		
 		<!--JSOUP依赖包 -->
 		<dependency>
 			<groupId>org.jsoup</groupId>

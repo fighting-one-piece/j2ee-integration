@@ -11,7 +11,6 @@
 	</parent>
 
 	<dependencies>
-	
 		<!--Spring依赖包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -78,12 +77,22 @@
 			<artifactId>spring-jms</artifactId>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-messaging</artifactId>
+		</dependency>
+		
 		<!--Aspectj Weaver 依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 
+		<!--Lang依赖包 -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+ 			<artifactId>commons-lang</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
