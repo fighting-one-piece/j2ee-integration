@@ -2,9 +2,5 @@
     <wb-module deploy-name="integration-core">
         <wb-resource deploy-path="/" source-path="/src/main/java"/>
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/filters"/>
-        <wb-resource deploy-path="/" source-path="/src/main/scripts"/>
-        <wb-resource deploy-path="/" source-path="/src/main/assembly"/>
-        <wb-resource deploy-path="/" source-path="/src/site"/>
     </wb-module>
 </project-modules>
